@@ -1,0 +1,65 @@
+### Register User
+POST http://localhost:8000/users/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "email": "hasheduser@example.com",
+  "username": "hasheduser",
+  "password": "strongpassword123",
+  "phone_number": "+1234567890",
+  "user_type": "MAIN_ADMIN"
+}
+
+
+
+### Register a previlaged user
+
+POST http://localhost:8000/users/create-privileged/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ2MDEwMjQ5LCJpYXQiOjE3NDYwMDkzNDksImp0aSI6Ijc4YzhiYjAyMjIwMjQwOWQ4NWI4ZTYzNjRlNWE4Y2RlIiwidXNlcl9pZCI6Ijg4ZjhjODhkLTAzYmUtNDdiYS04YjUxLTg2YjBiMTVmN2E4YiJ9.e3w1v59CB0qxu2CwBNPBZh0wBl6i26WLZiVx3eP20us
+
+{
+  "email": "newuser@example.com",
+  "username": "newuser",
+  "password": "temporarypassword123",
+  "phone_number": "+1234567890",
+  "user_type": "SCHOOL_ADMIN"
+}
+
+
+
+
+
+
+
+
+### Get JWT Token
+POST http://localhost:8000/auth/token/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "username": "newuser",
+  "password": "temporarypassword123"
+}
+
+
+
+
+
+
+
+
+### Use the signed url
+POST http://localhost:8000/users/invite/?token=TRIP_TEACHER:1uA4BW:aoJk5d8POz-34fqzl-ngh7EYIo4hRFhz8c6Hz3s2Wq4 HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "email": "firstteacher@example.com",
+  "username": "teacher",
+  "password": "strongpassword123",
+  "phone_number": "+1234567890"
+}
