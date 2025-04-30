@@ -1,3 +1,11 @@
-from django.shortcuts import render
+from rest_framework import generics
+from .models import TripMessage
+from .serializers import TripMessageSerializer
 
-# Create your views here.
+class TripMessageListCreateView(generics.ListCreateAPIView):
+    queryset = TripMessage.objects.all()
+    serializer_class = TripMessageSerializer
+
+class TripMessageRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = TripMessage.objects.all()
+    serializer_class = TripMessageSerializer

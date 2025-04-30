@@ -1,0 +1,45 @@
+### Create a Student Instance
+POST http://localhost:8000/students/ HTTP/1.1  
+Host: localhost:8000  
+Content-Type: application/json  
+
+{
+  "first_name": "John",
+  "last_name": "Doe",
+  "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+  "class_name": "Grade 5",
+  "parent_name": "Jane Doe",
+  "parent_phone": "+1234567890",
+  "parent_email": "parent@example.com",
+  "fingerprint_id": 101,
+  "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+}
+
+
+### List all the students
+GET http://localhost:8000/students/ HTTP/1.1  
+Host: localhost:8000  
+
+
+### Update a Student
+
+PUT http://localhost:8000/students/92768b34-d6c6-4e0a-b167-9518290a6094/ HTTP/1.1  
+Host: localhost:8000  
+Content-Type: application/json  
+
+{
+  "first_name": "Johnny",
+  "last_name": "Doe",
+  "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+  "class_name": "Grade 6",
+  "parent_name": "Jane Doe",
+  "parent_phone": "+1234567890",
+  "parent_email": "parent@example.com",
+  "fingerprint_id": 101,
+  "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+}
+
+
+### Delete a student
+DELETE http://localhost:8000/students/92768b34-d6c6-4e0a-b167-9518290a6094/ HTTP/1.1  
+Host: localhost:8000  

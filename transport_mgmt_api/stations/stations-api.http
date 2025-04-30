@@ -1,0 +1,40 @@
+### Add a Station
+
+POST http://localhost:8000/stations/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "name": "Sunset Boulevard",
+  "route": "7ee67271-a068-4ba9-ac75-5a83e88b732c",
+  "latitude": 34.052235,
+  "longitude": -118.243683,
+  "order": 1
+}
+
+### List all the stations:
+GET http://localhost:8000/stations/ HTTP/1.1
+Host: localhost:8000
+
+### Update a Station:
+PUT http://localhost:8000/stations/91b84c3e-9c7b-4d6f-9595-fc529b11a6a7/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "name": "Sunset Blvd (Updated)",
+  "route": "0d178fa6-f2f1-466b-a0bd-0f12a2b8fa1e",
+  "latitude": 34.052300,
+  "longitude": -118.243700,
+  "order": 2
+}
+
+### Delete a Station:
+DELETE http://localhost:8000/stations/91b84c3e-9c7b-4d6f-9595-fc529b11a6a7/ HTTP/1.1
+Host: localhost:8000
+
+
+
+
+
+

@@ -1,3 +1,16 @@
-from django.shortcuts import render
+# vehicles/views.py
+from rest_framework import generics, permissions
+from .models import Vehicle
+# vehicles/views.py
+from rest_framework import generics
+from .models import Vehicle
+from .serializers import VehicleSerializer
 
-# Create your views here.
+class VehicleListCreateView(generics.ListCreateAPIView):
+    queryset = Vehicle.objects.all()
+    serializer_class = VehicleSerializer
+
+class VehicleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Vehicle.objects.all()
+    serializer_class = VehicleSerializer
+    lookup_field = 'id'

@@ -1,0 +1,31 @@
+### Create a vehicle instance
+POST http://localhost:8000/vehicles/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "registration_number": "ABC1234",
+  "capacity": 30,
+  "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad"
+}
+
+
+### Get the list of Vehicles
+GET http://localhost:8000/vehicles/ HTTP/1.1
+Host: localhost:8000
+
+### Update a Vehicle instance
+PUT http://localhost:8000/vehicles/812ec04b-1cfd-4542-bba3-272ffc20bb98/ HTTP/1.1
+Host: localhost:8000  
+Content-Type: application/json  
+
+{
+  "registration_number": "XYZ5678",
+  "capacity": 35,
+  "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad"
+}
+
+
+### Delete a vehicle instance
+DELETE http://localhost:8000/vehicles/812ec04b-1cfd-4542-bba3-272ffc20bb98/ HTTP/1.1
+Host: localhost:8000  

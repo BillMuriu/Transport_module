@@ -29,7 +29,7 @@ class Trip(models.Model):
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField(null=True, blank=True)
     trip_status = models.CharField(max_length=10, choices=TripStatus.choices)
-    trip_type = models.CharField(max_length=10, choices=TripAction.choices)
+    trip_action = models.CharField(max_length=10, choices=TripAction.choices, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

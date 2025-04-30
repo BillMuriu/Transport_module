@@ -1,0 +1,32 @@
+### Create a route:
+POST http://localhost:8000/routes/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "name": "Route 1",
+  "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad"
+}
+
+### List the Routes
+GET http://localhost:8000/routes/ HTTP/1.1
+Host: localhost:8000
+
+
+### Update the Route
+PUT http://localhost:8000/routes/4f5ac991-90b1-4d86-95e6-e63b7332c72a/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "name": "Updated Route 1",
+  "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad"
+}
+
+
+### Delete the Route
+DELETE http://localhost:8000/routes/0d178fa6-f2f1-466b-a0bd-0f12a2b8fa1e/ HTTP/1.1
+Host: localhost:8000
+
+
+

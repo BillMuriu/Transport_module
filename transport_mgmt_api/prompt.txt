@@ -1,7 +1,6 @@
-Now, let's move to the next app. The school's app. Let's create the api views, serializers for listing, createing, updating and destroying the the school instances
+Now, let's move to the next app. The driver's app. Let's create the api views, serializers for listing, creating, updating and destroying the drivers instances 
 
 Here is the model :
-
 
 Promt 2:
 Now, give me the Api requests for testing the api:

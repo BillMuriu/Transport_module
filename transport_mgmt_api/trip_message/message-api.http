@@ -1,0 +1,35 @@
+
+### Create a message
+POST http://localhost:8000/trip-messages/
+Content-Type: application/json
+
+{
+  "student": "e69d8794-342c-4aa4-b56b-ced1487e1448",
+  "trip": "9e533fac-c724-456a-8736-4aa07cbd6e3f",
+  "sent_to": "parent-phone-or-email",
+  "message_type": "board",
+  "content": "Your kid has boarded the bus at...",
+  "status": "sent"
+}
+
+
+### List all trips
+GET http://localhost:8000/trip-messages/
+
+
+### Update a trip
+PUT http://localhost:8000/trip-messages/4128be9f-ee03-48ba-bbb6-8ad0dc04c055/
+Content-Type: application/json
+
+{
+  "student": "e69d8794-342c-4aa4-b56b-ced1487e1448",
+  "trip": "9e533fac-c724-456a-8736-4aa07cbd6e3f",
+  "sent_to": "0712345678",
+  "message_type": "alight",
+  "content": "The student has safely arrived at school.",
+  "status": "sent"
+}
+
+### Delete a message
+DELETE http://localhost:8000/trip-messages/4128be9f-ee03-48ba-bbb6-8ad0dc04c055/
+
