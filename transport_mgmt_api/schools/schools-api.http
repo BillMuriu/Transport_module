@@ -1,0 +1,38 @@
+## This is the request for creating a school instance
+POST http://localhost:8000/schools/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "name": "Bluehaven School",
+  "address": "456 Blue Street, Riverdale",
+  "phone_number": "+19876543210",
+  "email": "info@bluehaven.edu",
+  "contact_person": "Mark Spencer"
+}
+
+
+### Get all the schools
+GET http://localhost:8000/schools/ HTTP/1.1
+Host: localhost:8000
+
+
+### Update a specific school
+PUT http://localhost:8000/schools/da22b406-50f6-4e8d-afd7-ed52e5d0f6ad/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "name": "Greenfield Academy Updated",
+  "address": "456 New Road, Springfield",
+  "phone_number": "+19876543210",
+  "email": "updated@greenfield.edu",
+  "contact_person": "John Smith"
+}
+
+
+###Delete a school instance
+
+DELETE http://localhost:8000/schools/65d026c9-e8f2-474d-be36-595742a233d7/ HTTP/1.1
+Host: localhost:8000
+
