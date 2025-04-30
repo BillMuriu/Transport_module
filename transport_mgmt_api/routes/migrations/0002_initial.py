@@ -9,14 +9,14 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        ('routes', '0001_initial'),
         ('schools', '0001_initial'),
-        ('users', '0001_initial'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='school',
-            name='school_admin',
-            field=models.ForeignKey(blank=True, limit_choices_to={'user_type': 'SCHOOL_ADMIN'}, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='administered_schools', to='users.user'),
+            model_name='route',
+            name='school',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='routes', to='schools.school'),
         ),
     ]

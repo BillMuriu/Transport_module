@@ -1,3 +1,4 @@
+# users/views.py
 from rest_framework import generics
 from .models import User
 from .serializers import UserSerializer
@@ -6,7 +7,7 @@ class UserListCreateView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
+class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    lookup_field = 'pk'
+    lookup_field = 'id'
