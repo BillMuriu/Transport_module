@@ -1,0 +1,10 @@
+### send a message to parent test api query
+
+POST /trip-messages/send/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "student_id": "e69d8794-342c-4aa4-b56b-ced1487e1448",
+  "trip_id": "9e533fac-c724-456a-8736-4aa07cbd6e3f"
+}

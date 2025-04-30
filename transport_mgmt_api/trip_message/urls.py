@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import TripMessageListCreateView, TripMessageRetrieveUpdateDestroyView
+from .views import TripMessageListCreateView, TripMessageRetrieveUpdateDestroyView, SendTripMessageView
 
 urlpatterns = [
     path('', TripMessageListCreateView.as_view(), name='list-create-trip-messages'),
     path('<uuid:pk>/', TripMessageRetrieveUpdateDestroyView.as_view(), name='retrieve-update-destroy-trip-message'),
+    path('send/', SendTripMessageView.as_view(), name='send-trip-message'),
 ]
