@@ -3,11 +3,10 @@ from django.db import models
 
 class Trip(models.Model):
     class TripType(models.TextChoices):
-        NORMAL = 'normal', 'Normal'
-        SPECIAL = 'special', 'Special'
+        PICKUP = 'morning_pickup', 'Morning Pickup'
+        DROPP_OFF = 'evening_dropoff', 'Evening Dropoff'
 
     class TripStatus(models.TextChoices):
-        SCHEDULED = 'scheduled', 'Scheduled'
         ONGOING = 'ongoing', 'Ongoing'
         COMPLETED = 'completed', 'Completed'
         CANCELLED = 'cancelled', 'Cancelled'
@@ -18,7 +17,7 @@ class Trip(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)  # e.g., "Trip to School"
-    trip_type = models.CharField(max_length=10, choices=TripType.choices)
+    trip_type = models.CharField(max_length=20, choices=TripType.choices)
     school = models.ForeignKey('schools.School', on_delete=models.CASCADE, related_name='trips')
     vehicle = models.ForeignKey('vehicles.Vehicle', on_delete=models.CASCADE, related_name='trips')
     driver = models.ForeignKey('drivers.Driver', on_delete=models.CASCADE, related_name='trips')

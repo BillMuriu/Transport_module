@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
 
     'rest_framework',
 
@@ -67,6 +68,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'transport_mgmt_api.urls'
@@ -169,3 +173,5 @@ SIMPLE_JWT = {
     'USER_ID_FIELD': 'id',  # To use UUID field as user identifier
     'USER_ID_CLAIM': 'user_id',
 }
+
+CORS_ALLOW_ALL_ORIGINS = True

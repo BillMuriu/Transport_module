@@ -4,16 +4,17 @@ Host: localhost:8000
 Content-Type: application/json  
 
 {
-  "first_name": "John",
+  "first_name": "John Kimani 2",
   "last_name": "Doe",
   "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
-  "class_name": "Grade 5",
-  "parent_name": "Jane Doe",
-  "parent_phone": "+1234567890",
+  "class_name": "Grade 6",
+  "parent_name": "Mr Kimani",
+  "parent_phone": "0708160049",
   "parent_email": "parent@example.com",
-  "fingerprint_id": 101,
+  "fingerprint_id": 121,
   "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
 }
+
 
 
 ### List all the students
@@ -28,12 +29,12 @@ Host: localhost:8000
 Content-Type: application/json  
 
 {
-  "first_name": "Johnny",
+  "first_name": "John Kimani",
   "last_name": "Doe",
   "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
   "class_name": "Grade 6",
-  "parent_name": "Jane Doe",
-  "parent_phone": "0742675176",
+  "parent_name": "Mr Kimani",
+  "parent_phone": "0745409294",
   "parent_email": "parent@example.com",
   "fingerprint_id": 101,
   "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
