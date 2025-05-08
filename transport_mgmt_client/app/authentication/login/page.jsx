@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +16,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { useLogin } from "./query";
+import { useLogin } from "./queries/mutations";
+import { useFetchUserDetails } from "./queries/queries";
 
 const formSchema = z.object({
   username: z.string().min(1),
@@ -24,22 +25,44 @@ const formSchema = z.object({
 });
 
 export default function Login() {
+  const [userId, setUserId] = useState(null);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
   });
 
-  const { mutateAsync: login, isLoading } = useLogin();
+  const { mutateAsync: login, isLoading: isLoading } = useLogin();
+
+  const {
+    data: userDetails,
+    isLoading: isFetchingUser,
+    error: userError,
+  } = useFetchUserDetails(userId);
 
   async function onSubmit(values) {
     try {
-      await login(values);
+      console.log("Form submitted with values:", values);
 
-      toast.success("Login successful!");
+      const loginData = await login(values); // Perform login
+      const userId = loginData.userId;
+
+      if (userId) {
+        toast.success(`Login successful! User ID: ${userId}`);
+        setUserId(userId); // Triggers user details fetch
+      } else {
+        toast.error("Failed to retrieve User ID.");
+      }
     } catch (error) {
       console.error("Form submission error", error);
-      toast.error("Failed to submit the form. Please try again.");
+      toast.error("Failed to login. Please try again.");
     }
   }
+
+  useEffect(() => {
+    if (userDetails) {
+      toast.success(`Welcome, ${userDetails.user_type}`);
+    }
+  }, [userDetails]);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-muted px-4">
