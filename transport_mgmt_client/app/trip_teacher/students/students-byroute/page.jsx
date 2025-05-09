@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
 import { useCreateTripMessage } from "../../trip-messages/queries/mutation";
 import { Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const routeId = "7ee67271-a068-4ba9-ac75-5a83e88b732c";
 
@@ -50,38 +51,49 @@ const StudentsByRoute = () => {
     }
   };
 
-  if (isLoading) return <div>Loading students...</div>;
-  if (isError) return <div>Error loading students.</div>;
+  if (isLoading)
+    return <div className="text-center mt-12">Loading students...</div>;
+  if (isError)
+    return (
+      <div className="text-center mt-12 text-red-500">
+        Error loading students.
+      </div>
+    );
 
   return (
-    <div>
+    <div className="max-w-md mx-auto p-6">
       {ongoingTrip?.id && (
-        <h3 className="text-xl font-semibold mb-4">
+        <h3 className="text-base font-medium text-muted-foreground mb-4 text-center">
           Ongoing Trip ID: {ongoingTrip.id}
         </h3>
       )}
 
-      <h2 className="text-xl font-semibold mb-4">Students on Route</h2>
-      <ul className="space-y-2">
-        {students?.map((student) => (
-          <li
+      <h2 className="text-xl font-semibold mb-6 text-center">
+        Students on Route
+      </h2>
+      <ul className="space-y-3">
+        {students?.map((student, index) => (
+          <motion.li
             key={student.id}
-            className="p-2 border rounded flex items-center space-x-3"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05, duration: 0.3 }}
+            className="p-3 border rounded-md flex items-center space-x-3"
           >
             {sent[student.id] ? (
-              <span className="text-green-600 font-medium">Sent</span>
+              <span className="text-green-600 text-sm font-medium">Sent</span>
             ) : sending[student.id] ? (
-              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
             ) : (
               <Checkbox
                 checked={false}
                 onCheckedChange={(checked) => handleCheck(checked, student)}
               />
             )}
-            <span>
+            <span className="text-sm text-muted-foreground">
               {student.first_name} – {student.class_name}
             </span>
-          </li>
+          </motion.li>
         ))}
       </ul>
     </div>
