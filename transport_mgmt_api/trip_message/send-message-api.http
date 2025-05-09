@@ -5,6 +5,6 @@ Host: localhost:8000
 Content-Type: application/json
 
 {
-  "student_id": "47e51e87-d18a-42aa-b54c-6c2de81f42a1",
+  "student_id": "e69d8794-342c-4aa4-b56b-ced1487e1448",
   "trip_id": "aeb5022a-fd73-4e77-b1fd-6763785fe9e6"
 }

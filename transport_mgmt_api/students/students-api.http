@@ -3,40 +3,187 @@ POST http://localhost:8000/students/ HTTP/1.1
 Host: localhost:8000  
 Content-Type: application/json  
 
-{
-  "first_name": "John Kimani 2",
-  "last_name": "Doe",
-  "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
-  "class_name": "Grade 6",
-  "parent_name": "Mr Kimani",
-  "parent_phone": "0708160049",
-  "parent_email": "parent@example.com",
-  "fingerprint_id": 121,
-  "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
-}
+[
+  {
+    "first_name": "Brian",
+    "last_name": "Otieno",
+    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "class_name": "Grade 5",
+    "parent_name": "Mr Otieno",
+    "parent_phone": "0742675176",
+    "parent_email": "brian.parent@example.com",
+    "fingerprint_id": 140,
+    "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+  },
+  {
+    "first_name": "Faith",
+    "last_name": "Kamau",
+    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "class_name": "Grade 6",
+    "parent_name": "Mrs Kamau",
+    "parent_phone": "0792845342",
+    "parent_email": "faith.parent@example.com",
+    "fingerprint_id": 141,
+    "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+  },
+  {
+    "first_name": "Kelvin",
+    "last_name": "Njoroge",
+    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "class_name": "Grade 7",
+    "parent_name": "Mr Njoroge",
+    "parent_phone": "0742675176",
+    "parent_email": "kelvin.parent@example.com",
+    "fingerprint_id": 142,
+    "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+  },
+  {
+    "first_name": "Diana",
+    "last_name": "Wanjiku",
+    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "class_name": "Grade 4",
+    "parent_name": "Mrs Wanjiku",
+    "parent_phone": "0792845342",
+    "parent_email": "diana.parent@example.com",
+    "fingerprint_id": 143,
+    "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+  },
+  {
+    "first_name": "Samuel",
+    "last_name": "Maina",
+    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "class_name": "Grade 8",
+    "parent_name": "Mr Maina",
+    "parent_phone": "0742675176",
+    "parent_email": "samuel.parent@example.com",
+    "fingerprint_id": 144,
+    "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+  },
+  {
+    "first_name": "Janet",
+    "last_name": "Anyango",
+    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "class_name": "Grade 5",
+    "parent_name": "Mrs Anyango",
+    "parent_phone": "0792845342",
+    "parent_email": "janet.parent@example.com",
+    "fingerprint_id": 145,
+    "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+  },
+  {
+    "first_name": "Tom",
+    "last_name": "Kiprono",
+    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "class_name": "Grade 6",
+    "parent_name": "Mr Kiprono",
+    "parent_phone": "0742675176",
+    "parent_email": "tom.parent@example.com",
+    "fingerprint_id": 146,
+    "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+  },
+  {
+    "first_name": "Mary",
+    "last_name": "Muthoni",
+    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "class_name": "Grade 7",
+    "parent_name": "Mrs Muthoni",
+    "parent_phone": "0792845342",
+    "parent_email": "mary.parent@example.com",
+    "fingerprint_id": 147,
+    "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+  },
+  {
+    "first_name": "Collins",
+    "last_name": "Odinga",
+    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "class_name": "Grade 4",
+    "parent_name": "Mr Odinga",
+    "parent_phone": "0742675176",
+    "parent_email": "collins.parent@example.com",
+    "fingerprint_id": 148,
+    "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+  },
+  {
+    "first_name": "Irene",
+    "last_name": "Chepkorir",
+    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "class_name": "Grade 8",
+    "parent_name": "Mrs Chepkorir",
+    "parent_phone": "0792845342",
+    "parent_email": "irene.parent@example.com",
+    "fingerprint_id": 149,
+    "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+  },
+  {
+    "first_name": "Martin",
+    "last_name": "Ndungu",
+    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "class_name": "Grade 5",
+    "parent_name": "Mr Ndungu",
+    "parent_phone": "0742675176",
+    "parent_email": "martin.parent@example.com",
+    "fingerprint_id": 150,
+    "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+  },
+  {
+    "first_name": "Ruth",
+    "last_name": "Nabwire",
+    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "class_name": "Grade 6",
+    "parent_name": "Mrs Nabwire",
+    "parent_phone": "0792845342",
+    "parent_email": "ruth.parent@example.com",
+    "fingerprint_id": 151,
+    "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+  },
+  {
+    "first_name": "Alex",
+    "last_name": "Wekesa",
+    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "class_name": "Grade 7",
+    "parent_name": "Mr Wekesa",
+    "parent_phone": "0742675176",
+    "parent_email": "alex.parent@example.com",
+    "fingerprint_id": 152,
+    "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+  },
+  {
+    "first_name": "Linda",
+    "last_name": "Mburu",
+    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "class_name": "Grade 4",
+    "parent_name": "Mrs Mburu",
+    "parent_phone": "0792845342",
+    "parent_email": "linda.parent@example.com",
+    "fingerprint_id": 153,
+    "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+  }
+]
+
+
 
 
 
 ### List all the students
-GET http://localhost:8000/students/ HTTP/1.1  
+GET http://localhost:8000/students/?page=1&page_size=10 HTTP/1.1  
 Host: localhost:8000  
 
 
 ### Update a Student
 
-PUT http://localhost:8000/students/e69d8794-342c-4aa4-b56b-ced1487e1448/ HTTP/1.1  
+PUT http://localhost:8000/students/8115bfc4-b1aa-456c-9e1b-1fa5396f3dbb/ HTTP/1.1  
 Host: localhost:8000  
 Content-Type: application/json  
 
 {
-  "first_name": "John Kimani",
-  "last_name": "Doe",
+  "first_name": "Amina",
+  "last_name": "Omondi",
   "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
-  "class_name": "Grade 6",
-  "parent_name": "Mr Kimani",
-  "parent_phone": "0745409294",
-  "parent_email": "parent@example.com",
-  "fingerprint_id": 101,
+  "class_name": "Grade 5",
+  "parent_name": "Mrs Omondi",
+  "parent_phone": "0742675176",
+  "parent_email": "amina.parent@example.com",
+  "fingerprint_id": 122,
   "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
 }
 
