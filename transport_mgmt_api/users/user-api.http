@@ -4,11 +4,12 @@ Host: localhost:8000
 Content-Type: application/json
 
 {
-  "email": "hasheduser@example.com",
-  "username": "hasheduser",
-  "password": "strongpassword123",
+  "email": "demouser@example.com",
+  "username": "demouser",
+  "password": "demouser1234",
   "phone_number": "+1234567890",
-  "user_type": "MAIN_ADMIN"
+  "user_type": "TRIP_TEACHER",
+  "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad"
 }
 
 
@@ -18,14 +19,15 @@ Content-Type: application/json
 POST http://localhost:8000/users/create-privileged/ HTTP/1.1
 Host: localhost:8000
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ2MDEwMjQ5LCJpYXQiOjE3NDYwMDkzNDksImp0aSI6Ijc4YzhiYjAyMjIwMjQwOWQ4NWI4ZTYzNjRlNWE4Y2RlIiwidXNlcl9pZCI6Ijg4ZjhjODhkLTAzYmUtNDdiYS04YjUxLTg2YjBiMTVmN2E4YiJ9.e3w1v59CB0qxu2CwBNPBZh0wBl6i26WLZiVx3eP20us
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ2NzE5Njc4LCJpYXQiOjE3NDY3MTg3NzgsImp0aSI6ImRjOTdiZTU3MjJjYzRiOTQ5N2U5N2NhOTI2Yzg5ZWY2IiwidXNlcl9pZCI6Ijg4ZjhjODhkLTAzYmUtNDdiYS04YjUxLTg2YjBiMTVmN2E4YiJ9.i5x_vSB_OGh1zc93oNxvzS4igmSswagSP92gry4rT5c
 
 {
-  "email": "newuser@example.com",
-  "username": "newuser",
-  "password": "temporarypassword123",
+  "email": "demouser@example.com",
+  "username": "demouser",
+  "password": "demouser1234",
   "phone_number": "+1234567890",
-  "user_type": "SCHOOL_ADMIN"
+  "user_type": "TRIP_TEACHER",
+  "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad"
 }
 
 

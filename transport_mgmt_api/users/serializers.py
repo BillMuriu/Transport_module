@@ -1,9 +1,11 @@
 # users/serializers.py
-# users/serializers.py
 from rest_framework import serializers
 from .models import User
+from schools.serializers import SchoolSerializer  # Import the SchoolSerializer
 
 class UserSerializer(serializers.ModelSerializer):
+    school = SchoolSerializer(read_only=True)  # Nest the school data
+
     class Meta:
         model = User
         fields = '__all__'

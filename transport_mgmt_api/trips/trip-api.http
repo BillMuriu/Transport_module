@@ -4,21 +4,20 @@ POST http://localhost:8000/trips/
 Content-Type: application/json
 
 {
-  "name": "Morning Pickup",
-  "trip_type": "morning_pickup",
-  "trip_action": "pickup",
-  "trip_status": "ongoing",
-  "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
-  "vehicle": "982dbb9b-005a-4dea-995d-91fc4e16f4d5",
-  "driver": "abcadba0-7af4-4d7f-a69e-3e3ac7ad0040",
-  "trip_teacher": "287a1457-8a4d-4817-86c2-22f12f2670e0",
-  "route": "7ee67271-a068-4ba9-ac75-5a83e88b732c",
-  "start_location": "School",
-  "end_location": "School",
-  "departure_time": "2025-04-30T07:30:00Z",
-  "arrival_time": null
+    "name": "This is the trips name",
+    "trip_type": "morning_pickup",
+    "vehicle": "65caab33-cbe9-4c9c-8883-7017566c87a1",
+    "driver": "abcadba0-7af4-4d7f-a69e-3e3ac7ad0040",
+    "trip_teacher": "fa818362-d4c5-4d4b-b762-dd7fe5fa464a",
+    "route": "7ee67271-a068-4ba9-ac75-5a83e88b732c",
+    "trip_action": "pickup",
+    "trip_status": "ongoing",
+    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "start_location": "School",
+    "end_location": "School",
+    "departure_time": "2025-05-08T20:47:59.285Z",
+    "arrival_time": null
 }
-
 
 
 ### List all the trips
