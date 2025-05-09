@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useLogin } from "./queries/mutations";
 import { useFetchUserDetails } from "./queries/queries";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const formSchema = z.object({
   username: z.string().min(1),
@@ -27,11 +28,13 @@ const formSchema = z.object({
 export default function Login() {
   const [userId, setUserId] = useState(null);
 
+  const { setTokens, setUser } = useAuthStore();
+
   const form = useForm({
     resolver: zodResolver(formSchema),
   });
 
-  const { mutateAsync: login, isLoading: isLoading } = useLogin();
+  const { mutateAsync: login, isLoading } = useLogin();
 
   const {
     data: userDetails,
@@ -43,12 +46,18 @@ export default function Login() {
     try {
       console.log("Form submitted with values:", values);
 
-      const loginData = await login(values); // Perform login
+      const loginData = await login(values); // returns { access, refresh, userId }
       const userId = loginData.userId;
 
       if (userId) {
+        // ✅ Store tokens with correct keys
+        setTokens({
+          access: loginData.access,
+          refresh: loginData.refresh,
+        });
+
         toast.success(`Login successful! User ID: ${userId}`);
-        setUserId(userId); // Triggers user details fetch
+        setUserId(userId);
       } else {
         toast.error("Failed to retrieve User ID.");
       }
@@ -60,6 +69,8 @@ export default function Login() {
 
   useEffect(() => {
     if (userDetails) {
+      setUser(userDetails);
+      console.log(userDetails);
       toast.success(`Welcome, ${userDetails.user_type}`);
     }
   }, [userDetails]);

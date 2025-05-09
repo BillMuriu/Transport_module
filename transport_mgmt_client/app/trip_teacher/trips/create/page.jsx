@@ -5,7 +5,6 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -24,6 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useCreateTrip } from "../_queries/mutation";
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -38,15 +39,36 @@ export default function MyForm() {
   const form = useForm({
     resolver: zodResolver(formSchema),
   });
+  const user = useAuthStore((state) => state.user);
+  const vehicles = user?.school?.vehicles || [];
+  const drivers = user?.school?.drivers || [];
+  const routes = user?.school?.routes || [];
+  const tripTeacher = user?.user_type === "TRIP_TEACHER" ? user : null;
+
+  // Use mutation hook to create the trip
+  const { mutate: createTrip, isPending } = useCreateTrip();
 
   function onSubmit(values) {
     try {
-      console.log(values);
-      toast(
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      );
+      const schoolId = user?.school?.id;
+      const now = new Date().toISOString();
+
+      const payload = {
+        ...values,
+        trip_action:
+          values.trip_type === "morning_pickup" ? "pickup" : "dropoff",
+        trip_status: "ongoing",
+        school: schoolId,
+        start_location: "School",
+        end_location: "School",
+        departure_time: now,
+        arrival_time: null,
+      };
+
+      // Trigger the mutation to create the trip
+      createTrip(payload);
+
+      toast.success("Trip started successfully!"); // Show success toast
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Failed to submit the form. Please try again.");
@@ -89,17 +111,20 @@ export default function MyForm() {
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a trip type .." />
+                      <SelectValue placeholder="Select a trip type..." />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="m@example.com">m@example.com</SelectItem>
-                    <SelectItem value="m@google.com">m@google.com</SelectItem>
-                    <SelectItem value="m@support.com">m@support.com</SelectItem>
+                    <SelectItem value="morning_pickup">
+                      Morning Pickup
+                    </SelectItem>
+                    <SelectItem value="evening_dropoff">
+                      Evening Dropoff
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  Select the type of trip e.g. 'morning_pickup'...
+                  Select the type of trip, e.g. <code>morning_pickup</code>
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -122,9 +147,11 @@ export default function MyForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="m@example.com">m@example.com</SelectItem>
-                    <SelectItem value="m@google.com">m@google.com</SelectItem>
-                    <SelectItem value="m@support.com">m@support.com</SelectItem>
+                    {vehicles.map((vehicle) => (
+                      <SelectItem key={vehicle.id} value={vehicle.id}>
+                        {vehicle.registration_number}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -148,9 +175,11 @@ export default function MyForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="m@example.com">m@example.com</SelectItem>
-                    <SelectItem value="m@google.com">m@google.com</SelectItem>
-                    <SelectItem value="m@support.com">m@support.com</SelectItem>
+                    {drivers.map((driver) => (
+                      <SelectItem key={driver.id} value={driver.id}>
+                        {driver.full_name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -174,9 +203,11 @@ export default function MyForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="m@example.com">m@example.com</SelectItem>
-                    <SelectItem value="m@google.com">m@google.com</SelectItem>
-                    <SelectItem value="m@support.com">m@support.com</SelectItem>
+                    {tripTeacher && (
+                      <SelectItem key={tripTeacher.id} value={tripTeacher.id}>
+                        {tripTeacher.username}
+                      </SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -200,9 +231,11 @@ export default function MyForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="m@example.com">m@example.com</SelectItem>
-                    <SelectItem value="m@google.com">m@google.com</SelectItem>
-                    <SelectItem value="m@support.com">m@support.com</SelectItem>
+                    {routes.map((route) => (
+                      <SelectItem key={route.id} value={route.id}>
+                        {route.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -210,8 +243,8 @@ export default function MyForm() {
             )}
           />
 
-          <Button type="submit" className="w-full">
-            Start Trip
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? "Creating Trip..." : "Start Trip"}
           </Button>
         </form>
       </div>
