@@ -1,31 +1,46 @@
-// hooks/useFetchStudentsByRoute.js
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { API_BASE_URL } from "@/config";
 
-// Custom hook for infinite scrolling of students by routeId
+// Infinite scrolling students by routeId
 export const useInfiniteStudentsByRoute = (routeId) => {
   return useInfiniteQuery({
     queryKey: ["studentsByRoute", routeId],
-    enabled: !!routeId, // Ensure the hook runs only when routeId is available
+    enabled: !!routeId,
     queryFn: async ({ pageParam = 1 }) => {
       const response = await axios.get(`${API_BASE_URL}/students/`, {
         params: {
           station__route: routeId,
-          page: pageParam, // Page number to fetch
-          page_size: 10, // Page size for each request
+          page: pageParam,
+          page_size: 10,
         },
       });
       return response.data;
     },
     getNextPageParam: (lastPage) => {
-      // Assuming `lastPage.next` is of the format '/students/?page=2&page_size=10'
       if (lastPage.next) {
         const url = new URL(lastPage.next);
         const nextPage = url.searchParams.get("page");
         return nextPage ? parseInt(nextPage, 10) : undefined;
       }
-      return undefined; // No more pages
+      return undefined;
+    },
+  });
+};
+
+// 🔽 New query: total students by routeId
+export const useRouteStudentTotal = (routeId) => {
+  return useQuery({
+    queryKey: ["routeStudentTotal", routeId],
+    enabled: !!routeId,
+    queryFn: async () => {
+      const response = await axios.get(
+        `${API_BASE_URL}/students/route-total/`,
+        {
+          params: { route_id: routeId },
+        }
+      );
+      return response.data; // Expected to return something like { total: 30 }
     },
   });
 };
