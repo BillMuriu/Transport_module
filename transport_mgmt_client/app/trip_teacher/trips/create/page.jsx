@@ -25,6 +25,9 @@ import {
 } from "@/components/ui/select";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useCreateTrip } from "../_queries/mutation";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -36,6 +39,8 @@ const formSchema = z.object({
 });
 
 export default function MyForm() {
+  const router = useRouter();
+
   const form = useForm({
     resolver: zodResolver(formSchema),
   });
@@ -44,6 +49,9 @@ export default function MyForm() {
   const drivers = user?.school?.drivers || [];
   const routes = user?.school?.routes || [];
   const tripTeacher = user?.user_type === "TRIP_TEACHER" ? user : null;
+
+  // For handling the backdrop state
+  const [openBackdrop, setOpenBackdrop] = useState(false);
 
   // Use mutation hook to create the trip
   const { mutate: createTrip, isPending } = useCreateTrip();
@@ -65,13 +73,25 @@ export default function MyForm() {
         arrival_time: null,
       };
 
-      // Trigger the mutation to create the trip
-      createTrip(payload);
+      // Show backdrop while trip is being created
+      setOpenBackdrop(true);
 
-      toast.success("Trip started successfully!"); // Show success toast
+      // Trigger the mutation to create the trip
+      createTrip(payload, {
+        onSuccess: () => {
+          toast.success("Trip started successfully!");
+          setOpenBackdrop(false);
+          router.push("/trip_teacher/students/students-byroute");
+        },
+        onError: () => {
+          toast.error("Failed to submit the form. Please try again.");
+          setOpenBackdrop(false); // Close backdrop on error
+        },
+      });
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Failed to submit the form. Please try again.");
+      setOpenBackdrop(false); // Close backdrop on error
     }
   }
 
@@ -248,6 +268,14 @@ export default function MyForm() {
           </Button>
         </form>
       </div>
+
+      {/* Backdrop spinner */}
+      <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open={openBackdrop}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Form>
   );
 }

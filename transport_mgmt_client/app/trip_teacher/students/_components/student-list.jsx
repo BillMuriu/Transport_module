@@ -1,7 +1,11 @@
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { useInfiniteStudentsByRoute } from "@/app/trip_teacher/students/queries/queries";
+import {
+  useInfiniteStudentsByRoute,
+  useRouteStudentTotal,
+} from "@/app/trip_teacher/students/queries/queries";
 import { useSendTripMessage } from "@/app/trip_teacher/students/useSendTrip";
+import useTotalStudentsForRouteStore from "@/stores/totalStudentsForRouteStore";
 import StudentItem from "./student-item";
 
 const routeId = "7ee67271-a068-4ba9-ac75-5a83e88b732c";
@@ -12,6 +16,23 @@ const StudentList = () => {
     useInfiniteStudentsByRoute(routeId);
   const { handleCheck, sending, sent, setStudentsNotSent } =
     useSendTripMessage();
+
+  const setStudentCount = useTotalStudentsForRouteStore(
+    (state) => state.setStudentCount
+  );
+
+  const {
+    data: studentTotalData,
+    isLoading,
+    error,
+  } = useRouteStudentTotal(routeId);
+
+  useEffect(() => {
+    if (studentTotalData) {
+      setStudentCount(studentTotalData.student_count);
+      console.log("Student total:", studentTotalData.student_count);
+    }
+  }, [studentTotalData, setStudentCount]);
 
   useEffect(() => {
     if (data?.pages) {

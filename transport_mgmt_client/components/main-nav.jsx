@@ -1,24 +1,22 @@
 "use client";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import React from "react";
+import { usePathname } from "next/navigation"; // Import usePathname hook
+import useTotalStudentsForRouteStore from "@/stores/totalStudentsForRouteStore";
 import { SidebarTrigger } from "./ui/sidebar";
-import { cn } from "@/lib/utils";
 
 export function MainNav() {
-  const pathname = usePathname();
+  const pathname = usePathname(); // Get the current pathname
+  const studentCount = useTotalStudentsForRouteStore(
+    (state) => state.studentCount
+  ); // Access student count from the store
+
   return (
-    <nav className="flex items-center space-x-4 lg:space-x-6 border-none">
+    <nav className="flex items-center w-full space-x-4 lg:space-x-6 border-none">
       <SidebarTrigger />
-      <Link
-        href="/blog"
-        className={cn(
-          "text-sm font-medium transition-colors hover:text-primary hidden sm:inline-block",
-          pathname === "/blog" ? "text-foreground" : "text-foreground/60"
-        )}
-      >
-        Blog
-      </Link>
+      {/* Conditionally display total students based on pathname */}
+      {pathname.includes("students-byroute") && (
+        <div className="ml-32 text-center">{studentCount ?? "—"}</div>
+      )}
     </nav>
   );
 }

@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,6 +18,9 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { useLogin } from "./queries/mutations";
 import { useFetchUserDetails } from "./queries/queries";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useRouter } from "next/navigation";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const formSchema = z.object({
   username: z.string().min(1),
@@ -27,8 +29,9 @@ const formSchema = z.object({
 
 export default function Login() {
   const [userId, setUserId] = useState(null);
-
+  const [openBackdrop, setOpenBackdrop] = useState(false); // Track backdrop state
   const { setTokens, setUser } = useAuthStore();
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -43,6 +46,7 @@ export default function Login() {
   } = useFetchUserDetails(userId);
 
   async function onSubmit(values) {
+    setOpenBackdrop(true); // Show the backdrop when login starts
     try {
       console.log("Form submitted with values:", values);
 
@@ -50,7 +54,6 @@ export default function Login() {
       const userId = loginData.userId;
 
       if (userId) {
-        // ✅ Store tokens with correct keys
         setTokens({
           access: loginData.access,
           refresh: loginData.refresh,
@@ -64,6 +67,8 @@ export default function Login() {
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Failed to login. Please try again.");
+    } finally {
+      setOpenBackdrop(false); // Hide the backdrop once the login attempt is complete
     }
   }
 
@@ -71,9 +76,10 @@ export default function Login() {
     if (userDetails) {
       setUser(userDetails);
       console.log(userDetails);
-      toast.success(`Welcome, ${userDetails.user_type}`);
+      toast.success(`Welcome, ${userDetails.username}`);
+      router.push("/trip_teacher"); // Redirect to dashboard after login success
     }
-  }, [userDetails]);
+  }, [userDetails, router]);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-muted px-4">
@@ -121,6 +127,17 @@ export default function Login() {
           </form>
         </Form>
       </div>
+
+      {/* Backdrop */}
+      <Backdrop
+        sx={(theme) => ({
+          color: "#fff",
+          zIndex: theme.zIndex.drawer + 1,
+        })}
+        open={openBackdrop}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   );
 }

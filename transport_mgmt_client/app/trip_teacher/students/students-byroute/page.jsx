@@ -2,9 +2,9 @@
 
 import React from "react";
 import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
-import StudentList from "@/components/students/student-list";
-import EndTripButton from "@/components/students/end-trip-button";
-import TripPopoverActions from "@/components/students/trip-popover";
+import StudentList from "../_components/student-list";
+import EndTripButton from "../_components/end-trip-button";
+import TripPopoverActions from "../_components/trip-popover";
 
 const StudentsByRoute = () => {
   const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);

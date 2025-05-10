@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { API_BASE_URL } from "@/config";
+import useTotalStudentsForRouteStore from "@/stores/totalStudentsForRouteStore";
 
 // Infinite scrolling students by routeId
 export const useInfiniteStudentsByRoute = (routeId) => {
@@ -28,7 +29,6 @@ export const useInfiniteStudentsByRoute = (routeId) => {
   });
 };
 
-// 🔽 New query: total students by routeId
 export const useRouteStudentTotal = (routeId) => {
   return useQuery({
     queryKey: ["routeStudentTotal", routeId],
@@ -40,7 +40,7 @@ export const useRouteStudentTotal = (routeId) => {
           params: { route_id: routeId },
         }
       );
-      return response.data; // Expected to return something like { total: 30 }
+      return response.data;
     },
   });
 };

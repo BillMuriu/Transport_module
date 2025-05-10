@@ -4,9 +4,7 @@ import React from "react";
 
 const Trip = () => {
   return (
-    <div className="w-full ml-2 bg-amber-200">
-      <h1>Trips Page</h1>
-      <p>- Ongoing Trip</p>
+    <div className="w-full ml-2 mt-4 flex items-center justify-center">
       <Button>
         <a
           href="/trip_teacher/trips/create"
@@ -16,8 +14,6 @@ const Trip = () => {
           <span>Create New Trip</span>
         </a>
       </Button>
-      <p>- Filters</p>
-      <p>- List of Past Trips</p>
     </div>
   );
 };
