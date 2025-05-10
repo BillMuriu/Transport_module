@@ -73,3 +73,44 @@ class SendTripMessageView(APIView):
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+### Send bulk messages to multiple phone numbers
+# views.py
+
+class SendBulkTripMessagesView(APIView):
+    def post(self, request):
+        trip_id = request.data.get("trip_id")
+        phone_numbers = request.data.get("phone_numbers", [])
+
+        if not trip_id or not phone_numbers:
+            return Response(
+                {"error": "trip_id and phone_numbers are required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        trip = get_object_or_404(Trip, id=trip_id)
+
+        # Determine message type and content
+        if getattr(trip, "trip_action", None) == "pickup":
+            content = generate_trip_message_content("your child", "pickup")
+        elif getattr(trip, "trip_action", None) == "dropoff":
+            content = generate_trip_message_content("your child", "dropoff")
+        else:
+            return Response({"error": "Invalid trip action"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Convert list to comma-separated string
+        phone_string = ",".join(phone_numbers)
+
+        # Send bulk SMS
+        success, result = send_sms_via_gateway(phone_string, content)
+
+        return Response(
+            {
+                "message": "Messages sent" if success else "Failed to send messages",
+                "details": result
+            },
+            status=status.HTTP_200_OK if success else status.HTTP_400_BAD_REQUEST
+        )
+

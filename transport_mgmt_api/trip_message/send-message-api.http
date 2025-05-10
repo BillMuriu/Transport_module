@@ -8,3 +8,13 @@ Content-Type: application/json
   "student_id": "e69d8794-342c-4aa4-b56b-ced1487e1448",
   "trip_id": "aeb5022a-fd73-4e77-b1fd-6763785fe9e6"
 }
+
+###
+POST /trip-messages/send-bulk/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "trip_id": "aeb5022a-fd73-4e77-b1fd-6763785fe9e6",
+  "phone_numbers": ["0742675176", "0792845342"]
+}

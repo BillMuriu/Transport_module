@@ -1,5 +1,5 @@
 ### Create a Student Instance
-POST http://localhost:8000/students/ HTTP/1.1  
+POST https://glad-refined-quagga.ngrok-free.app/students/ HTTP/1.1  
 Host: localhost:8000  
 Content-Type: application/json  
 
@@ -18,8 +18,8 @@ Content-Type: application/json
 ]
 
 ### List all the students
-GET http://localhost:8000/students/?page=1&page_size=10 HTTP/1.1  
-Host: localhost:8000  
+GET https://glad-refined-quagga.ngrok-free.app/students/?page=1&page_size=10 HTTP/1.1  
+Host: glad-refined-quagga.ngrok-free.app
 
 
 ### Get the list of student ids
