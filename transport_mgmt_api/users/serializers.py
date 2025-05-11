@@ -4,7 +4,7 @@ from .models import User
 from schools.serializers import SchoolSerializer  # Import the SchoolSerializer
 
 class UserSerializer(serializers.ModelSerializer):
-    school = SchoolSerializer(read_only=True)  # Nest the school data
+    school = SchoolSerializer(read_only=True)
 
     class Meta:
         model = User

@@ -1,21 +1,22 @@
 ### Create a Student Instance
-POST https://glad-refined-quagga.ngrok-free.app/students/ HTTP/1.1  
+POST http://localhost:8000/students/ HTTP/1.1  
 Host: localhost:8000  
 Content-Type: application/json  
 
 [
   {
-    "first_name": "Elena",
-    "last_name": "Mbuvi",
-    "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
+    "first_name": "Oscar",
+    "last_name": "Nyambura",
+    "school": "9984c0da-82bc-4581-88f1-971e8beefc1a",
     "class_name": "Grade 4",
-    "parent_name": "Mrs Mbuvi",
+    "parent_name": "Mr Nyambura",
     "parent_phone": "0742675176",
-    "parent_email": "elena.parent@example.com",
-    "fingerprint_id": 265,
-    "station": "8947cb55-b8ce-4370-843c-0b1a0cfd21f0"
+    "parent_email": "oscar.parent@example.com",
+    "fingerprint_id": 280,
+    "station": "c859eef8-f288-40d0-8a1d-7b0763f2acd9"
   }
 ]
+
 
 ### List all the students
 GET https://glad-refined-quagga.ngrok-free.app/students/?page=1&page_size=10 HTTP/1.1  

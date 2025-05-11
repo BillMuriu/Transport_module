@@ -4,9 +4,10 @@ Host: localhost:8000
 Content-Type: application/json
 
 {
-  "name": "Route 1",
-  "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad"
+  "name": "Route 1 - through ...",
+  "school": "9984c0da-82bc-4581-88f1-971e8beefc1a"
 }
+
 
 ### List the Routes
 GET http://localhost:8000/routes/ HTTP/1.1

@@ -4,12 +4,12 @@ Host: localhost:8000
 Content-Type: application/json
 
 {
-  "email": "demouser@example.com",
-  "username": "demouser",
-  "password": "demouser1234",
+  "email": "test@example.com",
+  "username": "test-account",
+  "password": "test-account1234",
   "phone_number": "+1234567890",
   "user_type": "TRIP_TEACHER",
-  "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad"
+  "school": "9984c0da-82bc-4581-88f1-971e8beefc1a"
 }
 
 
@@ -22,12 +22,12 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ2NzE5Njc4LCJpYXQiOjE3NDY3MTg3NzgsImp0aSI6ImRjOTdiZTU3MjJjYzRiOTQ5N2U5N2NhOTI2Yzg5ZWY2IiwidXNlcl9pZCI6Ijg4ZjhjODhkLTAzYmUtNDdiYS04YjUxLTg2YjBiMTVmN2E4YiJ9.i5x_vSB_OGh1zc93oNxvzS4igmSswagSP92gry4rT5c
 
 {
-  "email": "demouser@example.com",
-  "username": "demouser",
-  "password": "demouser1234",
+  "email": "mockuser@example.com",
+  "username": "mock-user",
+  "password": "mock-user1234",
   "phone_number": "+1234567890",
   "user_type": "TRIP_TEACHER",
-  "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad"
+  "school": "9984c0da-82bc-4581-88f1-971e8beefc1a"
 }
 
 

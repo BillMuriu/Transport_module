@@ -5,9 +5,9 @@ Host: localhost:8000
 Content-Type: application/json  
 
 {
-  "full_name": "John Mboya",
-  "phone_number": "+254712345678",
-  "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad"
+  "full_name": "David Kiprono",
+  "phone_number": "+254733445566",
+  "school": "9984c0da-82bc-4581-88f1-971e8beefc1a"
 }
 
 
