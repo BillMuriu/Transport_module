@@ -1,4 +1,12 @@
-import { Calendar, Home, Inbox, Search, Command, LogOut } from "lucide-react";
+import {
+  Home,
+  Bus,
+  MessageCircle,
+  Users,
+  LayoutDashboard,
+  Command,
+  LogOut,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -20,25 +28,24 @@ const items = [
   {
     title: "Dashboard",
     url: "/trip_teacher",
-    icon: Home,
+    icon: LayoutDashboard,
   },
   {
     title: "Trips",
     url: "/trip_teacher/trips",
-    icon: Inbox,
+    icon: Bus,
   },
   {
     title: "Trips Messages",
     url: "/trip_teacher/trip-messages",
-    icon: Calendar,
+    icon: MessageCircle,
   },
   {
     title: "Students",
     url: "/trip_teacher/students",
-    icon: Search,
+    icon: Users,
   },
 ];
-
 export function TripTeacherSidebar() {
   return (
     <Sidebar variant="floating" collapsible="icon">
@@ -72,7 +79,6 @@ export function TripTeacherSidebar() {
                       <span>{item.title}</span>
                     </a>
                   </SidebarMenuButton>
-                  <SidebarMenuBadge>24</SidebarMenuBadge>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

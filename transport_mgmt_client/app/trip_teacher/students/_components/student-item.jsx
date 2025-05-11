@@ -12,7 +12,7 @@ const StudentItem = ({ student, index, onCheck, sending, sent }) => {
       className="p-3 border rounded-md flex items-center space-x-3"
     >
       {sent ? (
-        <span className="text-green-600 text-sm font-medium">Sent</span>
+        <span className="text-green-600 text-sm font-medium">Sent ✅</span>
       ) : sending ? (
         <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
       ) : (
@@ -22,7 +22,7 @@ const StudentItem = ({ student, index, onCheck, sending, sent }) => {
         />
       )}
       <span className="text-sm text-muted-foreground">
-        {student.first_name} – {student.class_name}
+        {student.first_name} {student.last_name} – {student.class_name}
       </span>
     </motion.li>
   );

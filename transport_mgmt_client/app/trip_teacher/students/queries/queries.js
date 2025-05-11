@@ -1,7 +1,6 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { API_BASE_URL } from "@/config";
-import useTotalStudentsForRouteStore from "@/stores/totalStudentsForRouteStore";
 
 // Infinite scrolling students by routeId
 export const useInfiniteStudentsByRoute = (routeId) => {
