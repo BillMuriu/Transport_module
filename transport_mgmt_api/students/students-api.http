@@ -19,8 +19,8 @@ Content-Type: application/json
 
 
 ### List all the students
-GET https://glad-refined-quagga.ngrok-free.app/students/?page=1&page_size=10 HTTP/1.1  
-Host: glad-refined-quagga.ngrok-free.app
+GET http://localhost:8000/students/
+Host: localhost:8000
 
 
 ### Get the list of student ids

@@ -16,7 +16,7 @@ class StudentListCreateView(generics.ListCreateAPIView):
     serializer_class = StudentSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['station__route']
-    pagination_class = CustomPagination  # or PageNumberPagination
+    pagination_class = None
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
