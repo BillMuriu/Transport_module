@@ -15,6 +15,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
+import DataTableActions from "./data-table-actions";
+import DataTableMinimalActions from "./Data-table-minimal";
+import DataTableActionBar from "./data-table-action-bar";
 
 export function DataTable({ columns, data, setStudents }) {
   const [rowSelection, setRowSelection] = useState({});
@@ -58,7 +61,6 @@ export function DataTable({ columns, data, setStudents }) {
     setStudents(updatedStudents);
   };
 
-  // Split rows into sent and not sent
   const allRows = table.getRowModel().rows;
   const sentRows = allRows.filter((row) => row.original.sent === true);
   const notSentRows = allRows.filter((row) => row.original.sent !== true);
@@ -87,7 +89,6 @@ export function DataTable({ columns, data, setStudents }) {
           <TableBody>
             {allRows.length ? (
               <>
-                {/* SENT SECTION */}
                 {sentRows.length > 0 && (
                   <>
                     <TableRow>
@@ -113,14 +114,12 @@ export function DataTable({ columns, data, setStudents }) {
                         ))}
                       </TableRow>
                     ))}
-                    {/* Add extra margin for spacing */}
                     <TableRow>
-                      <TableCell colSpan={columns.length} className="h-4" />
+                      <TableCell colSpan={columns.length} className="h-6" />
                     </TableRow>
                   </>
                 )}
 
-                {/* NOT SENT SECTION */}
                 {notSentRows.length > 0 && (
                   <>
                     <TableRow>
@@ -146,10 +145,6 @@ export function DataTable({ columns, data, setStudents }) {
                         ))}
                       </TableRow>
                     ))}
-                    {/* Add extra margin for spacing */}
-                    <TableRow>
-                      <TableCell colSpan={columns.length} className="h-4" />
-                    </TableRow>
                   </>
                 )}
               </>
@@ -167,31 +162,20 @@ export function DataTable({ columns, data, setStudents }) {
         </Table>
       </div>
 
-      <div className="flex items-center justify-between mt-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {selectedRowsCount} of {totalRowsCount} row(s) selected.
-        </div>
-        <div className="flex space-x-2">
-          <button
-            onClick={clearSelection}
-            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-          >
-            Clear Selection
-          </button>
-          <button
-            onClick={logParentPhones}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-          >
-            Log Parent Phones
-          </button>
-          <button
-            onClick={markAsSent}
-            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-          >
-            Mark as Sent
-          </button>
-        </div>
-      </div>
+      <DataTableActions
+        selectedCount={selectedRowsCount}
+        totalCount={totalRowsCount}
+        onClearSelection={clearSelection}
+        onLogParentPhones={logParentPhones}
+        onMarkAsSent={markAsSent}
+      />
+
+      <DataTableActionBar table={table}>
+        <DataTableMinimalActions
+          selectedCount={selectedRowsCount}
+          onClearSelection={clearSelection}
+        />
+      </DataTableActionBar>
     </div>
   );
 }
