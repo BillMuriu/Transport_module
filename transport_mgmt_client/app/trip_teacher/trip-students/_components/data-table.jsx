@@ -19,8 +19,15 @@ import DataTableActions from "./data-table-actions";
 import DataTableMinimalActions from "./Data-table-minimal";
 import DataTableActionBar from "./data-table-action-bar";
 
+import { useSendTripMessages } from "../queries/mutations";
+import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
+import { Button } from "@/components/ui/button";
+
 export function DataTable({ columns, data, setStudents }) {
   const [rowSelection, setRowSelection] = useState({});
+
+  const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
+  const { mutate: sendMessages, isPending } = useSendTripMessages();
 
   const table = useReactTable({
     data,
@@ -59,6 +66,45 @@ export function DataTable({ columns, data, setStudents }) {
     );
 
     setStudents(updatedStudents);
+  };
+
+  const sendMessagesToParents = () => {
+    const selectedStudents = table
+      .getSelectedRowModel()
+      .rows.map((row) => row.original);
+
+    const parentPhones = selectedStudents.map((s) => s.parent_phone);
+    const tripId = ongoingTrip?.id;
+
+    if (!tripId) {
+      console.warn("No ongoing trip ID found.");
+      return;
+    }
+
+    if (parentPhones.length === 0) {
+      console.warn("No students selected.");
+      return;
+    }
+
+    // ✅ Log the data being sent
+    console.log("Sending messages with data:", {
+      tripId,
+      phoneNumbers: parentPhones,
+    });
+
+    sendMessages(
+      { tripId, phoneNumbers: parentPhones },
+      {
+        onSuccess: () => {
+          console.log("Messages sent successfully");
+          markAsSent();
+          clearSelection();
+        },
+        onError: (err) => {
+          console.error("Failed to send messages", err);
+        },
+      }
+    );
   };
 
   const allRows = table.getRowModel().rows;
@@ -161,20 +207,20 @@ export function DataTable({ columns, data, setStudents }) {
           </TableBody>
         </Table>
       </div>
-
-      <DataTableActions
-        selectedCount={selectedRowsCount}
-        totalCount={totalRowsCount}
-        onClearSelection={clearSelection}
-        onLogParentPhones={logParentPhones}
-        onMarkAsSent={markAsSent}
-      />
-
-      <DataTableActionBar table={table}>
+      <DataTableActionBar
+        table={table}
+        className="flex justify-center items-center gap-2"
+      >
         <DataTableMinimalActions
           selectedCount={selectedRowsCount}
           onClearSelection={clearSelection}
         />
+        <Button
+          onClick={sendMessagesToParents}
+          disabled={isPending || selectedRowsCount === 0}
+        >
+          {isPending ? "Sending..." : "Send Messages"}
+        </Button>
       </DataTableActionBar>
     </div>
   );
