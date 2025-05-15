@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import {
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+
 import {
   Table,
   TableBody,
@@ -15,41 +17,42 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import SearchInput from "./search-input";
+import { StudentSentStatusTabs } from "./sent-status-filter";
 import DataTableActionButtons from "./data-table-action-buttons";
 import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
-import { useSendTripMessages } from "../queries/mutations"; // Assuming this hook is imported
+import { useSendTripMessages } from "../queries/mutations";
 
 export function DataTable({ columns, data, setStudents }) {
   const [rowSelection, setRowSelection] = useState({});
+  const [columnFilters, setColumnFilters] = useState([]);
 
   const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
-
   const { mutate: sendMessagesToParents, isPending } = useSendTripMessages();
 
   const table = useReactTable({
     data,
     columns,
     onRowSelectionChange: setRowSelection,
+    onColumnFiltersChange: setColumnFilters,
     state: {
       rowSelection,
+      columnFilters,
     },
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   const selectedRowsCount = table.getFilteredSelectedRowModel().rows.length;
-
   const clearSelection = () => setRowSelection({});
 
-  // Handle sending messages
   const handleSendMessages = () => {
     if (!ongoingTrip?.id) return;
 
     const selectedRows = table.getSelectedRowModel().rows;
     const selectedStudents = selectedRows.map((row) => row.original);
-
     const phoneNumbers = selectedStudents.map((s) => s.parent_phone);
 
-    // Send messages using the mutation
     sendMessagesToParents(
       {
         tripId: ongoingTrip.id,
@@ -57,7 +60,6 @@ export function DataTable({ columns, data, setStudents }) {
       },
       {
         onSuccess: () => {
-          // If the message is successfully sent, update the 'sent' state
           const updatedStudents = data.map((student) => {
             const updatedStudent = selectedStudents.find(
               (s) => s.id === student.id
@@ -65,13 +67,10 @@ export function DataTable({ columns, data, setStudents }) {
             return updatedStudent ? { ...student, sent: true } : student;
           });
 
-          // Update state with modified students
           setStudents(updatedStudents);
-          console.log("Message sent successfully to:", phoneNumbers);
         },
         onError: (error) => {
           console.error("Error sending messages:", error);
-          // Optionally handle the error by showing a toast or alert
         },
       }
     );
@@ -83,6 +82,11 @@ export function DataTable({ columns, data, setStudents }) {
 
   return (
     <div className="max-w-4xl mx-auto">
+      <div className="flex items-center justify-between py-4 gap-4 flex-wrap">
+        <SearchInput column={table.getColumn("first_name")} />
+        <StudentSentStatusTabs table={table} />
+      </div>
+
       <div className="rounded-md border overflow-x-auto">
         <Table className="w-full table-auto text-sm">
           <TableHeader>
@@ -181,7 +185,7 @@ export function DataTable({ columns, data, setStudents }) {
       <DataTableActionButtons
         table={table}
         selectedRowsCount={selectedRowsCount}
-        isPending={isPending} // Set loading state to button
+        isPending={isPending}
         sendMessagesToParents={handleSendMessages}
         clearSelection={clearSelection}
       />

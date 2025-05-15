@@ -34,9 +34,7 @@ import {
 
 import { Button } from "../button";
 import { useState } from "react";
-
-// Simulate trip status
-const isTripOngoing = true;
+import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
 
 const items = [
   {
@@ -73,6 +71,7 @@ const items = [
 
 export function TripTeacherSidebar() {
   const [isTripsOpen, setIsTripsOpen] = useState(true);
+  const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
 
   return (
     <Sidebar variant="floating" collapsible="icon" className="w-52">
@@ -129,7 +128,7 @@ export function TripTeacherSidebar() {
                                   className="flex items-center gap-2"
                                 >
                                   <span>{subitem.title}</span>
-                                  {subitem.ongoing && isTripOngoing && (
+                                  {subitem.ongoing && ongoingTrip?.id && (
                                     <span className="ml-auto relative flex h-2 w-2 rounded-full bg-green-500 animate-ping">
                                       <span className="absolute top-1/2 left-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-green-700" />
                                     </span>
