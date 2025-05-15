@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from .serializers import SendTripMessageSerializer
 from .utils import send_sms_via_gateway, generate_trip_message_content 
 from students.models import Student
+from django.db import transaction
 from trips.models import Trip
 from .models import TripMessage, Status
 
@@ -114,3 +115,73 @@ class SendBulkTripMessagesView(APIView):
             status=status.HTTP_200_OK if success else status.HTTP_400_BAD_REQUEST
         )
 
+
+
+class SendBulkTripStudentMessagesView(APIView):
+    def post(self, request):
+        trip_id = request.data.get("trip_id")
+        student_ids = request.data.get("student_ids", [])
+
+        if not trip_id or not student_ids:
+            return Response(
+                {"error": "trip_id and student_ids are required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        trip = get_object_or_404(Trip, id=trip_id)
+        students = Student.objects.filter(id__in=student_ids)
+
+        if not students.exists():
+            return Response({"error": "No matching students found."}, status=status.HTTP_404_NOT_FOUND)
+
+        if trip.trip_action not in ["pickup", "dropoff"]:
+            return Response({"error": "Invalid trip action"}, status=status.HTTP_400_BAD_REQUEST)
+
+        message_type = "board" if trip.trip_action == "pickup" else "alight"
+        # Generic content for bulk message
+        content = generate_trip_message_content("your child", trip.trip_action)
+
+        # Collect valid phone numbers & map to students
+        phone_student_map = {}
+        errors = []
+
+        for student in students:
+            phone = student.parent_phone
+            if not phone:
+                errors.append({"student_id": student.id, "error": "No phone number"})
+                continue
+            phone_student_map[phone] = student
+
+        if not phone_student_map:
+            return Response({"error": "No valid phone numbers found"}, status=status.HTTP_400_BAD_REQUEST)
+
+        phone_numbers = list(phone_student_map.keys())
+        phone_string = ",".join(phone_numbers)
+
+        # Send bulk SMS once
+        success, result = send_sms_via_gateway(phone_string, content)
+
+        trip_messages = []
+        status_to_use = Status.SENT if success else Status.FAILED
+
+        # Create TripMessage instances for each student
+        for phone, student in phone_student_map.items():
+            trip_messages.append(TripMessage(
+                student=student,
+                trip=trip,
+                sent_to=phone,
+                message_type=message_type,
+                content=content,
+                status=status_to_use
+            ))
+
+        with transaction.atomic():
+            TripMessage.objects.bulk_create(trip_messages)
+
+        return Response({
+            "message": "Messages sent" if success else "Failed to send messages",
+            "details": result,
+            "errors": errors,
+            "success_count": len(trip_messages) if success else 0,
+            "failure_count": 0 if success else len(trip_messages),
+        }, status=status.HTTP_200_OK if success else status.HTTP_400_BAD_REQUEST)
