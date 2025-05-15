@@ -1,22 +1,21 @@
 "use client";
+
 import React from "react";
 import { usePathname } from "next/navigation";
-import useTotalStudentsForRouteStore from "@/stores/totalStudentsForRouteStore";
 import { PanelLeftIcon } from "lucide-react";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
+import { useStudentStore } from "@/stores/useStudentStore";
 
 export function CustomTrigger() {
   const { toggleSidebar } = useSidebar();
-
-  // Get ongoing trip from the store
   const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
-  const hasOngoingTrip = !!ongoingTrip; // true if there's an ongoing trip
+  const hasOngoingTrip = !!ongoingTrip;
 
   return (
     <button
       onClick={toggleSidebar}
-      className="relative flex items-center justify-center rounded-md p-2 hover:bg-muted transition-colors h-10 w-10"
+      className="relative flex items-center justify-center rounded-md p-2 bg-muted hover:bg-muted/50 transition-colors h-10 w-10"
       aria-label="Toggle Sidebar"
     >
       <PanelLeftIcon className="w-8 h-8 text-muted-foreground" />
@@ -34,15 +33,21 @@ export function CustomTrigger() {
 
 export function MainNav() {
   const pathname = usePathname();
-  const studentCount = useTotalStudentsForRouteStore(
-    (state) => state.studentCount
-  );
+  const { students } = useStudentStore();
+
+  const sentCount = students.filter((student) => student.sent).length;
+  const totalCount = students.length;
+
+  const isTripStudentsPage = pathname.includes("trip-students");
 
   return (
-    <nav className="flex items-center w-full space-x-4 lg:space-x-6 border-none">
+    <nav className="flex items-center w-full space-x-4 lg:space-x-6 border-none bg-transparent">
       <CustomTrigger />
-      {pathname.includes("students-byroute") && (
-        <div className="ml-32 text-center">{studentCount ?? "—"}</div>
+
+      {isTripStudentsPage && (
+        <div className="absolute left-1/2 -translate-x-1/2 text-sm text-muted-foreground font-medium">
+          {sentCount}/{totalCount} sent
+        </div>
       )}
     </nav>
   );

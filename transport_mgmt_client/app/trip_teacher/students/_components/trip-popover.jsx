@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, X } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -20,18 +20,40 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+const iconBaseClasses =
+  "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out";
+
 const TripPopoverActions = () => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className="fixed bottom-4 right-4 z-50">
-      <Popover>
-        <PopoverTrigger className="w-12 h-12 bg-foreground/80 text-white rounded-full flex items-center justify-center shadow-md border border-white/10 hover:bg-black/70 transition-colors">
-          <MoreHorizontal className="w-5 h-5" />
+    <div className="fixed mb-2 bottom-4 right-4 z-50">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            className="relative w-12 h-12 backdrop-blur bg-foreground/80 text-white rounded-full flex items-center justify-center shadow-md border border-white/10 hover:bg-black/70 transition-colors"
+            aria-label={open ? "Close actions" : "Open actions"}
+          >
+            <MoreHorizontal
+              className={`${iconBaseClasses} ${
+                open ? "opacity-0 scale-50" : "opacity-100 scale-100"
+              }`}
+              aria-hidden={open}
+            />
+            <X
+              className={`${iconBaseClasses} ${
+                open ? "opacity-100 scale-100" : "opacity-0 scale-50"
+              }`}
+              aria-hidden={!open}
+            />
+          </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-64 p-4 mr-4 mt-10 bg-foreground shadow-lg rounded-lg flex flex-col gap-2">
+        <PopoverContent className="w-64 p-4 mr-4 mt-10 backdrop-blur bg-foreground/80 shadow-lg rounded-lg flex flex-col gap-2">
+          {/* ... AlertDialogs unchanged */}
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button className="w-full">Cancel Trip</Button>
+              <Button className="w-full rounded-sm">Cancel Trip</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>

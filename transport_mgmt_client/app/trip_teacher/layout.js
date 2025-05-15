@@ -5,9 +5,9 @@ import { SiteHeader } from "@/components/header";
 export default function TripTeacherLayout({ children }) {
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex h-screen w-screen overflow-x-hidden">
+      <div className="flex h-screen w-screen overflow-x-hidden bg-transparent">
         <TripTeacherSidebar />
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden bg-transparent">
           <SiteHeader />
           <div className="flex-1 overflow-y-auto bg-background">{children}</div>
         </div>
