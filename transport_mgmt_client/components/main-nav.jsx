@@ -2,19 +2,31 @@
 import React from "react";
 import { usePathname } from "next/navigation"; // Import usePathname hook
 import useTotalStudentsForRouteStore from "@/stores/totalStudentsForRouteStore";
-import { useSidebar } from "@/components/ui/sidebar";
 import { PanelLeftIcon } from "lucide-react";
+import { useSidebar } from "@/components/ui/sidebar";
+
+// Mock condition — replace with actual logic
+const useOngoingTrip = () => true;
 
 export function CustomTrigger() {
   const { toggleSidebar } = useSidebar();
+  const hasOngoingTrip = useOngoingTrip();
 
   return (
     <button
       onClick={toggleSidebar}
-      className="flex items-center justify-center rounded-md p-2 hover:bg-muted transition-colors h-40"
+      className="relative flex items-center justify-center rounded-md p-2 hover:bg-muted transition-colors h-10 w-10"
       aria-label="Toggle Sidebar"
     >
-      <PanelLeftIcon className="w-5 h-20 text-muted-foreground" />
+      <PanelLeftIcon className="w-8 h-8 text-muted-foreground" />
+      {hasOngoingTrip && (
+        <span className="absolute -top-0.5 -right-0.5">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-600" />
+          </span>
+        </span>
+      )}
     </button>
   );
 }

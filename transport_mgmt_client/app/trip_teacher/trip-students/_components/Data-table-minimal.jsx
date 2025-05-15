@@ -14,13 +14,13 @@ export default function DataTableMinimalActions({
   if (selectedCount === 0) return null;
 
   return (
-    <div className="flex h-7 items-center rounded-md border pr-1 pl-2.5 mt-4 w-fit">
+    <div className="flex items-center rounded-md border pr-1 pl-2.5 w-fit">
       <span className="whitespace-nowrap text-xs">
         {selectedCount} selected
       </span>
       <Separator
         orientation="vertical"
-        className="mx-2 data-[orientation=vertical]:h-4"
+        className="mx-2 data-[orientation=vertical]:h-6"
       />
       <Tooltip>
         <TooltipTrigger asChild>

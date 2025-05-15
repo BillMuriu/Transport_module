@@ -1,29 +1,43 @@
+"use client";
+
 import {
-  Home,
   Bus,
+  ChevronDown,
+  Command,
+  LayoutDashboard,
+  LogOut,
   MessageCircle,
   Users,
-  LayoutDashboard,
-  Command,
-  LogOut,
 } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuBadge,
-  SidebarHeader,
-  SidebarFooter,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { Button } from "../button";
 
-// Menu items.
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+
+import { Button } from "../button";
+import { useState } from "react";
+
+// Simulate trip status
+const isTripOngoing = true;
+
 const items = [
   {
     title: "Dashboard",
@@ -32,8 +46,18 @@ const items = [
   },
   {
     title: "Trips",
-    url: "/trip_teacher/trips",
     icon: Bus,
+    submenu: [
+      {
+        title: "All Trips",
+        url: "/trip_teacher/trips",
+      },
+      {
+        title: "Ongoing Trip",
+        url: "/trip_teacher/trips/ongoing",
+        ongoing: true,
+      },
+    ],
   },
   {
     title: "Trips Messages",
@@ -46,9 +70,12 @@ const items = [
     icon: Users,
   },
 ];
+
 export function TripTeacherSidebar() {
+  const [isTripsOpen, setIsTripsOpen] = useState(true);
+
   return (
-    <Sidebar variant="floating" collapsible="icon">
+    <Sidebar variant="floating" collapsible="icon" className="w-52">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -66,25 +93,71 @@ export function TripTeacherSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map((item) =>
+                item.submenu ? (
+                  <Collapsible
+                    key={item.title}
+                    defaultOpen
+                    onOpenChange={setIsTripsOpen}
+                    className="group/collapsible"
+                  >
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton>
+                          <item.icon />
+                          <span className="flex-1">{item.title}</span>
+                          <ChevronDown
+                            className={`size-4 transition-transform ${
+                              isTripsOpen ? "rotate-180" : ""
+                            }`}
+                          />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          {item.submenu.map((subitem) => (
+                            <SidebarMenuSubItem key={subitem.title}>
+                              <SidebarMenuSubButton asChild>
+                                <a
+                                  href={subitem.url}
+                                  className="flex items-center gap-2"
+                                >
+                                  <span>{subitem.title}</span>
+                                  {subitem.ongoing && isTripOngoing && (
+                                    <span className="ml-auto relative flex h-2 w-2 rounded-full bg-green-500 animate-ping">
+                                      <span className="absolute top-1/2 left-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-green-700" />
+                                    </span>
+                                  )}
+                                </a>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+                ) : (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <a href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter>
         <Button variant="outline" className="flex">
           <a href="" className="flex w-full items-start gap-2">

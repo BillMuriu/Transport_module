@@ -14,20 +14,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
-import DataTableActions from "./data-table-actions";
-import DataTableMinimalActions from "./Data-table-minimal";
-import DataTableActionBar from "./data-table-action-bar";
 
-import { useSendTripMessages } from "../queries/mutations";
+import DataTableActionButtons from "./data-table-action-buttons";
 import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
-import { Button } from "@/components/ui/button";
+import { useSendTripMessages } from "../queries/mutations"; // Assuming this hook is imported
 
 export function DataTable({ columns, data, setStudents }) {
   const [rowSelection, setRowSelection] = useState({});
 
   const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
-  const { mutate: sendMessages, isPending } = useSendTripMessages();
+
+  const { mutate: sendMessagesToParents, isPending } = useSendTripMessages();
 
   const table = useReactTable({
     data,
@@ -40,68 +37,41 @@ export function DataTable({ columns, data, setStudents }) {
   });
 
   const selectedRowsCount = table.getFilteredSelectedRowModel().rows.length;
-  const totalRowsCount = table.getFilteredRowModel().rows.length;
 
   const clearSelection = () => setRowSelection({});
 
-  const logParentPhones = () => {
-    const selectedStudents = table
-      .getSelectedRowModel()
-      .rows.map((row) => row.original);
-    const parentPhones = selectedStudents.map(
-      (student) => student.parent_phone
-    );
-    console.log(parentPhones);
-  };
+  // Handle sending messages
+  const handleSendMessages = () => {
+    if (!ongoingTrip?.id) return;
 
-  const markAsSent = () => {
-    const selectedStudents = table
-      .getSelectedRowModel()
-      .rows.map((row) => row.original);
+    const selectedRows = table.getSelectedRowModel().rows;
+    const selectedStudents = selectedRows.map((row) => row.original);
 
-    const updatedStudents = data.map((student) =>
-      selectedStudents.some((s) => s.id === student.id)
-        ? { ...student, sent: true }
-        : student
-    );
+    const phoneNumbers = selectedStudents.map((s) => s.parent_phone);
 
-    setStudents(updatedStudents);
-  };
-
-  const sendMessagesToParents = () => {
-    const selectedStudents = table
-      .getSelectedRowModel()
-      .rows.map((row) => row.original);
-
-    const parentPhones = selectedStudents.map((s) => s.parent_phone);
-    const tripId = ongoingTrip?.id;
-
-    if (!tripId) {
-      console.warn("No ongoing trip ID found.");
-      return;
-    }
-
-    if (parentPhones.length === 0) {
-      console.warn("No students selected.");
-      return;
-    }
-
-    // ✅ Log the data being sent
-    console.log("Sending messages with data:", {
-      tripId,
-      phoneNumbers: parentPhones,
-    });
-
-    sendMessages(
-      { tripId, phoneNumbers: parentPhones },
+    // Send messages using the mutation
+    sendMessagesToParents(
+      {
+        tripId: ongoingTrip.id,
+        phoneNumbers,
+      },
       {
         onSuccess: () => {
-          console.log("Messages sent successfully");
-          markAsSent();
-          clearSelection();
+          // If the message is successfully sent, update the 'sent' state
+          const updatedStudents = data.map((student) => {
+            const updatedStudent = selectedStudents.find(
+              (s) => s.id === student.id
+            );
+            return updatedStudent ? { ...student, sent: true } : student;
+          });
+
+          // Update state with modified students
+          setStudents(updatedStudents);
+          console.log("Message sent successfully to:", phoneNumbers);
         },
-        onError: (err) => {
-          console.error("Failed to send messages", err);
+        onError: (error) => {
+          console.error("Error sending messages:", error);
+          // Optionally handle the error by showing a toast or alert
         },
       }
     );
@@ -207,21 +177,14 @@ export function DataTable({ columns, data, setStudents }) {
           </TableBody>
         </Table>
       </div>
-      <DataTableActionBar
+
+      <DataTableActionButtons
         table={table}
-        className="flex justify-center items-center gap-2"
-      >
-        <DataTableMinimalActions
-          selectedCount={selectedRowsCount}
-          onClearSelection={clearSelection}
-        />
-        <Button
-          onClick={sendMessagesToParents}
-          disabled={isPending || selectedRowsCount === 0}
-        >
-          {isPending ? "Sending..." : "Send Messages"}
-        </Button>
-      </DataTableActionBar>
+        selectedRowsCount={selectedRowsCount}
+        isPending={isPending} // Set loading state to button
+        sendMessagesToParents={handleSendMessages}
+        clearSelection={clearSelection}
+      />
     </div>
   );
 }
