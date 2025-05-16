@@ -19,12 +19,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useStudentStore } from "@/stores/useStudentStore";
 
 const iconBaseClasses =
   "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out";
 
-const TripPopoverActions = () => {
+const TripPopoverActions = ({ onEndTrip, onCancelTrip }) => {
   const [open, setOpen] = useState(false);
+  const { students } = useStudentStore();
+
+  const boardedCount = students.filter((s) => s.sent).length;
+  const notBoardedCount = students.length - boardedCount;
 
   return (
     <div className="fixed mb-2 bottom-4 right-4 z-50">
@@ -50,7 +55,7 @@ const TripPopoverActions = () => {
         </PopoverTrigger>
 
         <PopoverContent className="w-64 p-4 mr-4 mt-10 backdrop-blur bg-foreground/80 shadow-lg rounded-lg flex flex-col gap-2">
-          {/* ... AlertDialogs unchanged */}
+          {/* Cancel Trip */}
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button className="w-full rounded-sm">Cancel Trip</Button>
@@ -65,13 +70,17 @@ const TripPopoverActions = () => {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Close</AlertDialogCancel>
-                <AlertDialogAction className="bg-destructive text-white hover:bg-destructive/90">
+                <AlertDialogAction
+                  className="bg-destructive text-white hover:bg-destructive/90"
+                  onClick={onCancelTrip}
+                >
                   Confirm Cancel
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
 
+          {/* End Trip */}
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
@@ -86,23 +95,29 @@ const TripPopoverActions = () => {
                 <AlertDialogTitle>
                   Are you sure you want to end the trip?
                 </AlertDialogTitle>
-                <AlertDialogDescription className="space-y-2">
-                  <p>You’re about to end the trip.</p>
-                  <p>
-                    Parents of the <span className="font-semibold">10</span>{" "}
-                    students who boarded will be notified that their children
-                    have arrived safely.
+                <AlertDialogDescription className="space-y-5 text-[15px] leading-relaxed text-foreground">
+                  <p className="text-base font-semibold">
+                    You’re about to end the trip.
                   </p>
-                  <p>
-                    Parents of the <span className="font-semibold">20</span>{" "}
-                    students who did not board will be informed that their
-                    children did not take the trip.
-                  </p>
+
+                  <div className="space-y-1">
+                    <p className="text-[15px]">
+                      <span className="font-bold">{boardedCount}</span> student
+                      {boardedCount !== 1 && "s"} boarded.
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Their parents will be notified that they have arrived
+                      safely.
+                    </p>
+                  </div>
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction className="bg-primary text-white hover:bg-primary/90">
+                <AlertDialogAction
+                  className="bg-primary text-white hover:bg-primary/90"
+                  onClick={onEndTrip}
+                >
                   Confirm End Trip
                 </AlertDialogAction>
               </AlertDialogFooter>
