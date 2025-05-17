@@ -34,6 +34,8 @@ export function CustomTrigger() {
 export function MainNav() {
   const pathname = usePathname();
   const { students } = useStudentStore();
+  const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
+  const hasOngoingTrip = !!ongoingTrip;
 
   const sentCount = students.filter((student) => student.sent).length;
   const totalCount = students.length;
@@ -44,7 +46,7 @@ export function MainNav() {
     <nav className="flex items-center w-full space-x-4 lg:space-x-6 border-none bg-transparent">
       <CustomTrigger />
 
-      {isTripStudentsPage && (
+      {isTripStudentsPage && hasOngoingTrip && (
         <div className="absolute left-1/2 -translate-x-1/2 text-sm text-muted-foreground font-medium">
           {sentCount}/{totalCount} sent
         </div>
