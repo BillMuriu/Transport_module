@@ -95,20 +95,23 @@ const TripPopoverActions = ({ onEndTrip, onCancelTrip }) => {
                 <AlertDialogTitle>
                   Are you sure you want to end the trip?
                 </AlertDialogTitle>
-                <AlertDialogDescription className="space-y-5 text-[15px] leading-relaxed text-foreground">
-                  <p className="text-base font-semibold">
-                    You’re about to end the trip.
-                  </p>
+                <AlertDialogDescription asChild>
+                  <div className="space-y-5 text-[15px] leading-relaxed text-foreground">
+                    <p className="text-base font-semibold">
+                      You're about to end the trip.
+                    </p>
 
-                  <div className="space-y-1">
-                    <p className="text-[15px]">
-                      <span className="font-bold">{boardedCount}</span> student
-                      {boardedCount !== 1 && "s"} boarded.
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Their parents will be notified that they have arrived
-                      safely.
-                    </p>
+                    <div className="space-y-1">
+                      <p className="text-[15px]">
+                        <span className="font-bold">{boardedCount}</span>{" "}
+                        student
+                        {boardedCount !== 1 && "s"} boarded.
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Their parents will be notified that they have arrived
+                        safely.
+                      </p>
+                    </div>
                   </div>
                 </AlertDialogDescription>
               </AlertDialogHeader>

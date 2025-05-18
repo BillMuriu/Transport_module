@@ -118,16 +118,8 @@ const TripStudents = () => {
 
   return (
     <div>
-      <h2>Trip Students</h2>
+      {/* <h2>Trip Students</h2> */}
       <DataTable columns={columns} data={students} setStudents={setStudents} />
-      <div className="mt-4 flex gap-4">
-        <button
-          onClick={() => resetStudents()}
-          className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-        >
-          Reset Store
-        </button>
-      </div>
       <TripPopoverActions
         onEndTrip={handleEndTrip}
         onCancelTrip={handleCancelTrip}

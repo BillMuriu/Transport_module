@@ -15,7 +15,7 @@ export function CustomTrigger() {
   return (
     <button
       onClick={toggleSidebar}
-      className="relative flex items-center justify-center rounded-md p-2 bg-muted hover:bg-muted/50 transition-colors h-10 w-10"
+      className="relative flex ml-4 items-center justify-center rounded-md p-2 bg-muted hover:bg-muted/50 transition-colors h-10 w-10"
       aria-label="Toggle Sidebar"
     >
       <PanelLeftIcon className="w-8 h-8 text-muted-foreground" />

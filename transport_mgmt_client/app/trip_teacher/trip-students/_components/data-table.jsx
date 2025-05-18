@@ -55,28 +55,29 @@ export function DataTable({ columns, data, setStudents }) {
     const selectedStudents = selectedRows.map((row) => row.original);
     const phoneNumbers = selectedStudents.map((s) => s.parent_phone);
 
-    sendMessagesToParents(
-      {
-        tripId: ongoingTrip.id,
-        phoneNumbers,
-      },
-      {
-        onSuccess: () => {
-          const updatedStudents = data.map((student) => {
-            const updatedStudent = selectedStudents.find(
-              (s) => s.id === student.id
-            );
-            return updatedStudent ? { ...student, sent: true } : student;
-          });
+    const payload = {
+      tripId: ongoingTrip.id,
+      phoneNumbers,
+    };
 
-          setStudents(updatedStudents);
-          clearSelection();
-        },
-        onError: (error) => {
-          console.error("Error sending messages:", error);
-        },
-      }
-    );
+    console.log("Sending payload to backend:", payload); // ✅ Add this
+
+    sendMessagesToParents(payload, {
+      onSuccess: () => {
+        const updatedStudents = data.map((student) => {
+          const updatedStudent = selectedStudents.find(
+            (s) => s.id === student.id
+          );
+          return updatedStudent ? { ...student, sent: true } : student;
+        });
+
+        setStudents(updatedStudents);
+        clearSelection();
+      },
+      onError: (error) => {
+        console.error("Error sending messages:", error); // Already present ✅
+      },
+    });
   };
 
   const allRows = table.getRowModel().rows;

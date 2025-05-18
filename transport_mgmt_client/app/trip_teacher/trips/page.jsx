@@ -23,3 +23,6 @@ const Trip = () => {
 };
 
 export default Trip;
+
+// import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
+// import { useStudentStore } from "@/stores/useStudentStore";

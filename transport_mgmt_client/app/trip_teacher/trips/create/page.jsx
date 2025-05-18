@@ -85,7 +85,7 @@ export default function MyForm() {
         onSuccess: () => {
           toast.success("Trip started successfully!");
           setOpenBackdrop(false);
-          router.push("/trip_teacher/students/students-byroute");
+          router.push("/trip_teacher/trip-students");
         },
         onError: () => {
           toast.error("Failed to submit the form. Please try again.");

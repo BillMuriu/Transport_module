@@ -52,7 +52,7 @@ const items = [
       },
       {
         title: "Ongoing Trip",
-        url: "/trip_teacher/trips/ongoing",
+        url: "/trip_teacher/trip-students",
         ongoing: true,
       },
     ],
