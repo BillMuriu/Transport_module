@@ -39,10 +39,24 @@ Content-Type: application/json
   "trip_teacher": "287a1457-8a4d-4817-86c2-22f12f2670e0",  
   "route": "7ee67271-a068-4ba9-ac75-5a83e88b732c",  
   "start_location": "School",  
-  "end_location": "School",  
+  "end_location": "Schoo",  
   "departure_time": "2025-04-30T13:00:00Z",
-  "arrival_time": null
+  "arrival_time": null,
+  "expected_students": [
+    "0277624c-a067-49ec-9824-5a21d797ba0f",
+    "03a9e2e6-0df5-416f-81ba-75571c49c9d7",
+    "075e11fd-dc6c-465a-9b64-4085cb52b81f",
+    "084582b1-4bd4-48b3-863a-79a19c31cd62",
+    "0c723a02-3d2a-410f-a72c-b28cbf3c8207"
+  ],
+  "boarded_students": [
+    "03a9e2e6-0df5-416f-81ba-75571c49c9d7",
+    "075e11fd-dc6c-465a-9b64-4085cb52b81f",
+    "084582b1-4bd4-48b3-863a-79a19c31cd62",
+    "0c723a02-3d2a-410f-a72c-b28cbf3c8207"
+  ]
 }
+
 
 
 ### Delete a trip

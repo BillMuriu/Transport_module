@@ -138,10 +138,10 @@ class SendBulkTripStudentMessagesView(APIView):
             return Response({"error": "Invalid trip action"}, status=status.HTTP_400_BAD_REQUEST)
 
         message_type = "board" if trip.trip_action == "pickup" else "alight"
-        # Generic content for bulk message
-        content = generate_trip_message_content("your child", trip.trip_action)
 
-        # Collect valid phone numbers & map to students
+        # Static message content
+        content = "Dear parent, your child has arrived safely to school."
+
         phone_student_map = {}
         errors = []
 
@@ -158,13 +158,12 @@ class SendBulkTripStudentMessagesView(APIView):
         phone_numbers = list(phone_student_map.keys())
         phone_string = ",".join(phone_numbers)
 
-        # Send bulk SMS once
+        # Send the message in bulk once
         success, result = send_sms_via_gateway(phone_string, content)
 
         trip_messages = []
         status_to_use = Status.SENT if success else Status.FAILED
 
-        # Create TripMessage instances for each student
         for phone, student in phone_student_map.items():
             trip_messages.append(TripMessage(
                 student=student,
