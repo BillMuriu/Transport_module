@@ -28,3 +28,16 @@ Content-Type: application/json
     "0f503ac3-4231-4f30-833f-870b2e5b92dc"
   ]
 }
+
+
+###
+POST /trip-messages/send-bulk/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "trip_id": "aeb5022a-fd73-4e77-b1fd-6763785fe9e6",
+  "phone_numbers": [
+    "0742675176",
+  ]
+}

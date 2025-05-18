@@ -12,5 +12,5 @@ urlpatterns = [
     path('<uuid:pk>/', TripMessageRetrieveUpdateDestroyView.as_view(), name='retrieve-update-destroy-trip-message'),
     path('send/', SendTripMessageView.as_view(), name='send-trip-message'),
     path('send-bulk/', SendBulkTripMessagesView.as_view(), name='send-bulk-trip-messages'),  # ✅ New URL
-     path('send-bulk-messages/', SendBulkTripStudentMessagesView.as_view(), name='send-bulk-trip-messages'),
+    path('send-bulk-messages/', SendBulkTripStudentMessagesView.as_view(), name='send-bulk-trip-student-messages'),
 ]
