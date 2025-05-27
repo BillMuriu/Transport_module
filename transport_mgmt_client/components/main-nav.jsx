@@ -6,6 +6,7 @@ import { PanelLeftIcon } from "lucide-react";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
 import { useStudentStore } from "@/stores/useStudentStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export function CustomTrigger() {
   const { toggleSidebar } = useSidebar();
@@ -35,20 +36,30 @@ export function MainNav() {
   const pathname = usePathname();
   const { students } = useStudentStore();
   const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
-  const hasOngoingTrip = !!ongoingTrip;
+  const user = useAuthStore((state) => state.user);
 
+  const hasOngoingTrip = !!ongoingTrip;
   const sentCount = students.filter((student) => student.sent).length;
   const totalCount = students.length;
 
   const isTripStudentsPage = pathname.includes("trip-students");
 
   return (
-    <nav className="flex items-center w-full space-x-4 lg:space-x-6 border-none bg-transparent">
-      <CustomTrigger />
+    <nav className="flex items-center justify-between w-full px-4 space-x-4 lg:space-x-6">
+      <div className="flex items-center space-x-4">
+        <CustomTrigger />
 
-      {isTripStudentsPage && hasOngoingTrip && (
-        <div className="absolute left-1/2 -translate-x-1/2 text-sm text-muted-foreground font-medium">
-          {sentCount}/{totalCount} sent
+        {isTripStudentsPage && hasOngoingTrip && (
+          <div className="text-sm text-muted-foreground font-medium">
+            {sentCount}/{totalCount} sent
+          </div>
+        )}
+      </div>
+
+      {user && (
+        <div className="text-sm text-muted-foreground">
+          Logged in as{" "}
+          <span className="font-semibold text-black">{user.username}</span>
         </div>
       )}
     </nav>
