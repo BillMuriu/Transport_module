@@ -1,7 +1,8 @@
 "use client";
+
 import { Checkbox } from "@/components/ui/checkbox";
 
-export const driverColumns = [
+export const columns = [
   {
     id: "select",
     header: ({ table }) => (
@@ -28,17 +29,9 @@ export const driverColumns = [
     size: 50,
   },
   {
-    accessorKey: "full_name",
+    accessorKey: "name",
     header: () => <span>Name</span>,
-    cell: ({ row }) => (
-      <span className="truncate">{row.original.full_name}</span>
-    ),
+    cell: ({ row }) => <span className="truncate">{row.original.name}</span>,
     size: 160,
-  },
-  {
-    accessorKey: "phone_number",
-    header: () => <span>Phone Number</span>,
-    cell: ({ row }) => <span>{row.original.phone_number}</span>,
-    size: 140,
   },
 ];
