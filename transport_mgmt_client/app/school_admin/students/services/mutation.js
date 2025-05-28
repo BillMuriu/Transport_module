@@ -26,3 +26,32 @@ export const useCreateStudent = () => {
     },
   });
 };
+
+export const useUpdateStudent = (id) =>
+  useMutation({
+    mutationFn: async (updatedData) => {
+      const response = await axios.put(
+        `${API_BASE_URL}/students/${id}/`,
+        updatedData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    },
+    onError: (error) => {
+      console.error("Failed to update student:", error);
+    },
+  });
+
+export const useDeleteStudent = () =>
+  useMutation({
+    mutationFn: async (id) => {
+      await axios.delete(`${API_BASE_URL}/students/${id}/`);
+    },
+    onError: (error) => {
+      console.error("Failed to delete student:", error);
+    },
+  });

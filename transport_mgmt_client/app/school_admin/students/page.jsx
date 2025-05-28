@@ -1,23 +1,46 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { Plus, PlusCircle } from "lucide-react";
-import React from "react";
+import { PlusCircle } from "lucide-react";
+import { useStudents } from "./services/queries";
+import { columns } from "./_components/students-columns";
+import { StudentsDataTable } from "./_components/students-data-table";
+import { Loader2 } from "lucide-react";
 
 const Students = () => {
+  const { data, isLoading, isError } = useStudents();
+
   return (
-    <div className="w-full max-w-screen-md mx-auto mt-4 flex flex-col items-center px-4">
-      <h1 className="mb-10">Students Page...</h1>
-      <Button>
-        <a
-          href="/school_admin/students/add"
-          className="w-full flex gap-2 justify-between"
-        >
-          <PlusCircle />
-          <span>Add New Student</span>
-        </a>
-      </Button>
-      <div className="mt-16 w-full p-6 border-2 border-dashed border-gray-400 rounded-lg text-center text-muted-foreground">
-        Students content will appear here
+    <div className="w-full max-w-6xl mx-auto mt-4 flex flex-col px-4">
+      <div className="flex justify-between items-center mb-10">
+        <h1 className="text-2xl font-semibold">Students</h1>
+        <Button asChild>
+          <a
+            href="/school_admin/students/add"
+            className="flex gap-2 items-center"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>Add New Student</span>
+          </a>
+        </Button>
       </div>
+
+      {isLoading ? (
+        <div className="mt-16 flex justify-center items-center">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span className="ml-2 text-muted-foreground">
+            Loading students...
+          </span>
+        </div>
+      ) : isError ? (
+        <div className="mt-16 text-center text-red-500">
+          Failed to load students.
+        </div>
+      ) : (
+        <div className="mt-6">
+          <StudentsDataTable columns={columns} data={data} />
+        </div>
+      )}
     </div>
   );
 };
