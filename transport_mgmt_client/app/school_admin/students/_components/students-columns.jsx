@@ -62,14 +62,7 @@ export const columns = [
   {
     id: "parent",
     header: () => <span>Parent</span>,
-    cell: ({ row }) => (
-      <div className="flex flex-col">
-        <span>{row.original.parent_name}</span>
-        <span className="text-xs text-muted-foreground">
-          {row.original.parent_phone}
-        </span>
-      </div>
-    ),
+    cell: ({ row }) => <span>{row.original.parent_name}</span>,
     size: 160,
   },
 ];
