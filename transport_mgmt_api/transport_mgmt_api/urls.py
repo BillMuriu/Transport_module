@@ -36,4 +36,5 @@ urlpatterns = [
     path('students/', include('students.urls')),
     path('trips/', include('trips.urls')),
     path('trip-messages/', include('trip_message.urls')),
+    path('school_admin/', include('school_admin.urls')),
 ]
