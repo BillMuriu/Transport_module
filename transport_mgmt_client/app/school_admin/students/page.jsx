@@ -12,8 +12,7 @@ const Students = () => {
 
   return (
     <div className="w-full max-w-6xl mx-auto mt-4 flex flex-col px-4">
-      <div className="flex justify-around items-center mb-10">
-        <h1 className="text-2xl font-semibold">Students</h1>
+      <div className="flex justify-start items-center mb-10">
         <Button asChild>
           <a
             href="/school_admin/students/add"

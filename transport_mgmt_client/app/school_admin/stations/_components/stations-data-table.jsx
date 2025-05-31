@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import SearchInput from "../../_components/search-filter";
 
 import { motion } from "framer-motion";
 
@@ -49,7 +50,12 @@ export function StationsDataTable({ columns, data }) {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 space-y-4">
-      {/* Table View - Visible from sm and up */}
+      <div className="flex items-center justify-between py-4 gap-4 flex-wrap">
+        <SearchInput
+          column={table.getColumn("name")}
+          placeholder="Search by name..."
+        />
+      </div>
       <div className="overflow-x-auto hidden sm:block">
         <Table className="w-full table-auto text-xs md:text-sm border-separate border-spacing-y-[4px]">
           <TableHeader>

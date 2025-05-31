@@ -8,6 +8,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import SearchInput from "../../_components/search-filter";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -49,6 +50,13 @@ export function VehiclesDataTable({ columns, data }) {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 space-y-4">
+      <div className="flex items-center justify-between py-4 gap-4 flex-wrap">
+        <SearchInput
+          column={table.getColumn("registration_number")}
+          placeholder="Search by plate..."
+        />
+      </div>
+
       <div className="overflow-x-auto">
         <Table className="w-full table-auto text-sm border-separate border-spacing-y-[4px]">
           <TableHeader>
