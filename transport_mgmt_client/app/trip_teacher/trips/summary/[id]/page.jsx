@@ -11,7 +11,6 @@ export default function TripSummaryPage() {
 
   const params = useParams();
   const tripId = params.id; // Get trip ID from URL parameters
-  cls;
 
   const clearOngoingTrip = useOngoingTripStore(
     (state) => state.clearOngoingTrip

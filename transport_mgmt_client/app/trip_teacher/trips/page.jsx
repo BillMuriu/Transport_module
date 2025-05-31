@@ -1,11 +1,29 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { Plus, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import React from "react";
+import { TripsDataTable } from "./_components/trips-data-table";
+import { tripsColumns } from "./_components/trip-columns";
+import { useTrips } from "./_queries/queries";
 
 const Trip = () => {
+  const { data: tripsData = [], isLoading, isError } = useTrips();
+
+  if (isLoading) {
+    return <div className="text-center mt-20">Loading trips...</div>;
+  }
+
+  if (isError) {
+    return (
+      <div className="text-center mt-20 text-red-500">
+        Failed to load trips.
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-screen-md mx-auto mt-4 flex flex-col items-center px-4">
-      <h1 className="mb-10">Trips Page...</h1>
       <Button>
         <a
           href="/trip_teacher/trips/create"
@@ -15,8 +33,9 @@ const Trip = () => {
           <span>Create New Trip</span>
         </a>
       </Button>
-      <div className="mt-16 w-full p-6 border-2 border-dashed border-gray-400 rounded-lg text-center text-muted-foreground">
-        Trip content will appear here
+
+      <div className="mt-4 w-full">
+        <TripsDataTable columns={tripsColumns} data={tripsData} />
       </div>
     </div>
   );

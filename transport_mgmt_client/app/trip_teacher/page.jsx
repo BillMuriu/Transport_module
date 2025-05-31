@@ -1,39 +1,87 @@
 "use client";
 
 import React from "react";
-import { useAuthStore } from "@/stores/useAuthStore";
+import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
+import { Users } from "lucide-react";
+import DashboardStatCard from "../school_admin/_components/dashboard-stats-card";
+
+const fetchDashboardSummary = async () => {
+  const { data } = await axios.get(
+    "http://localhost:8000/school_admin/dashboard-summary/?school_id=9984c0da-82bc-4581-88f1-971e8beefc1a"
+  );
+  return data;
+};
 
 const TripTeacherDashboard = () => {
-  const user = useAuthStore((state) => state.user);
+  const { ongoingTrip } = useOngoingTripStore();
 
-  const school = user?.school || {};
-  const { name: schoolName, phone_number: schoolPhone } = school;
-  const username = user?.username;
-  const email = user?.email;
-  const userPhone = user?.phone_number;
+  const {
+    data: summary,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["dashboard-summary"],
+    queryFn: fetchDashboardSummary,
+  });
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-semibold mb-4">Trip Coordinator Dashboard</h1>
-      <div className="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto max-w-full">
-        <div className="space-y-4">
-          <p>
-            <strong>School Name:</strong> {schoolName || "N/A"}
-          </p>
-          <p>
-            <strong>Username:</strong> {username || "N/A"}
-          </p>
-          <p>
-            <strong>Email:</strong> {email || "N/A"}
-          </p>
-          <p>
-            <strong>User Phone:</strong> {userPhone || "N/A"}
-          </p>
-          <p>
-            <strong>School Phone:</strong> {schoolPhone || "N/A"}
-          </p>
+    <div className="mt-6 px-4 space-y-6 max-w-md mx-auto">
+      {ongoingTrip ? (
+        <div className="p-4 border rounded-xl shadow-sm bg-white space-y-4">
+          <div className="flex items-center justify-between">
+            <Badge
+              variant="outline"
+              className="capitalize text-xs px-3 py-1 rounded-md border-2 border-blue-500 text-blue-600 bg-blue-100 shadow-sm"
+            >
+              {ongoingTrip.trip_type.replace("_", " ")}
+            </Badge>
+          </div>
+
+          <div className="space-y-1 text-sm">
+            <p className="text-muted-foreground">
+              <span className="text-foreground font-medium">Departure:</span>{" "}
+              {format(new Date(ongoingTrip.departure_time), "PPPpp")}
+            </p>
+          </div>
+
+          <div className="flex justify-end pt-2">
+            <Link href="/trip_teacher/trip-students">
+              <Button size="sm" variant="outline">
+                Manage Trip
+              </Button>
+            </Link>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="p-6 flex justify-center">
+          <Badge
+            variant="outline"
+            className="text-sm px-3 py-1 rounded-md border-2 border-gray-400 text-gray-600 bg-gray-100 shadow-sm"
+          >
+            No ongoing trip at the moment.
+          </Badge>
+        </div>
+      )}
+
+      {/* Student Card - Always shown */}
+      {isLoading ? (
+        <p>Loading student data...</p>
+      ) : error ? (
+        <p className="text-red-500">Failed to load active students</p>
+      ) : (
+        <DashboardStatCard
+          title="Active Students"
+          count={summary?.active_students ?? 0}
+          description="Enrolled and active"
+          icon={<Users />}
+        />
+      )}
     </div>
   );
 };

@@ -57,11 +57,11 @@ const items = [
       },
     ],
   },
-  {
-    title: "Trips Messages",
-    url: "/trip_teacher/trip-messages",
-    icon: MessageCircle,
-  },
+  // {
+  //   title: "Trips Messages",
+  //   url: "/trip_teacher/trip-messages",
+  //   icon: MessageCircle,
+  // },
   {
     title: "Students",
     url: "/trip_teacher/students",

@@ -12,3 +12,13 @@ export const useTripById = (tripId) => {
     enabled: !!tripId, // ensures it only runs if tripId is truthy
   });
 };
+
+export const useTrips = () => {
+  return useQuery({
+    queryKey: ["trips"],
+    queryFn: async () => {
+      const response = await axios.get(`${API_BASE_URL}/trips/`);
+      return response.data;
+    },
+  });
+};
