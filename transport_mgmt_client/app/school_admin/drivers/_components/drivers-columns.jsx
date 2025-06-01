@@ -57,38 +57,39 @@ export function DriversDataTable({ columns, data }) {
         />
       </div>
 
-      <div className="overflow-x-auto">
-        <Table className="w-full table-auto text-sm border-separate border-spacing-y-[4px]">
-          <TableHeader>
-            <TableRow>
-              {table.getHeaderGroups()[0].headers.map((header) => (
-                <TableHead
-                  key={header.id}
-                  className="py-2 px-4 whitespace-nowrap"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
+      <div className="rounded-md border bg-white overflow-x-auto">
+        <Table className="w-full text-sm border-separate border-spacing-y-1.5">
+          <TableHeader className="bg-muted/40">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} className="px-4 py-2">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
           </TableHeader>
+
           <TableBody>
             {visibleRows.length > 0 ? (
               visibleRows.map((row, index) => (
                 <motion.tr
                   key={row.id}
-                  className="hover:bg-muted/50"
+                  data-state={row.getIsSelected() ? "selected" : undefined}
+                  className="bg-white hover:bg-muted/50 rounded-md transition"
                   initial="hidden"
                   animate="visible"
                   custom={index}
                   variants={rowAnimation}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="py-3 px-4">
+                    <TableCell key={cell.id} className="px-4 py-3">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

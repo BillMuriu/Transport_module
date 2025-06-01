@@ -56,14 +56,15 @@ export function RoutesDataTable({ columns, data }) {
           placeholder="Search by name..."
         />
       </div>
-      <div className="overflow-x-auto">
-        <Table className="w-full table-auto text-sm border-separate border-spacing-y-[4px]">
-          <TableHeader>
+
+      <div className="overflow-x-auto rounded-md shadow-sm border border-gray-200 bg-white">
+        <Table className="w-full table-auto text-sm">
+          <TableHeader className="bg-gray-50">
             <TableRow>
               {table.getHeaderGroups()[0].headers.map((header) => (
                 <TableHead
                   key={header.id}
-                  className="py-2 px-4 whitespace-nowrap"
+                  className="py-3 px-4 whitespace-nowrap text-gray-600 font-semibold"
                 >
                   {header.isPlaceholder
                     ? null
@@ -80,7 +81,7 @@ export function RoutesDataTable({ columns, data }) {
               visibleRows.map((row, index) => (
                 <motion.tr
                   key={row.id}
-                  className="hover:bg-muted/50"
+                  className="bg-white border-b border-gray-100 hover:bg-muted/50"
                   initial="hidden"
                   animate="visible"
                   custom={index}
