@@ -120,3 +120,7 @@
     @apply bg-transparent text-foreground;
   }
 }
+
+.leaflet-container {
+  height: 100vh;
+}
