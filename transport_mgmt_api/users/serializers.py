@@ -1,6 +1,6 @@
 # users/serializers.py
 from rest_framework import serializers
-from .models import User
+from .models import User, Invitation
 from schools.serializers import SchoolSerializer  # Import the SchoolSerializer
 
 class UserSerializer(serializers.ModelSerializer):
@@ -20,3 +20,9 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class InvitationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invitation
+        fields = ['email', 'user_type', 'school']

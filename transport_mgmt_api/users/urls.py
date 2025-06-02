@@ -4,7 +4,9 @@ from .views import (
     UserListCreateView,
     UserRetrieveUpdateDestroyView,
     CreatePrivilegedUserView,
-    ExpiringUserInviteView
+    ExpiringUserInviteView,
+    CreateInvitationView,
+    AcceptInvitationView
 )
 
 urlpatterns = [
@@ -12,4 +14,6 @@ urlpatterns = [
     path('<uuid:id>/', UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
     path('create-privileged/', CreatePrivilegedUserView.as_view(), name='create-privileged-user'),
     path('invite/', ExpiringUserInviteView.as_view(), name='user-invite'),
+    path('invite-user/', CreateInvitationView.as_view(), name='create-invitation'),
+    path('accept-invite/', AcceptInvitationView.as_view(), name='accept-invitation'),
 ]

@@ -194,6 +194,8 @@ STORAGES = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+FRONTEND_URL = "http://localhost:3000" 
+
 
 MPESA_ENVIRONMENT = 'sandbox'
 

@@ -3,9 +3,11 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.core.signing import SignatureExpired, BadSignature, TimestampSigner
-from .models import User
-from .serializers import UserSerializer
+from .models import User, Invitation
+from .serializers import UserSerializer, InvitationSerializer
 from .permissions import IsMainAdmin
+from django.conf import settings
+
 
 signer = TimestampSigner()
 
@@ -53,3 +55,50 @@ class ExpiringUserInviteView(APIView):
             serializer.save(user_type=user_type)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateInvitationView(generics.CreateAPIView):
+    serializer_class = InvitationSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        invitation = serializer.save()  # no invited_by
+
+        invite_link = f"{settings.FRONTEND_URL}/accept-invite/{invitation.token}/"
+        return Response({
+            "invite_link": invite_link,
+            "token": str(invitation.token),
+            "email": invitation.email
+        })
+
+
+
+class AcceptInvitationView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        token = request.data.get("token")
+        username = request.data.get("username")
+        password = request.data.get("password")
+
+        if not all([token, username, password]):
+            return Response({"detail": "Missing fields"}, status=400)
+
+        try:
+            invitation = Invitation.objects.get(token=token, is_used=False)
+        except Invitation.DoesNotExist:
+            return Response({"detail": "Invalid or expired invitation"}, status=400)
+
+        user = User.objects.create_user(
+            email="emailake@example.com",
+            username=username,
+            password=password,
+            phone_number=request.data.get("phone_number", ""),
+            user_type=invitation.user_type,
+            school=invitation.school,
+        )
+
+        invitation.is_used = True
+        invitation.save()
+        return Response({"detail": "User created successfully"}, status=status.HTTP_201_CREATED)

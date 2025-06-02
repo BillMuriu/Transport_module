@@ -55,13 +55,26 @@ Content-Type: application/json
 
 
 ### Use the signed url
-POST http://localhost:8000/users/invite/?token=TRIP_TEACHER:1uA4BW:aoJk5d8POz-34fqzl-ngh7EYIo4hRFhz8c6Hz3s2Wq4 HTTP/1.1
+POST http://localhost:8000/users/invite-user/ HTTP/1.1
 Host: localhost:8000
 Content-Type: application/json
 
 {
-  "email": "firstteacher@example.com",
-  "username": "teacher",
-  "password": "strongpassword123",
-  "phone_number": "+1234567890"
+  "email": "newuser@example.com",
+  "user_type": "SCHOOL_ADMIN",
+  "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad"
 }
+
+
+### Create a new user through the invitation link
+POST http://localhost:8000/users/accept-invite/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "token": "fe4e4698-3f16-4757-b0b8-8f9b303f35d0",
+  "username": "Invited_user",
+  "password": "securePassword",
+  "phone_number": "09123456789"
+}
+
