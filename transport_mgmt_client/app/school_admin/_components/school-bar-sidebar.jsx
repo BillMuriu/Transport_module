@@ -55,17 +55,17 @@ const items = [
   {
     title: "Drivers",
     url: "/school_admin/drivers",
-    icon: Users, // You can swap icon if you want a different one for drivers
+    icon: Users,
   },
   {
     title: "Routes",
     url: "/school_admin/routes",
-    icon: FileText, // Change icon if you want
+    icon: FileText,
   },
   {
     title: "Stations",
     url: "/school_admin/stations",
-    icon: FileText, // Change icon if you want
+    icon: FileText,
   },
   {
     title: "Trips",
@@ -81,11 +81,25 @@ const items = [
       },
     ],
   },
-
   {
     title: "Messages",
     url: "/school_admin/messages",
     icon: FileText,
+  },
+  {
+    title: "Users",
+    url: "/school_admin/users",
+    icon: Users,
+    submenu: [
+      {
+        title: "Manage Users",
+        url: "/school_admin/users/manage",
+      },
+      {
+        title: "Invitation",
+        url: "/school_admin/users/invitations",
+      },
+    ],
   },
   {
     title: "School Info",
@@ -97,15 +111,17 @@ const items = [
     url: "/school_admin/settings",
     icon: School,
   },
-  //   {
-  //     title: "Reports",
-  //     url: "/school_admin/reports",
-  //     icon: FileText,
-  //   },
 ];
 
 export function SchoolAdminSidebar() {
-  const [isTripsOpen, setIsTripsOpen] = useState(true);
+  // Initialize all submenu items as open by default
+  const [openSubmenus, setOpenSubmenus] = useState(() => {
+    const initialState = {};
+    items.forEach((item) => {
+      if (item.submenu) initialState[item.title] = true;
+    });
+    return initialState;
+  });
 
   return (
     <Sidebar variant="floating" collapsible="icon" className="w-52">
@@ -136,8 +152,13 @@ export function SchoolAdminSidebar() {
                 item.submenu ? (
                   <Collapsible
                     key={item.title}
-                    defaultOpen
-                    onOpenChange={setIsTripsOpen}
+                    defaultOpen={openSubmenus[item.title]}
+                    onOpenChange={(isOpen) =>
+                      setOpenSubmenus((prev) => ({
+                        ...prev,
+                        [item.title]: isOpen,
+                      }))
+                    }
                     className="group/collapsible"
                   >
                     <SidebarMenuItem>
@@ -147,7 +168,7 @@ export function SchoolAdminSidebar() {
                           <span className="flex-1">{item.title}</span>
                           <ChevronDown
                             className={`size-4 transition-transform ${
-                              isTripsOpen ? "rotate-180" : ""
+                              openSubmenus[item.title] ? "rotate-180" : ""
                             }`}
                           />
                         </SidebarMenuButton>

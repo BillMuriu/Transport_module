@@ -16,7 +16,11 @@ export default function DashboardStatCard({ title, count, description, icon }) {
             {description}
           </CardDescription>
         </div>
-        {icon && <div className="text-primary text-2xl">{icon}</div>}
+        {icon && (
+          <div className="flex size-10 items-center justify-center rounded-md bg-primary/10 text-primary group-hover:bg-primary/20">
+            <span className="size-5">{icon}</span>
+          </div>
+        )}
       </CardHeader>
       <CardContent>
         <p className="text-3xl font-bold">{count}</p>

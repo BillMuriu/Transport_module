@@ -10,14 +10,14 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { Users } from "lucide-react";
 import DashboardStatCard from "../school_admin/_components/dashboard-stats-card";
+import { API_BASE_URL } from "@/config";
 
 const fetchDashboardSummary = async () => {
   const { data } = await axios.get(
-    "https://transport-module.onrender.com/school_admin/dashboard-summary/?school_id=9984c0da-82bc-4581-88f1-971e8beefc1a"
+    `${API_BASE_URL}/school_admin/dashboard-summary/?school_id=9984c0da-82bc-4581-88f1-971e8beefc1a`
   );
   return data;
 };
-
 const TripTeacherDashboard = () => {
   const { ongoingTrip } = useOngoingTripStore();
 
