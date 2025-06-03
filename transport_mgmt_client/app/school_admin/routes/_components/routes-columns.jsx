@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ArrowUpRight } from "lucide-react";
 
 export const columns = [
   {
@@ -31,7 +33,18 @@ export const columns = [
   {
     accessorKey: "name",
     header: () => <span>Name</span>,
-    cell: ({ row }) => <span className="truncate">{row.original.name}</span>,
+    cell: ({ row }) => {
+      const { id, name } = row.original;
+      return (
+        <Link
+          href={`/school_admin/routes/${id}/edit`}
+          className="truncate text-primary font-medium flex items-center gap-1 hover:underline hover:text-primary/80 transition-colors"
+        >
+          {name}
+          <ArrowUpRight className="w-4 h-4" />
+        </Link>
+      );
+    },
     size: 160,
   },
 ];

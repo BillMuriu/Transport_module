@@ -18,9 +18,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import SearchInput from "../../_components/search-filter";
 
 import { motion } from "framer-motion";
-import SearchInput from "../../_components/search-filter";
 
 export function StudentsDataTable({ columns, data }) {
   const [columnFilters, setColumnFilters] = useState([]);
@@ -49,53 +49,56 @@ export function StudentsDataTable({ columns, data }) {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-6 py-6 px-4 sm:px-6 lg:px-8">
-      {/* Search Section */}
-      <div className="flex items-center justify-between py-4 gap-4 flex-wrap border-b border-gray-200">
-        <div className="flex-1 max-w-sm">
+    <div className="bg-background min-h-screen">
+      <div className="max-w-7xl mx-auto">
+        {/* Search Section */}
+        <div className="flex items-center justify-between py-4 gap-4 flex-wrap">
           <SearchInput
             column={table.getColumn("name")}
             placeholder="Search students..."
           />
         </div>
-      </div>
 
-      {/* Table Section */}
-      <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table className="w-full">
+        {/* Table Container */}
+        <div className="bg-card rounded-lg border border-border shadow-lg overflow-hidden">
+          <Table className="bg-card">
             <TableHeader>
-              <TableRow className="bg-gray-50/50">
-                {table.getHeaderGroups()[0].headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    className="py-3 px-4 text-left font-semibold text-gray-900 border-b border-gray-200"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow
+                  key={headerGroup.id}
+                  className="border-b border-border bg-muted/50 hover:bg-muted/70 transition-colors"
+                >
+                  {headerGroup.headers.map((header) => (
+                    <TableHead
+                      key={header.id}
+                      className="text-foreground font-semibold py-4 px-6 text-left"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
             </TableHeader>
             <TableBody>
               {visibleRows.length > 0 ? (
                 visibleRows.map((row, index) => (
                   <motion.tr
                     key={row.id}
-                    className="hover:bg-gray-50/50 transition-colors border-b border-gray-100 last:border-b-0"
+                    custom={index}
                     initial="hidden"
                     animate="visible"
-                    custom={index}
                     variants={rowAnimation}
+                    className="border-b border-border hover:bg-accent/10 transition-colors group"
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell
                         key={cell.id}
-                        className="py-4 px-4 text-sm text-gray-900"
+                        className="py-4 px-6 text-card-foreground group-hover:text-foreground transition-colors"
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
@@ -106,67 +109,92 @@ export function StudentsDataTable({ columns, data }) {
                   </motion.tr>
                 ))
               ) : (
-                <TableRow>
+                <TableRow className="border-b border-border">
                   <TableCell
                     colSpan={columns.length}
-                    className="h-32 text-center py-8 px-4 text-gray-500"
+                    className="h-24 text-center text-muted-foreground py-8"
                   >
-                    <div className="flex flex-col items-center justify-center space-y-2">
-                      <div className="text-lg font-medium">
-                        No students found
-                      </div>
-                      <div className="text-sm">
-                        Try adjusting your search criteria
-                      </div>
-                    </div>
+                    No students found.
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
         </div>
-      </div>
 
-      {/* Pagination Section */}
-      <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-        <div className="flex items-center text-sm text-gray-700">
-          <span>
-            Showing{" "}
-            {table.getState().pagination.pageIndex *
-              table.getState().pagination.pageSize +
-              1}{" "}
-            to{" "}
-            {Math.min(
-              (table.getState().pagination.pageIndex + 1) *
-                table.getState().pagination.pageSize,
-              table.getFilteredRowModel().rows.length
-            )}{" "}
-            of {table.getFilteredRowModel().rows.length} results
-          </span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            className="px-3 py-1.5"
-          >
-            Previous
-          </Button>
-          <div className="flex items-center px-2 text-sm text-gray-700">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
+        {/* Pagination */}
+        <div className="mt-6 bg-card rounded-lg border border-border shadow-sm">
+          {/* Desktop Pagination */}
+          <div className="hidden sm:flex items-center justify-between px-6 py-4">
+            <div className="text-sm text-muted-foreground">
+              Showing{" "}
+              {table.getState().pagination.pageIndex *
+                table.getState().pagination.pageSize +
+                1}{" "}
+              to{" "}
+              {Math.min(
+                (table.getState().pagination.pageIndex + 1) *
+                  table.getState().pagination.pageSize,
+                table.getFilteredRowModel().rows.length
+              )}{" "}
+              of {table.getFilteredRowModel().rows.length} results
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+                className="bg-secondary text-secondary-foreground border-border hover:bg-secondary/80 disabled:bg-muted disabled:text-muted-foreground"
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+                className="bg-primary text-primary-foreground border-border hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
+              >
+                Next
+              </Button>
+            </div>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            className="px-3 py-1.5"
-          >
-            Next
-          </Button>
+
+          {/* Mobile Pagination */}
+          <div className="sm:hidden px-4 py-3 space-y-3">
+            <div className="text-xs text-muted-foreground text-center">
+              Page {table.getState().pagination.pageIndex + 1} of{" "}
+              {table.getPageCount()} ({table.getFilteredRowModel().rows.length}{" "}
+              total)
+            </div>
+
+            <div className="flex items-center justify-center space-x-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+                className="bg-secondary text-secondary-foreground border-border hover:bg-secondary/80 disabled:bg-muted disabled:text-muted-foreground px-3 py-2 text-xs"
+              >
+                Prev
+              </Button>
+              <div className="text-xs text-muted-foreground min-w-[60px] text-center">
+                {table.getState().pagination.pageIndex + 1} /{" "}
+                {table.getPageCount()}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+                className="bg-primary text-primary-foreground border-border hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground px-3 py-2 text-xs"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -1,5 +1,7 @@
 "use client";
+import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ArrowUpRight } from "lucide-react";
 
 export const driverColumns = [
   {
@@ -30,9 +32,18 @@ export const driverColumns = [
   {
     accessorKey: "full_name",
     header: () => <span>Name</span>,
-    cell: ({ row }) => (
-      <span className="truncate">{row.original.full_name}</span>
-    ),
+    cell: ({ row }) => {
+      const { id, full_name } = row.original;
+      return (
+        <Link
+          href={`/school_admin/drivers/${id}/edit`}
+          className="truncate text-primary font-medium flex items-center gap-1 hover:underline hover:text-primary/80 transition-colors"
+        >
+          {full_name}
+          <ArrowUpRight className="w-4 h-4" />
+        </Link>
+      );
+    },
     size: 160,
   },
   {

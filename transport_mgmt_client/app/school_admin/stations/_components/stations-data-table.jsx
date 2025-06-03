@@ -18,9 +18,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import SearchInput from "../../_components/search-filter";
 
 import { motion } from "framer-motion";
+import SearchInput from "../../_components/search-filter";
 
 export function StationsDataTable({ columns, data }) {
   const [columnFilters, setColumnFilters] = useState([]);
@@ -28,13 +28,11 @@ export function StationsDataTable({ columns, data }) {
   const table = useReactTable({
     data,
     columns,
-    getPaginationRowModel: getPaginationRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    state: {
-      columnFilters,
-    },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    state: { columnFilters },
   });
 
   const visibleRows = table.getRowModel().rows;
@@ -49,119 +47,153 @@ export function StationsDataTable({ columns, data }) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 space-y-4">
-      <div className="flex items-center justify-between py-4 gap-4 flex-wrap">
-        <SearchInput
-          column={table.getColumn("name")}
-          placeholder="Search by name..."
-        />
-      </div>
-      <div className="overflow-x-auto hidden sm:block">
-        <Table className="w-full table-auto text-xs md:text-sm border-separate border-spacing-y-[4px]">
-          <TableHeader>
-            <TableRow>
-              {table.getHeaderGroups()[0].headers.map((header) => (
-                <TableHead
-                  key={header.id}
-                  className="py-1 px-2 md:py-2 md:px-4"
+    <div className="bg-background min-h-screen">
+      <div className="max-w-7xl mx-auto">
+        {/* Search Section */}
+        <div className="flex items-center justify-between py-4 gap-4 flex-wrap">
+          <SearchInput
+            column={table.getColumn("name")}
+            placeholder="Search stations..."
+          />
+        </div>
+
+        {/* Table Container */}
+        <div className="bg-card rounded-lg border border-border shadow-lg overflow-hidden">
+          <Table className="bg-card">
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow
+                  key={headerGroup.id}
+                  className="border-b border-border bg-muted/50 hover:bg-muted/70 transition-colors"
                 >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {visibleRows.length > 0 ? (
-              visibleRows.map((row, index) => (
-                <motion.tr
-                  key={row.id}
-                  className="hover:bg-muted/50"
-                  initial="hidden"
-                  animate="visible"
-                  custom={index}
-                  variants={rowAnimation}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className="py-2 px-2 md:py-4 md:px-4"
+                  {headerGroup.headers.map((header) => (
+                    <TableHead
+                      key={header.id}
+                      className="text-foreground font-semibold py-4 px-6 text-left"
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
                   ))}
-                </motion.tr>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center py-4 px-2 md:py-6 md:px-4"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* Card View - Visible on small screens only */}
-      <div className="flex flex-col gap-4 sm:hidden">
-        {visibleRows.length > 0 ? (
-          visibleRows.map((row, index) => (
-            <motion.div
-              key={row.id}
-              initial="hidden"
-              animate="visible"
-              custom={index}
-              variants={rowAnimation}
-              className="border rounded-lg p-4 shadow-sm bg-white space-y-2"
-            >
-              {row.getVisibleCells().map((cell) => (
-                <div key={cell.id} className="text-sm">
-                  <span className="font-semibold">
-                    {flexRender(
-                      cell.column.columnDef.header,
-                      cell.getContext()
-                    )}
-                    :{" "}
-                  </span>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </div>
+                </TableRow>
               ))}
-            </motion.div>
-          ))
-        ) : (
-          <div className="text-center text-sm py-8">No results.</div>
-        )}
-      </div>
+            </TableHeader>
+            <TableBody>
+              {visibleRows.length > 0 ? (
+                visibleRows.map((row, index) => (
+                  <motion.tr
+                    key={row.id}
+                    custom={index}
+                    initial="hidden"
+                    animate="visible"
+                    variants={rowAnimation}
+                    className="border-b border-border hover:bg-accent/10 transition-colors group"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        className="py-4 px-6 text-card-foreground group-hover:text-foreground transition-colors"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </motion.tr>
+                ))
+              ) : (
+                <TableRow className="border-b border-border">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center text-muted-foreground py-8"
+                  >
+                    No stations found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
 
-      {/* Pagination Buttons */}
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+        {/* Pagination */}
+        <div className="mt-6 bg-card rounded-lg border border-border shadow-sm">
+          {/* Desktop Pagination */}
+          <div className="hidden sm:flex items-center justify-between px-6 py-4">
+            <div className="text-sm text-muted-foreground">
+              Showing{" "}
+              {table.getState().pagination.pageIndex *
+                table.getState().pagination.pageSize +
+                1}{" "}
+              to{" "}
+              {Math.min(
+                (table.getState().pagination.pageIndex + 1) *
+                  table.getState().pagination.pageSize,
+                table.getFilteredRowModel().rows.length
+              )}{" "}
+              of {table.getFilteredRowModel().rows.length} results
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+                className="bg-secondary text-secondary-foreground border-border hover:bg-secondary/80 disabled:bg-muted disabled:text-muted-foreground"
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+                className="bg-primary text-primary-foreground border-border hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+
+          {/* Mobile Pagination */}
+          <div className="sm:hidden px-4 py-3 space-y-3">
+            <div className="text-xs text-muted-foreground text-center">
+              Page {table.getState().pagination.pageIndex + 1} of{" "}
+              {table.getPageCount()} ({table.getFilteredRowModel().rows.length}{" "}
+              total)
+            </div>
+
+            <div className="flex items-center justify-center space-x-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+                className="bg-secondary text-secondary-foreground border-border hover:bg-secondary/80 disabled:bg-muted disabled:text-muted-foreground px-3 py-2 text-xs"
+              >
+                Prev
+              </Button>
+              <div className="text-xs text-muted-foreground min-w-[60px] text-center">
+                {table.getState().pagination.pageIndex + 1} /{" "}
+                {table.getPageCount()}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+                className="bg-primary text-primary-foreground border-border hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground px-3 py-2 text-xs"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

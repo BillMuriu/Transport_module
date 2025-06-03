@@ -49,22 +49,22 @@ export function RoutesDataTable({ columns, data }) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 space-y-4">
-      <div className="flex items-center justify-between py-4 gap-4 flex-wrap">
+    <div className="max-w-6xl mx-auto space-y-3">
+      <div className="flex items-center justify-between py-3 gap-4 flex-wrap">
         <SearchInput
           column={table.getColumn("name")}
           placeholder="Search by name..."
         />
       </div>
 
-      <div className="overflow-x-auto rounded-md shadow-sm border border-gray-200 bg-white">
-        <Table className="w-full table-auto text-sm">
-          <TableHeader className="bg-gray-50">
+      <div className="overflow-x-auto rounded-lg border border-border bg-card shadow-sm">
+        <Table className="w-full text-sm">
+          <TableHeader className="bg-muted/40">
             <TableRow>
               {table.getHeaderGroups()[0].headers.map((header) => (
                 <TableHead
                   key={header.id}
-                  className="py-3 px-4 whitespace-nowrap text-gray-600 font-semibold"
+                  className="py-3 px-4 whitespace-nowrap text-muted-foreground font-medium"
                 >
                   {header.isPlaceholder
                     ? null
@@ -81,7 +81,7 @@ export function RoutesDataTable({ columns, data }) {
               visibleRows.map((row, index) => (
                 <motion.tr
                   key={row.id}
-                  className="bg-white border-b border-gray-100 hover:bg-muted/50"
+                  className="bg-background border-b hover:bg-muted/50"
                   initial="hidden"
                   animate="visible"
                   custom={index}
@@ -111,7 +111,7 @@ export function RoutesDataTable({ columns, data }) {
         </Table>
       </div>
 
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="flex items-center justify-end space-x-2 py-3">
         <Button
           variant="outline"
           size="sm"

@@ -1,5 +1,7 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
 export const columns = [
   {
@@ -31,8 +33,16 @@ export const columns = [
     id: "name",
     header: () => <span>Name</span>,
     cell: ({ row }) => {
-      const { first_name, last_name } = row.original;
-      return <span className="truncate">{`${first_name} ${last_name}`}</span>;
+      const { id, first_name, last_name } = row.original;
+      return (
+        <Link
+          href={`/school_admin/students/${id}/edit`}
+          className="truncate text-primary font-medium flex items-center gap-1 hover:underline hover:text-primary/80 transition-colors"
+        >
+          {`${first_name} ${last_name}`}
+          <ArrowUpRight className="w-4 h-4" />
+        </Link>
+      );
     },
     filterFn: (row, _columnId, filterValue) => {
       const fullName =

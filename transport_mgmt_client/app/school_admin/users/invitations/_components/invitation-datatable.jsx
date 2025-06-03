@@ -18,23 +18,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import SearchInput from "../../_components/search-filter";
 
 import { motion } from "framer-motion";
+import SearchInput from "@/app/school_admin/_components/search-filter";
 
-export function DriversDataTable({ columns, data }) {
+export function InvitationLinksTable({ columns, data }) {
   const [columnFilters, setColumnFilters] = useState([]);
 
   const table = useReactTable({
     data,
     columns,
-    getPaginationRowModel: getPaginationRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    state: {
-      columnFilters,
-    },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    state: { columnFilters },
   });
 
   const visibleRows = table.getRowModel().rows;
@@ -52,12 +50,12 @@ export function DriversDataTable({ columns, data }) {
     <div className="bg-background min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Search Section */}
-        <div className="flex items-center justify-between py-4 gap-4 flex-wrap">
+        {/* <div className="flex items-center justify-between py-4 gap-4 flex-wrap">
           <SearchInput
-            column={table.getColumn("full_name")}
-            placeholder="Search by name..."
+            column={table.getColumn("invite_link")}
+            placeholder="Search invitation links..."
           />
-        </div>
+        </div> */}
 
         {/* Table Container */}
         <div className="bg-card rounded-lg border border-border shadow-lg overflow-hidden">
@@ -114,7 +112,7 @@ export function DriversDataTable({ columns, data }) {
                     colSpan={columns.length}
                     className="h-24 text-center text-muted-foreground py-8"
                   >
-                    No results found.
+                    No invitation links found.
                   </TableCell>
                 </TableRow>
               )}
@@ -124,7 +122,6 @@ export function DriversDataTable({ columns, data }) {
 
         {/* Pagination */}
         <div className="mt-6 bg-card rounded-lg border border-border shadow-sm">
-          {/* Desktop Pagination */}
           <div className="hidden sm:flex items-center justify-between px-6 py-4">
             <div className="text-sm text-muted-foreground">
               Showing{" "}
@@ -162,11 +159,10 @@ export function DriversDataTable({ columns, data }) {
             </div>
           </div>
 
-          {/* Mobile Pagination */}
           <div className="sm:hidden px-4 py-3 space-y-3">
             <div className="text-xs text-muted-foreground text-center">
               Page {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount()}({table.getFilteredRowModel().rows.length}{" "}
+              {table.getPageCount()} ({table.getFilteredRowModel().rows.length}{" "}
               total)
             </div>
 
