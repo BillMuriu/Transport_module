@@ -4,8 +4,8 @@ Host: localhost:8000
 Content-Type: application/json
 
 {
-  "email": "test@example.com",
-  "username": "test-account",
+  "email": "test@exarmple.com",
+  "username": "test-accountsd",
   "password": "test-account1234",
   "phone_number": "+1234567890",
   "user_type": "TRIP_TEACHER",
@@ -60,7 +60,7 @@ Host: localhost:8000
 Content-Type: application/json
 
 {
-  "user_type": "TRIP_TEACHER",
+  "user_type": "SCHOOL_ADMIN",
   "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad"
 }
 
@@ -71,10 +71,10 @@ Host: localhost:8000
 Content-Type: application/json
 
 {
-  "token": "a132b63a-15d7-40a9-b07d-3d0a38e5a209",
-  "email": "newuserr@example.com",
-  "username": "Invited_user",
+  "token": "51211979-eeee-4f90-b71f-b25924168bcf",
+  "email": "kasipul@gmail.com",
+  "username": "sapuru",
   "password": "securePassword",
-  "phone_number": "09123456789"
+  "phone_number": "09123256789"
 }
 

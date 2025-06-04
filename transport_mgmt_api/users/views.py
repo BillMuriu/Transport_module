@@ -94,6 +94,16 @@ class AcceptInvitationView(APIView):
         except Invitation.DoesNotExist:
             return Response({"detail": "Invalid or expired invitation"}, status=400)
 
+        # Print data for debugging
+        print({
+            "email": email,
+            "username": username,
+            "password": "[HIDDEN]",
+            "phone_number": phone_number,
+            "user_type": invitation.user_type,
+            "school_id": str(invitation.school.id) if invitation.school else None
+        })
+
         user = User.objects.create_user(
             email=email,
             username=username,

@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from .models import User, Invitation
 from schools.serializers import SchoolSerializer
+from schools.models import School
 from django.conf import settings
 
 class UserSerializer(serializers.ModelSerializer):
@@ -26,13 +27,23 @@ class UserSerializer(serializers.ModelSerializer):
 class InvitationSerializer(serializers.ModelSerializer):
     invite_link = serializers.SerializerMethodField()
     school_name = serializers.CharField(source='school.name', read_only=True)
+    school_id = serializers.UUIDField(source='school.id', read_only=True)
+
+    # Add this to allow setting the school via its UUID
+    school = serializers.PrimaryKeyRelatedField(
+        queryset=School.objects.all(),
+        write_only=True,
+        required=True
+    )
 
     class Meta:
         model = Invitation
         fields = [
             'token',
             'user_type',
-            'school_name',
+            'school',        # for writing
+            'school_name',   # for display
+            'school_id',     # for display
             'invited_by',
             'created_at',
             'is_used',
