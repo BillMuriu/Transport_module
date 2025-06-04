@@ -55,6 +55,8 @@ export default function AddStationForm() {
   const router = useRouter();
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [coordsEnabled, setCoordsEnabled] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
+  const [locationSuccess, setLocationSuccess] = useState(null);
   const school = useSchoolStore((s) => s.school);
 
   const form = useForm({
@@ -95,11 +97,12 @@ export default function AddStationForm() {
 
   function handleGetCurrentCoordinates() {
     if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported by your browser.");
+      setLocationSuccess(false);
       return;
     }
 
-    toast.message("Getting current location...");
+    setIsLocating(true);
+    setLocationSuccess(null); // reset state
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -107,10 +110,12 @@ export default function AddStationForm() {
         form.setValue("latitude", latitude);
         form.setValue("longitude", longitude);
         setCoordsEnabled(true);
-        toast.success("Coordinates added.");
+        setLocationSuccess(true);
+        setIsLocating(false);
       },
       () => {
-        toast.error("Failed to get location.");
+        setLocationSuccess(false);
+        setIsLocating(false);
       }
     );
   }
@@ -147,7 +152,7 @@ export default function AddStationForm() {
                   onValueChange={field.onChange}
                   disabled={!school?.routes || school.routes.length === 0}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full border border-input bg-background rounded-md px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring">
                     <SelectValue placeholder="Select a route" />
                   </SelectTrigger>
                   <SelectContent>
@@ -167,12 +172,48 @@ export default function AddStationForm() {
         <Button
           type="button"
           variant="secondary"
-          className="w-full flex bg-muted items-center justify-center gap-2"
+          className="w-full flex items-center justify-between gap-2 bg-muted"
           onClick={handleGetCurrentCoordinates}
         >
-          <LocateIcon className="w-4 h-4" />
-          Get Current Coordinates
+          <div className="flex items-center gap-2">
+            <LocateIcon className="w-4 h-4" />
+            Get Current Coordinates
+          </div>
+
+          {isLocating ? (
+            <svg
+              className="w-4 h-4 animate-spin text-muted-foreground"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8z"
+              ></path>
+            </svg>
+          ) : locationSuccess === true ? (
+            <span className="text-green-600 text-lg">✅</span>
+          ) : locationSuccess === false ? (
+            <span className="text-red-600 text-lg">❌</span>
+          ) : null}
         </Button>
+
+        {locationSuccess === false && (
+          <p className="text-sm text-destructive mt-1">
+            Unable to fetch location. Please allow location access in your
+            browser settings.
+          </p>
+        )}
 
         <FormField
           control={form.control}
