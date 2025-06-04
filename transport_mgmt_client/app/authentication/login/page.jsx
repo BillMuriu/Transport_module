@@ -17,7 +17,9 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useLogin } from "./queries/mutations";
 import { useFetchUserDetails } from "./queries/queries";
+import { useGetSchool } from "@/app/school_admin/school-info/services/queries";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useSchoolStore } from "@/stores/useSchoolStore";
 import { useRouter } from "next/navigation";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -29,9 +31,10 @@ const formSchema = z.object({
 
 export default function Login() {
   const [userId, setUserId] = useState(null);
-  const [openBackdrop, setOpenBackdrop] = useState(false); // Track backdrop state
   const { setTokens, setUser } = useAuthStore();
+  const { setSchool } = useSchoolStore();
   const router = useRouter();
+  const [openBackdrop, setOpenBackdrop] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -39,18 +42,21 @@ export default function Login() {
 
   const { mutateAsync: login, isLoading } = useLogin();
 
-  const {
-    data: userDetails,
-    isLoading: isFetchingUser,
-    error: userError,
-  } = useFetchUserDetails(userId);
+  const { data: userDetails, isLoading: isFetchingUser } =
+    useFetchUserDetails(userId);
+
+  // ✅ Adjusted this line to access school.id
+  const { data: schoolData, isLoading: isFetchingSchool } = useGetSchool(
+    userDetails?.school?.id,
+    {
+      enabled: !!userDetails?.school?.id,
+    }
+  );
 
   async function onSubmit(values) {
-    setOpenBackdrop(true); // Show the backdrop when login starts
+    setOpenBackdrop(true);
     try {
-      console.log("Form submitted with values:", values);
-
-      const loginData = await login(values); // returns { access, refresh, userId }
+      const loginData = await login(values);
       const userId = loginData.userId;
 
       if (userId) {
@@ -58,8 +64,7 @@ export default function Login() {
           access: loginData.access,
           refresh: loginData.refresh,
         });
-
-        toast.success(`Login successful! User ID: ${userId}`);
+        toast.success(`Login successful!`);
         setUserId(userId);
       } else {
         toast.error("Failed to retrieve User ID.");
@@ -68,18 +73,23 @@ export default function Login() {
       console.error("Form submission error", error);
       toast.error("Failed to login. Please try again.");
     } finally {
-      setOpenBackdrop(false); // Hide the backdrop once the login attempt is complete
+      setOpenBackdrop(false);
     }
   }
 
   useEffect(() => {
     if (userDetails) {
       setUser(userDetails);
-      console.log(userDetails);
-      toast.success(`Welcome, ${userDetails.username}`);
-      router.push("/trip_teacher"); // Redirect to dashboard after login success
     }
-  }, [userDetails, router]);
+  }, [userDetails]);
+
+  useEffect(() => {
+    if (schoolData) {
+      setSchool(schoolData);
+      toast.success(`Welcome, ${userDetails?.username}`);
+      router.push("/trip_teacher");
+    }
+  }, [schoolData]);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-muted px-4">

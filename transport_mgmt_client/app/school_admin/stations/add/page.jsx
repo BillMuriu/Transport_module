@@ -16,10 +16,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useCreateStation } from "../services/mutations";
+import { LocateIcon } from "lucide-react";
+import { useSchoolStore } from "@/stores/useSchoolStore";
 
 const stationSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -44,15 +53,15 @@ const stationSchema = z.object({
 export default function AddStationForm() {
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
-  const schoolId = user?.school?.id;
-
   const [openBackdrop, setOpenBackdrop] = useState(false);
+  const [coordsEnabled, setCoordsEnabled] = useState(false);
+  const school = useSchoolStore((s) => s.school);
 
   const form = useForm({
     resolver: zodResolver(stationSchema),
     defaultValues: {
       name: "",
-      route_id: "", // expects a UUID string
+      route_id: "",
       latitude: 0,
       longitude: 0,
       order: 1,
@@ -67,7 +76,6 @@ export default function AddStationForm() {
       return;
     }
 
-    // No need to manually convert latitude/longitude/order here anymore
     const payload = { ...values };
 
     setOpenBackdrop(true);
@@ -83,6 +91,28 @@ export default function AddStationForm() {
         setOpenBackdrop(false);
       },
     });
+  }
+
+  function handleGetCurrentCoordinates() {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    toast.message("Getting current location...");
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        form.setValue("latitude", latitude);
+        form.setValue("longitude", longitude);
+        setCoordsEnabled(true);
+        toast.success("Coordinates added.");
+      },
+      () => {
+        toast.error("Failed to get location.");
+      }
+    );
   }
 
   return (
@@ -110,17 +140,39 @@ export default function AddStationForm() {
           name="route_id"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Route UUID</FormLabel>
+              <FormLabel>Select Route</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="e.g. 3d2da454-05bb-42bb-b96f-5c3e4d2b1cd8"
-                  {...field}
-                />
+                <Select
+                  value={field.value || ""}
+                  onValueChange={field.onChange}
+                  disabled={!school?.routes || school.routes.length === 0}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a route" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {school?.routes?.map((route) => (
+                      <SelectItem key={route.id} value={route.id}>
+                        {route.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        <Button
+          type="button"
+          variant="secondary"
+          className="w-full flex bg-muted items-center justify-center gap-2"
+          onClick={handleGetCurrentCoordinates}
+        >
+          <LocateIcon className="w-4 h-4" />
+          Get Current Coordinates
+        </Button>
 
         <FormField
           control={form.control}
@@ -134,6 +186,7 @@ export default function AddStationForm() {
                   step="any"
                   placeholder="34.052235"
                   {...field}
+                  disabled={!coordsEnabled}
                 />
               </FormControl>
               <FormMessage />
@@ -153,6 +206,7 @@ export default function AddStationForm() {
                   step="any"
                   placeholder="-118.243683"
                   {...field}
+                  disabled={!coordsEnabled}
                 />
               </FormControl>
               <FormMessage />
@@ -175,13 +229,16 @@ export default function AddStationForm() {
         />
 
         <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? "Submitting..." : "Add Station"}
+          {isPending ? "Saving..." : "Add Station"}
         </Button>
-      </form>
 
-      <Backdrop open={openBackdrop} sx={{ color: "#fff", zIndex: 1300 }}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={openBackdrop}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </form>
     </Form>
   );
 }
