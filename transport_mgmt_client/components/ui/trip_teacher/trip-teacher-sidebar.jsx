@@ -1,6 +1,13 @@
 "use client";
 
-import { Bus, LayoutDashboard, LogOut, Users, Command } from "lucide-react";
+import {
+  Bus,
+  LayoutDashboard,
+  LogOut,
+  Users,
+  Command,
+  FileText,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -46,6 +53,11 @@ const items = [
     title: "Students",
     url: "/trip_teacher/students",
     icon: Users,
+  },
+  {
+    title: "Stations",
+    url: "/trip_teacher/stations",
+    icon: FileText,
   },
 ];
 

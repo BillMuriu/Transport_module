@@ -2,25 +2,25 @@
 
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Loader2 } from "lucide-react";
-import { useStudents } from "@/app/school_admin/students/services/queries";
-import { columns } from "@/app/school_admin/students/_components/students-columns";
-import { StudentsDataTable } from "@/app/school_admin/students/_components/students-data-table";
+import { useStations } from "@/app/school_admin/stations/services/queries";
+import { columns } from "@/app/school_admin/stations/_components/stations-columns";
+import { StationsDataTable } from "@/app/school_admin/stations/_components/stations-data-table";
 
-const Students = () => {
-  const { data, isLoading, isError } = useStudents();
+const Stations = () => {
+  const { data, isLoading, isError } = useStations();
 
   return (
     <div className="bg-background min-h-screen">
       <div className="w-full max-w-6xl mx-auto mt-4 flex flex-col px-4">
         {/* Header Section */}
-        <div className="bg-card rounded-lg border border-border shadow-sm p-6 mb-4">
+        <div className="bg-card rounded-lg border border-border shadow-sm p-6 mb-3">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-2xl font-semibold text-foreground">
-                Students
+                Stations
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
-                Manage students with actions e.g. Edit, archive, or delete
+                Manage and view all registered stations
               </p>
             </div>
 
@@ -29,11 +29,11 @@ const Students = () => {
               className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm w-fit"
             >
               <a
-                href="/trip_teacher/students/add"
+                href="/school_admin/stations/add"
                 className="flex gap-2 items-center px-4 py-2"
               >
                 <PlusCircle className="w-4 h-4" />
-                <span>Add New Student</span>
+                <span>Add New Station</span>
               </a>
             </Button>
           </div>
@@ -45,7 +45,7 @@ const Students = () => {
             <div className="flex justify-center items-center">
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
               <span className="ml-3 text-muted-foreground">
-                Loading students...
+                Loading stations...
               </span>
             </div>
           </div>
@@ -53,7 +53,7 @@ const Students = () => {
           <div className="bg-card rounded-lg border border-border shadow-sm p-12">
             <div className="text-center">
               <div className="text-destructive text-lg font-medium mb-2">
-                Failed to load students
+                Failed to load stations
               </div>
               <p className="text-muted-foreground">
                 Please try refreshing the page or contact support if the problem
@@ -63,7 +63,7 @@ const Students = () => {
           </div>
         ) : (
           <div className="mt-3">
-            <StudentsDataTable columns={columns} data={data} />
+            <StationsDataTable columns={columns} data={data?.results || []} />
           </div>
         )}
       </div>
@@ -71,4 +71,4 @@ const Students = () => {
   );
 };
 
-export default Students;
+export default Stations;
