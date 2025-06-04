@@ -5,7 +5,13 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class TripSerializer(serializers.ModelSerializer):
+    # Accept trip_teacher UUID as input
     trip_teacher = serializers.UUIDField(write_only=True, required=True)
+    
+    # Show trip_teacher ID in the output
+    trip_teacher_id = serializers.SerializerMethodField()
+    
+    # Display names
     trip_teacher_name = serializers.SerializerMethodField()
     driver_name = serializers.SerializerMethodField()
     vehicle_name = serializers.SerializerMethodField()
@@ -19,7 +25,8 @@ class TripSerializer(serializers.ModelSerializer):
             'school',
             'vehicle',
             'driver',
-            'trip_teacher',  # write-only field
+            'trip_teacher',        # write-only input
+            'trip_teacher_id',     # read-only output
             'route',
             'start_location',
             'end_location',
@@ -37,7 +44,6 @@ class TripSerializer(serializers.ModelSerializer):
         ]
 
     def _resolve_related_fields(self, validated_data):
-        """Helper to convert UUIDs to related model instances."""
         if 'trip_teacher' in validated_data:
             try:
                 validated_data['trip_teacher'] = User.objects.get(id=validated_data['trip_teacher'])
@@ -53,17 +59,16 @@ class TripSerializer(serializers.ModelSerializer):
         validated_data = self._resolve_related_fields(validated_data)
         return super().update(instance, validated_data)
 
+    def get_trip_teacher_id(self, obj):
+        return str(obj.trip_teacher.id) if obj.trip_teacher else None
+
     def get_trip_teacher_name(self, obj):
         if obj.trip_teacher:
             return obj.trip_teacher.get_full_name() or str(obj.trip_teacher)
         return None
 
     def get_driver_name(self, obj):
-        if obj.driver:
-            return getattr(obj.driver, 'full_name', str(obj.driver))
-        return None
+        return getattr(obj.driver, 'full_name', str(obj.driver)) if obj.driver else None
 
     def get_vehicle_name(self, obj):
-        if obj.vehicle:
-            return getattr(obj.vehicle, 'registration_number', str(obj.vehicle))
-        return None
+        return getattr(obj.vehicle, 'registration_number', str(obj.vehicle)) if obj.vehicle else None

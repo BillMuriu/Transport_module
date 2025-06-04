@@ -68,7 +68,7 @@ class CreateInvitationView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         invitation = serializer.save()
 
-        invite_link = f"{settings.FRONTEND_URL}/accept-invite/{invitation.token}/"
+        invite_link = f"{settings.FRONTEND_URL}/authentication/accept-invite/{invitation.token}/"
         return Response({
             "invite_link": invite_link,
             "token": str(invitation.token),
