@@ -1,16 +1,71 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Menu } from "lucide-react";
+import { PanelLeftIcon } from "lucide-react";
+import { useSidebar } from "@/components/ui/sidebar";
+import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
+import { useStudentStore } from "@/stores/useStudentStore";
+import { useAuthStore } from "@/stores/useAuthStore";
+
+function CustomTrigger() {
+  const { toggleSidebar } = useSidebar();
+  const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
+  const user = useAuthStore((state) => state.user);
+
+  const showSignal =
+    ongoingTrip && user && ongoingTrip.trip_teacher_id === user.id;
+
+  return (
+    <button
+      onClick={toggleSidebar}
+      className="relative flex ml-4 items-center justify-center rounded-md p-2 bg-muted hover:bg-muted/50 transition-colors h-10 w-10"
+      aria-label="Toggle Sidebar"
+    >
+      <PanelLeftIcon className="w-8 h-8 text-muted-foreground" />
+      {showSignal && (
+        <span className="absolute -top-0.5 -right-0.5">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-600" />
+          </span>
+        </span>
+      )}
+    </button>
+  );
+}
 
 export function MainNav() {
   const pathname = usePathname();
+  const { students } = useStudentStore();
+  const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
+  const user = useAuthStore((state) => state.user);
+
+  const isTripStudentsPage = pathname.includes("trip-students");
+  const isTripTeacher =
+    ongoingTrip && user && ongoingTrip.trip_teacher === user.id;
+  const showProgress = isTripStudentsPage && isTripTeacher;
+
+  const sentCount = students.filter((s) => s.sent).length;
+  const totalCount = students.length;
+
   return (
-    <nav className="flex items-center space-x-4 lg:space-x-6 border-none">
-      <SidebarTrigger>
-        <Menu />
-      </SidebarTrigger>
+    <nav className="flex items-center justify-between w-full px-4 space-x-4 lg:space-x-6 border-none">
+      <div className="flex items-center space-x-4">
+        <CustomTrigger />
+
+        {showProgress && (
+          <div className="text-sm text-muted-foreground font-medium">
+            {sentCount}/{totalCount} sent
+          </div>
+        )}
+      </div>
+
+      {user && (
+        <div className="text-sm text-muted-foreground">
+          Logged in as{" "}
+          <span className="font-semibold text-black">{user.username}</span>
+        </div>
+      )}
     </nav>
   );
 }

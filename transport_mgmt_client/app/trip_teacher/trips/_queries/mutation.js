@@ -27,8 +27,6 @@ export const useCreateTrip = () => {
 };
 
 export const useUpdateTrip = () => {
-  const setOngoingTrip = useOngoingTripStore.getState().setOngoingTrip;
-
   return useMutation({
     mutationFn: async ({ tripId, updatedData }) => {
       const response = await axios.put(
@@ -44,7 +42,6 @@ export const useUpdateTrip = () => {
     },
     onSuccess: (data) => {
       console.log("Trip updated successfully:", data);
-      setOngoingTrip(data);
     },
     onError: (error) => {
       console.error("Trip update failed:", error);

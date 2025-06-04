@@ -7,7 +7,6 @@ import {
   FileText,
   LogOut,
   School,
-  ChevronDown,
   Command,
 } from "lucide-react";
 
@@ -27,14 +26,9 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const items = [
   {
@@ -49,6 +43,7 @@ const items = [
       {
         title: "View Trips",
         url: "/school_admin/trips",
+        ongoing: true,
       },
       {
         title: "Create Trip",
@@ -81,12 +76,6 @@ const items = [
     url: "/school_admin/stations",
     icon: FileText,
   },
-
-  {
-    title: "Messages",
-    url: "/school_admin/messages",
-    icon: FileText,
-  },
   {
     title: "Users",
     url: "/school_admin/users",
@@ -115,14 +104,11 @@ const items = [
 ];
 
 export function SchoolAdminSidebar() {
-  // Initialize all submenu items as open by default
-  const [openSubmenus, setOpenSubmenus] = useState(() => {
-    const initialState = {};
-    items.forEach((item) => {
-      if (item.submenu) initialState[item.title] = true;
-    });
-    return initialState;
-  });
+  const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
+  const user = useAuthStore((state) => state.user);
+
+  const isTripTeacher =
+    ongoingTrip && user && ongoingTrip.trip_teacher_id === user.id;
 
   return (
     <Sidebar variant="floating" collapsible="icon" className="w-52">
@@ -151,42 +137,34 @@ export function SchoolAdminSidebar() {
             <SidebarMenu>
               {items.map((item) =>
                 item.submenu ? (
-                  <Collapsible
+                  <SidebarMenuItem
                     key={item.title}
-                    defaultOpen={openSubmenus[item.title]}
-                    onOpenChange={(isOpen) =>
-                      setOpenSubmenus((prev) => ({
-                        ...prev,
-                        [item.title]: isOpen,
-                      }))
-                    }
-                    className="group/collapsible"
+                    className="flex flex-col gap-1"
                   >
-                    <SidebarMenuItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton>
-                          <item.icon />
-                          <span className="flex-1">{item.title}</span>
-                          <ChevronDown
-                            className={`size-4 transition-transform ${
-                              openSubmenus[item.title] ? "rotate-180" : ""
-                            }`}
-                          />
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <SidebarMenuSub>
-                          {item.submenu.map((subitem) => (
-                            <SidebarMenuSubItem key={subitem.title}>
-                              <SidebarMenuSubButton asChild>
-                                <a href={subitem.url}>{subitem.title}</a>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </SidebarMenuItem>
-                  </Collapsible>
+                    <SidebarMenuButton>
+                      <item.icon />
+                      <span className="flex-1">{item.title}</span>
+                    </SidebarMenuButton>
+                    <SidebarMenuSub>
+                      {item.submenu.map((subitem) => (
+                        <SidebarMenuSubItem key={subitem.title}>
+                          <SidebarMenuSubButton asChild>
+                            <a
+                              href={subitem.url}
+                              className="flex items-center gap-2"
+                            >
+                              <span>{subitem.title}</span>
+                              {subitem.ongoing && isTripTeacher && (
+                                <span className="ml-auto relative flex h-2 w-2 rounded-full bg-green-500 animate-ping">
+                                  <span className="absolute top-1/2 left-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-green-700" />
+                                </span>
+                              )}
+                            </a>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </SidebarMenuItem>
                 ) : (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>

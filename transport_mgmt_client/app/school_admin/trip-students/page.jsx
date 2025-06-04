@@ -18,16 +18,22 @@ const TripStudents = () => {
   const routeId = "3d2da454-05bb-42bb-b96f-5c3e4d2b1cd8";
   const { data, isLoading, isError } = useStudentsByRoute(routeId);
   const { students, setStudents, resetStudents } = useStudentStore();
+
   const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
+  const clearOngoingTrip = useOngoingTripStore(
+    (state) => state.clearOngoingTrip
+  );
+
   const updateTrip = useUpdateTrip();
   const createArrivedMessage = useCreateArrivedMessage();
   const router = useRouter();
   const [openBackdrop, setOpenBackdrop] = useState(false);
 
-  // Get user from auth store
+  // Get logged-in user info
   const user = useAuthStore((state) => state.user);
   const tripTeacherId = user?.id;
 
+  // Initialize students list from data fetched
   useEffect(() => {
     if (data && students.length === 0) {
       const transformed = data.map((student) => ({
@@ -42,6 +48,7 @@ const TripStudents = () => {
     }
   }, [data, students.length, setStudents]);
 
+  // Log ongoingTrip state whenever it changes
   useEffect(() => {
     if (ongoingTrip) {
       console.log("🧭 ongoingTrip structure:", ongoingTrip);
@@ -50,13 +57,17 @@ const TripStudents = () => {
     }
   }, [ongoingTrip]);
 
+  // Handle ending the trip
   const handleEndTrip = () => {
     if (!ongoingTrip) return;
 
-    setOpenBackdrop(true); // show loader
+    setOpenBackdrop(true); // Show loading spinner
 
     const expected_students = students.map((s) => s.id);
     const boarded_students = students.filter((s) => s.sent).map((s) => s.id);
+
+    // Store the trip ID before clearing the store
+    const tripId = ongoingTrip.id;
 
     const updatedData = {
       ...ongoingTrip,
@@ -85,7 +96,11 @@ const TripStudents = () => {
             },
             {
               onSuccess: () => {
-                router.push(`/school_admin/trips/summary/${ongoingTrip.id}`);
+                // Clear stores before navigation
+                clearOngoingTrip();
+                resetStudents();
+                // Use stored trip ID for navigation
+                router.push(`/school_admin/trips/summary/${tripId}`);
               },
               onError: () => {
                 setOpenBackdrop(false);
@@ -95,6 +110,41 @@ const TripStudents = () => {
         },
         onError: () => {
           setOpenBackdrop(false);
+        },
+      }
+    );
+  };
+
+  // Handle cancelling the trip
+  const handleCancelTrip = () => {
+    if (!ongoingTrip) return;
+
+    const expected_students = students.map((s) => s.id);
+    const boarded_students = students.filter((s) => s.sent).map((s) => s.id);
+
+    const updatedData = {
+      ...ongoingTrip,
+      expected_students,
+      boarded_students,
+      trip_teacher: tripTeacherId,
+      trip_status: "cancelled",
+    };
+
+    updateTrip.mutate(
+      {
+        tripId: ongoingTrip.id,
+        updatedData,
+      },
+      {
+        onSuccess: () => {
+          // Clear stores after successful cancellation
+          clearOngoingTrip();
+          resetStudents();
+          router.push(`/school_admin/trips/summary/${tripId}`);
+        },
+        onError: (error) => {
+          console.error("Failed to cancel trip:", error);
+          // Optionally add toast/error UI here
         },
       }
     );
@@ -110,26 +160,6 @@ const TripStudents = () => {
       </div>
     );
   }
-
-  const handleCancelTrip = () => {
-    if (!ongoingTrip) return;
-
-    const expected_students = students.map((s) => s.id);
-    const boarded_students = students.filter((s) => s.sent).map((s) => s.id);
-
-    const updatedData = {
-      ...ongoingTrip,
-      expected_students,
-      boarded_students,
-      trip_teacher: tripTeacherId, // Keep teacher id consistent here too
-      trip_status: "cancelled", // set cancelled status here
-    };
-
-    updateTrip.mutate({
-      tripId: ongoingTrip.id,
-      updatedData,
-    });
-  };
 
   if (isLoading) return <div>Loading students...</div>;
   if (isError) return <div>Failed to load students.</div>;

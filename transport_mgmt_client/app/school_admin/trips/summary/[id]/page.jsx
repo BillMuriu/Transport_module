@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { CalendarDays, MapPin, Users, Car, User, Clock } from "lucide-react";
+import { useOngoingTripStore } from "@/stores/useOngoingTripStore"; // import the store
 
 // Mock data for demonstration - replace with your actual query
 const mockTrip = {
@@ -42,6 +43,15 @@ export default function TripSummaryPage() {
   const isLoading = false;
   const isError = false;
   const isSuccess = true;
+
+  const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
+  const clearOngoingTrip = useOngoingTripStore(
+    (state) => state.clearOngoingTrip
+  );
+
+  useEffect(() => {
+    console.log("🚩 Current ongoingTrip from store:", ongoingTrip);
+  }, [ongoingTrip]);
 
   useEffect(() => {
     if (isSuccess && trip && !isDataProcessed) {
