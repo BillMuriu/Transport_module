@@ -56,6 +56,9 @@ class ExpiringUserInviteView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class InvitationListView(generics.ListAPIView):
+    queryset = Invitation.objects.all()
+    serializer_class = InvitationSerializer
 
 class CreateInvitationView(generics.CreateAPIView):
     serializer_class = InvitationSerializer
@@ -63,13 +66,12 @@ class CreateInvitationView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        invitation = serializer.save()  # no invited_by
+        invitation = serializer.save()
 
         invite_link = f"{settings.FRONTEND_URL}/accept-invite/{invitation.token}/"
         return Response({
             "invite_link": invite_link,
             "token": str(invitation.token),
-            "email": invitation.email
         })
 
 
@@ -79,10 +81,12 @@ class AcceptInvitationView(APIView):
 
     def post(self, request):
         token = request.data.get("token")
+        email = request.data.get("email")
         username = request.data.get("username")
         password = request.data.get("password")
+        phone_number = request.data.get("phone_number", "")
 
-        if not all([token, username, password]):
+        if not all([token, email, username, password]):
             return Response({"detail": "Missing fields"}, status=400)
 
         try:
@@ -91,14 +95,15 @@ class AcceptInvitationView(APIView):
             return Response({"detail": "Invalid or expired invitation"}, status=400)
 
         user = User.objects.create_user(
-            email="emailake@example.com",
+            email=email,
             username=username,
             password=password,
-            phone_number=request.data.get("phone_number", ""),
+            phone_number=phone_number,
             user_type=invitation.user_type,
             school=invitation.school,
         )
 
         invitation.is_used = True
         invitation.save()
+
         return Response({"detail": "User created successfully"}, status=status.HTTP_201_CREATED)

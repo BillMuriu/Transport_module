@@ -53,10 +53,10 @@ class User(AbstractUser):
 
 
 class Invitation(models.Model):
-    email = models.EmailField(unique=True)
     token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     invited_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='sent_invitations')
     user_type = models.CharField(max_length=20, choices=User.UserType.choices)
     school = models.ForeignKey('schools.School', on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_used = models.BooleanField(default=False)
+

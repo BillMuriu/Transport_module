@@ -1,7 +1,8 @@
 # users/serializers.py
 from rest_framework import serializers
 from .models import User, Invitation
-from schools.serializers import SchoolSerializer  # Import the SchoolSerializer
+from schools.serializers import SchoolSerializer
+from django.conf import settings
 
 class UserSerializer(serializers.ModelSerializer):
     school = SchoolSerializer(read_only=True)
@@ -23,6 +24,21 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class InvitationSerializer(serializers.ModelSerializer):
+    invite_link = serializers.SerializerMethodField()
+    school_name = serializers.CharField(source='school.name', read_only=True)
+
     class Meta:
         model = Invitation
-        fields = ['email', 'user_type', 'school']
+        fields = [
+            'token',
+            'user_type',
+            'school_name',
+            'invited_by',
+            'created_at',
+            'is_used',
+            'invite_link',
+        ]
+        read_only_fields = ['token', 'created_at', 'is_used']
+
+    def get_invite_link(self, obj):
+        return f"{settings.FRONTEND_URL}/accept-invite/{obj.token}/"

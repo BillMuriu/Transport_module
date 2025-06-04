@@ -6,7 +6,8 @@ from .views import (
     CreatePrivilegedUserView,
     ExpiringUserInviteView,
     CreateInvitationView,
-    AcceptInvitationView
+    AcceptInvitationView,
+    InvitationListView
 )
 
 urlpatterns = [
@@ -15,5 +16,6 @@ urlpatterns = [
     path('create-privileged/', CreatePrivilegedUserView.as_view(), name='create-privileged-user'),
     path('invite/', ExpiringUserInviteView.as_view(), name='user-invite'),
     path('invite-user/', CreateInvitationView.as_view(), name='create-invitation'),
+    path("invitations/", InvitationListView.as_view(), name="invitation-list"),
     path('accept-invite/', AcceptInvitationView.as_view(), name='accept-invitation'),
 ]

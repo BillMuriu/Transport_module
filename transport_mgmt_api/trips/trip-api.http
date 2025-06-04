@@ -8,7 +8,7 @@ Content-Type: application/json
     "trip_type": "morning_pickup",
     "vehicle": "65caab33-cbe9-4c9c-8883-7017566c87a1",
     "driver": "abcadba0-7af4-4d7f-a69e-3e3ac7ad0040",
-    "trip_teacher": "fa818362-d4c5-4d4b-b762-dd7fe5fa464a",
+    "trip_teacher": "164cf0ce-41c2-4eea-bb5b-207660ad611b",
     "route": "7ee67271-a068-4ba9-ac75-5a83e88b732c",
     "trip_action": "pickup",
     "trip_status": "ongoing",
@@ -29,32 +29,21 @@ PUT http://localhost:8000/trips/9e533fac-c724-456a-8736-4aa07cbd6e3f/
 Content-Type: application/json
 
 {
-  "name": "Morning Pick Up - Date...",
+  "name": "Morning Pic Up - Date...",
   "trip_type": "morning_pickup", 
   "trip_action": "pickup",
   "trip_status": "ongoing",
   "school": "da22b406-50f6-4e8d-afd7-ed52e5d0f6ad",
   "vehicle": "982dbb9b-005a-4dea-995d-91fc4e16f4d5",
   "driver": "abcadba0-7af4-4d7f-a69e-3e3ac7ad0040", 
-  "trip_teacher": "287a1457-8a4d-4817-86c2-22f12f2670e0",  
+  "trip_teacher": "164cf0ce-41c2-4eea-bb5b-207660ad611b",  
   "route": "7ee67271-a068-4ba9-ac75-5a83e88b732c",  
   "start_location": "School",  
   "end_location": "Schoo",  
   "departure_time": "2025-04-30T13:00:00Z",
   "arrival_time": null,
-  "expected_students": [
-    "0277624c-a067-49ec-9824-5a21d797ba0f",
-    "03a9e2e6-0df5-416f-81ba-75571c49c9d7",
-    "075e11fd-dc6c-465a-9b64-4085cb52b81f",
-    "084582b1-4bd4-48b3-863a-79a19c31cd62",
-    "0c723a02-3d2a-410f-a72c-b28cbf3c8207"
-  ],
-  "boarded_students": [
-    "03a9e2e6-0df5-416f-81ba-75571c49c9d7",
-    "075e11fd-dc6c-465a-9b64-4085cb52b81f",
-    "084582b1-4bd4-48b3-863a-79a19c31cd62",
-    "0c723a02-3d2a-410f-a72c-b28cbf3c8207"
-  ]
+  "expected_students": [],
+  "boarded_students": ["b4e3d16e-e910-4488-9192-806b57d9461b"]
 }
 
 
