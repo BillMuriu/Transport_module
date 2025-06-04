@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Bus,
-  ChevronDown,
-  Command,
-  LayoutDashboard,
-  LogOut,
-  MessageCircle,
-  Users,
-} from "lucide-react";
+import { Bus, LayoutDashboard, LogOut, Users, Command } from "lucide-react";
 
 import {
   Sidebar,
@@ -26,14 +18,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-
 import { Button } from "../button";
-import { useState } from "react";
 import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
 
 const items = [
@@ -57,11 +42,6 @@ const items = [
       },
     ],
   },
-  // {
-  //   title: "Trips Messages",
-  //   url: "/trip_teacher/trip-messages",
-  //   icon: MessageCircle,
-  // },
   {
     title: "Students",
     url: "/trip_teacher/students",
@@ -70,7 +50,6 @@ const items = [
 ];
 
 export function TripTeacherSidebar() {
-  const [isTripsOpen, setIsTripsOpen] = useState(true);
   const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
 
   return (
@@ -100,47 +79,34 @@ export function TripTeacherSidebar() {
             <SidebarMenu>
               {items.map((item) =>
                 item.submenu ? (
-                  <Collapsible
+                  <SidebarMenuItem
                     key={item.title}
-                    defaultOpen
-                    onOpenChange={setIsTripsOpen}
-                    className="group/collapsible"
+                    className="flex flex-col gap-1"
                   >
-                    <SidebarMenuItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton>
-                          <item.icon />
-                          <span className="flex-1">{item.title}</span>
-                          <ChevronDown
-                            className={`size-4 transition-transform ${
-                              isTripsOpen ? "rotate-180" : ""
-                            }`}
-                          />
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <SidebarMenuSub>
-                          {item.submenu.map((subitem) => (
-                            <SidebarMenuSubItem key={subitem.title}>
-                              <SidebarMenuSubButton asChild>
-                                <a
-                                  href={subitem.url}
-                                  className="flex items-center gap-2"
-                                >
-                                  <span>{subitem.title}</span>
-                                  {subitem.ongoing && ongoingTrip?.id && (
-                                    <span className="ml-auto relative flex h-2 w-2 rounded-full bg-green-500 animate-ping">
-                                      <span className="absolute top-1/2 left-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-green-700" />
-                                    </span>
-                                  )}
-                                </a>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </SidebarMenuItem>
-                  </Collapsible>
+                    <SidebarMenuButton>
+                      <item.icon />
+                      <span className="flex-1">{item.title}</span>
+                    </SidebarMenuButton>
+                    <SidebarMenuSub>
+                      {item.submenu.map((subitem) => (
+                        <SidebarMenuSubItem key={subitem.title}>
+                          <SidebarMenuSubButton asChild>
+                            <a
+                              href={subitem.url}
+                              className="flex items-center gap-2"
+                            >
+                              <span>{subitem.title}</span>
+                              {subitem.ongoing && ongoingTrip?.id && (
+                                <span className="ml-auto relative flex h-2 w-2 rounded-full bg-green-500 animate-ping">
+                                  <span className="absolute top-1/2 left-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-green-700" />
+                                </span>
+                              )}
+                            </a>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </SidebarMenuItem>
                 ) : (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>

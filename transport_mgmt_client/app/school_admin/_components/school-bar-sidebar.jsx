@@ -43,6 +43,20 @@ const items = [
     icon: LayoutDashboard,
   },
   {
+    title: "Trips",
+    icon: Bus,
+    submenu: [
+      {
+        title: "View Trips",
+        url: "/school_admin/trips",
+      },
+      {
+        title: "Create Trip",
+        url: "/school_admin/trips/create",
+      },
+    ],
+  },
+  {
     title: "Students",
     url: "/school_admin/students",
     icon: Users,
@@ -67,20 +81,7 @@ const items = [
     url: "/school_admin/stations",
     icon: FileText,
   },
-  {
-    title: "Trips",
-    icon: Bus,
-    submenu: [
-      {
-        title: "View Trips",
-        url: "/school_admin/trips",
-      },
-      {
-        title: "Create Trip",
-        url: "/school_admin/trips/create",
-      },
-    ],
-  },
+
   {
     title: "Messages",
     url: "/school_admin/messages",

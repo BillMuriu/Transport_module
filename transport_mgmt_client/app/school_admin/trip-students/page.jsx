@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useStudentsByRoute } from "./queries/queries";
+import { useStudentsByRoute } from "@/app/trip_teacher/trip-students/queries/queries";
 import { useStudentStore } from "@/stores/useStudentStore";
 import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { DataTable } from "./_components/data-table";
-import { columns } from "./_components/columns";
-import TripPopoverActions from "../students/_components/trip-popover";
-import { useUpdateTrip } from "../trips/_queries/mutation";
-import { useCreateArrivedMessage } from "../trip-messages/queries/mutation";
+import { DataTable } from "@/app/trip_teacher/trip-students/_components/data-table";
+import { columns } from "@/app/trip_teacher/trip-students/_components/columns";
+import TripPopoverActions from "@/app/trip_teacher/students/_components/trip-popover";
+import { useUpdateTrip } from "@/app/trip_teacher/trips/_queries/mutation";
+import { useCreateArrivedMessage } from "@/app/trip_teacher/trip-messages/queries/mutation";
 import { useRouter } from "next/navigation";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -85,7 +85,7 @@ const TripStudents = () => {
             },
             {
               onSuccess: () => {
-                router.push(`/trip_teacher/trips/summary/${ongoingTrip.id}`);
+                router.push(`/school_admin/trips/summary/${ongoingTrip.id}`);
               },
               onError: () => {
                 setOpenBackdrop(false);
