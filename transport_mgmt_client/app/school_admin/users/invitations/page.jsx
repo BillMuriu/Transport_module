@@ -30,7 +30,7 @@ const InvitationLinksPage = () => {
               className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm w-fit"
             >
               <a
-                href="/admin/invitations/create"
+                href="/school_admin/users/invitations/generate"
                 className="flex gap-2 items-center px-4 py-2"
               >
                 <PlusCircle className="w-4 h-4" />
