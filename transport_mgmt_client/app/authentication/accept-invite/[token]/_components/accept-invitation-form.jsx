@@ -85,7 +85,7 @@ export default function AcceptInviteForm({ token }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full max-w-xl mx-auto space-y-6 py-10 px-4"
+        className="w-full max-w-xl mx-auto space-y-6 py-10 px-4 sm:px-6 md:px-8"
       >
         {/* Email */}
         <FormField

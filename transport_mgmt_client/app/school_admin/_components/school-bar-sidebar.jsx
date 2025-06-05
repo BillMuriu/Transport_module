@@ -28,6 +28,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
+import { useSchoolStore } from "@/stores/useSchoolStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 
 const items = [
@@ -106,6 +107,7 @@ const items = [
 export function SchoolAdminSidebar() {
   const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
   const user = useAuthStore((state) => state.user);
+  const school = useSchoolStore((s) => s.school);
 
   const isTripTeacher =
     ongoingTrip && user && ongoingTrip.trip_teacher_id === user.id;
@@ -117,12 +119,19 @@ export function SchoolAdminSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Command className="size-4" />
+                <div className="flex aspect-square size-8 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground">
+                  <span className="text-sm font-bold text-center">
+                    {school?.name ? school.name.charAt(0).toUpperCase() : "S"}
+                  </span>
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">School Admin</span>
-                  <span className="truncate text-xs">Dashboard</span>
+                <div className="grid flex-1 text-left text-sm leading-tight min-w-0">
+                  <span
+                    className="truncate font-semibold"
+                    title={school?.name || "School Name"}
+                  >
+                    {school?.name || "School Name"}
+                  </span>
+                  <span className="truncate text-xs">Institution</span>
                 </div>
               </a>
             </SidebarMenuButton>

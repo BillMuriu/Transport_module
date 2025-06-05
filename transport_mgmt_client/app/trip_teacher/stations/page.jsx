@@ -29,7 +29,7 @@ const Stations = () => {
               className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm w-fit"
             >
               <a
-                href="/school_admin/stations/add"
+                href="/trip_teacher/stations/add"
                 className="flex gap-2 items-center px-4 py-2"
               >
                 <PlusCircle className="w-4 h-4" />

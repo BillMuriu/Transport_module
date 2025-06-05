@@ -30,7 +30,7 @@ const Trip = () => {
           className="w-full flex gap-2 justify-between"
         >
           <PlusCircle />
-          <span>Create New Trip</span>
+          <span>Start New Trip</span>
         </a>
       </Button>
 

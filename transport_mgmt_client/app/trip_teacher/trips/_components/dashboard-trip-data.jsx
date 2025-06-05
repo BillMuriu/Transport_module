@@ -6,6 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { useRouter } from "next/navigation";
 
 import {
   Table,
@@ -17,9 +18,11 @@ import {
 } from "@/components/ui/table";
 
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 
 export function DashboardTripsDataTable({ columns, data }) {
   const [showAll, setShowAll] = useState(false);
+  const router = useRouter();
 
   const table = useReactTable({
     data,
@@ -28,7 +31,7 @@ export function DashboardTripsDataTable({ columns, data }) {
   });
 
   const rows = table.getRowModel().rows;
-  const visibleRows = showAll ? rows : rows.slice(0, 4);
+  const visibleRows = showAll ? rows : rows.slice(0, 5);
 
   const rowAnimation = {
     hidden: { opacity: 0, y: 8 },
@@ -104,7 +107,7 @@ export function DashboardTripsDataTable({ columns, data }) {
       </div>
 
       {/* View More / View Less button */}
-      {rows.length > 6 && (
+      {/* {rows.length > 6 && (
         <div className="flex justify-center mt-2">
           <button
             // onClick={() => setShowAll(!showAll)}
@@ -113,6 +116,17 @@ export function DashboardTripsDataTable({ columns, data }) {
           >
             {showAll ? "View Less" : `View More (${rows.length - 6})`}
           </button>
+        </div>
+      )} */}
+      {rows.length > 6 && (
+        <div className="flex justify-center mt-2">
+          <Button
+            variant="secondary"
+            onClick={() => router.push("/trip_teacher/trips")} // Replace with your actual route
+            className="px-4 py-1 text-sm font-medium rounded-md text-primary-foreground hover:bg-primary/90 transition"
+          >
+            View More
+          </Button>
         </div>
       )}
     </div>

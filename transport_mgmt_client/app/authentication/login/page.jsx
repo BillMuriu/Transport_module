@@ -84,16 +84,22 @@ export default function Login() {
   }, [userDetails]);
 
   useEffect(() => {
-    if (schoolData) {
+    if (schoolData && userDetails?.user_type) {
       setSchool(schoolData);
-      toast.success(`Welcome, ${userDetails?.username}`);
-      router.push("/trip_teacher");
+      toast.success(`Welcome, ${userDetails.username}`);
+
+      if (userDetails.user_type === "TRIP_TEACHER") {
+        router.push("/trip_teacher");
+      } else if (userDetails.user_type === "SCHOOL_ADMIN") {
+        router.push("/school_admin");
+      }
     }
-  }, [schoolData]);
+  }, [schoolData, userDetails?.user_type]);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-muted px-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
+    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8">
+      <div className="w-full max-w-md p-4 border rounded">
+        <h1 className="text-xl font-bold mb-4">Login</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField

@@ -65,7 +65,7 @@ const TripTeacherDashboard = () => {
           <div className="flex justify-end pt-2">
             <Link href="/trip_teacher/trip-students">
               <Button size="sm" variant="outline">
-                Manage Trip
+                Manage Ongoing Trip
               </Button>
             </Link>
           </div>
@@ -82,7 +82,7 @@ const TripTeacherDashboard = () => {
           <Button asChild className="gap-2">
             <a href="/trip_teacher/trips/create">
               <PlusCircle className="h-4 w-4" />
-              Create New Trip
+              Start New Trip
             </a>
           </Button>
         </div>
