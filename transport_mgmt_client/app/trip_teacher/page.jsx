@@ -44,13 +44,12 @@ const TripTeacherDashboard = () => {
 
   return (
     <div className="mt-6 px-4 space-y-6 max-w-3xl mx-auto">
-      {/* Ongoing Trip */}
       {ongoingTrip ? (
-        <div className="p-4 border rounded-xl shadow-sm bg-white space-y-4">
+        <div className="p-4 border rounded-xl shadow-sm bg-background space-y-4">
           <div className="flex items-center justify-between">
             <Badge
               variant="outline"
-              className="capitalize text-xs px-3 py-1 rounded-md border-2 border-blue-500 text-blue-600 bg-blue-100 shadow-sm"
+              className="capitalize text-xs px-3 py-1 rounded-md border border-primary text-primary bg-primary/10 shadow-sm"
             >
               {ongoingTrip.trip_type.replace("_", " ")}
             </Badge>
@@ -72,7 +71,7 @@ const TripTeacherDashboard = () => {
           </div>
         </div>
       ) : (
-        <div className="p-6 flex flex-col items-center gap-4 text-center">
+        <div className="p-6 flex flex-col items-center gap-4 text-center bg-background border rounded-xl shadow-sm">
           <Badge
             variant="outline"
             className="text-sm px-4 py-1.5 rounded-lg border border-muted text-muted-foreground bg-muted/50 shadow"
@@ -88,7 +87,6 @@ const TripTeacherDashboard = () => {
           </Button>
         </div>
       )}
-
       {/* Active Students */}
       {isSummaryLoading ? (
         <p>Loading student data...</p>
@@ -105,7 +103,7 @@ const TripTeacherDashboard = () => {
 
       {/* Recent Trips (7 days) */}
       <div className="pt-4">
-        <h2 className="text-lg font-semibold mb-2">Recent Trips</h2>
+        <h2 className="text-lg font-semibold mb-2">My Recent Trips</h2>
         {isTripsLoading ? (
           <p>Loading recent trips...</p>
         ) : tripsError ? (

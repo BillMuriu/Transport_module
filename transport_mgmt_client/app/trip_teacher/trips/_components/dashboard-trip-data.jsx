@@ -107,7 +107,8 @@ export function DashboardTripsDataTable({ columns, data }) {
       {rows.length > 6 && (
         <div className="flex justify-center mt-2">
           <button
-            onClick={() => setShowAll(!showAll)}
+            // onClick={() => setShowAll(!showAll)}
+            onClick={() => {}}
             className="px-4 py-1 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition"
           >
             {showAll ? "View Less" : `View More (${rows.length - 6})`}

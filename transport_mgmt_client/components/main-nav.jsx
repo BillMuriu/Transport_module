@@ -44,8 +44,15 @@ export function MainNav() {
 
   const isTripStudentsPage = pathname.includes("trip-students");
 
+  // Get user initials
+  const getInitials = (name) => {
+    const parts = name.split(" ");
+    if (parts.length === 1) return parts[0][0]?.toUpperCase();
+    return (parts[0][0] + parts[1][0])?.toUpperCase();
+  };
+
   return (
-    <nav className="flex items-center justify-between w-full px-4 space-x-4 lg:space-x-6">
+    <nav className="flex items-center justify-between w-full pr-4 space-x-4 lg:space-x-6">
       <div className="flex items-center space-x-4">
         <CustomTrigger />
 
@@ -57,9 +64,8 @@ export function MainNav() {
       </div>
 
       {user && (
-        <div className="text-sm text-muted-foreground">
-          Logged in as{" "}
-          <span className="font-semibold text-black">{user.username}</span>
+        <div className="flex items-center justify-center h-9 w-9 rounded-full bg-muted text-primary font-bold text-sm uppercase">
+          {getInitials(user.username)}
         </div>
       )}
     </nav>

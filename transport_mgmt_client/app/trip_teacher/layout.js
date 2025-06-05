@@ -7,9 +7,10 @@ export default function TripTeacherLayout({ children }) {
     <SidebarProvider defaultOpen={true}>
       <div className="flex h-screen w-screen overflow-x-hidden bg-transparent">
         <TripTeacherSidebar />
-        <div className="flex-1 flex flex-col overflow-hidden bg-transparent">
+        <div className="relative w-full flex min-h-dvh flex-col bg-background">
           <SiteHeader />
-          <div className="flex-1 overflow-y-auto bg-background">{children}</div>
+          <main className="flex-1">{children}</main>
+          {/* <main className="flex-1 overflow-y-auto">{children}</main> */}
         </div>
       </div>
     </SidebarProvider>
