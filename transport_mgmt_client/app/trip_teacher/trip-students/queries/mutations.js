@@ -4,13 +4,13 @@ import { API_BASE_URL } from "@/config";
 
 export function useSendTripMessages() {
   return useMutation({
-    mutationFn: async ({ tripId, phoneNumbers }) => {
+    mutationFn: async ({ tripId, studentIds }) => {
       const payload = {
         trip_id: tripId,
-        phone_numbers: phoneNumbers,
+        student_ids: studentIds,
       };
 
-      const url = `${API_BASE_URL}/trip-messages/send-bulk/`;
+      const url = `${API_BASE_URL}/trip-messages/send-bulk-messages-mobilesasa/`;
       console.log("Sending POST to:", url);
       console.log("Payload:", payload);
 

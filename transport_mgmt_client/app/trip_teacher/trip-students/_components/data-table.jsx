@@ -53,14 +53,14 @@ export function DataTable({ columns, data, setStudents }) {
 
     const selectedRows = table.getSelectedRowModel().rows;
     const selectedStudents = selectedRows.map((row) => row.original);
-    const phoneNumbers = selectedStudents.map((s) => s.parent_phone);
+    const studentIds = selectedStudents.map((s) => s.id);
 
     const payload = {
       tripId: ongoingTrip.id,
-      phoneNumbers,
+      studentIds,
     };
 
-    console.log("Sending payload to backend:", payload); // ✅ Add this
+    console.log("Sending payload to backend:", payload);
 
     sendMessagesToParents(payload, {
       onSuccess: () => {
@@ -75,7 +75,7 @@ export function DataTable({ columns, data, setStudents }) {
         clearSelection();
       },
       onError: (error) => {
-        console.error("Error sending messages:", error); // Already present ✅
+        console.error("Error sending messages:", error);
       },
     });
   };
