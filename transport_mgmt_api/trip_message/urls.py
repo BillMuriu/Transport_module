@@ -4,7 +4,9 @@ from .views import (
     TripMessageRetrieveUpdateDestroyView,
     SendTripMessageView,
     SendBulkTripMessagesView,  # ✅ Import the new view
-    SendBulkTripStudentMessagesView
+    SendBulkTripStudentMessagesViewV2,
+    SendBulkTripStudentMessagesViewWithRateLimit,
+    SendBulkTripStudentArriveStartMessagesView
 )
 
 urlpatterns = [
@@ -12,5 +14,8 @@ urlpatterns = [
     path('<uuid:pk>/', TripMessageRetrieveUpdateDestroyView.as_view(), name='retrieve-update-destroy-trip-message'),
     path('send/', SendTripMessageView.as_view(), name='send-trip-message'),
     path('send-bulk/', SendBulkTripMessagesView.as_view(), name='send-bulk-trip-messages'),  # ✅ New URL
-    path('send-bulk-messages/', SendBulkTripStudentMessagesView.as_view(), name='send-bulk-trip-student-messages'),
+    path('send-bulk-messages/', SendBulkTripStudentMessagesViewV2.as_view(), name='send-bulk-trip-student-messages'),
+    path('send-bulk-messages-mobilesasa/', SendBulkTripStudentMessagesViewWithRateLimit.as_view(), name='send-bulk-trip-student-messages-mobilesasa'),
+    path('bulk-start-arrive-messages/', SendBulkTripStudentArriveStartMessagesView.as_view(), name='bulk-start-arrive-messages')
+
 ]

@@ -9,26 +9,6 @@ Content-Type: application/json
   "trip_id": "aeb5022a-fd73-4e77-b1fd-6763785fe9e6"
 }
 
-###
-POST /trip-messages/send-bulk-messages/ HTTP/1.1
-Host: localhost:8000
-Content-Type: application/json
-
-{
-  "trip_id": "aeb5022a-fd73-4e77-b1fd-6763785fe9e6",
-  "student_ids": [
-    "00b139f4-eecc-41cf-a9fc-34d68042556f",
-    "0277624c-a067-49ec-9824-5a21d797ba0f",
-    "03a9e2e6-0df5-416f-81ba-75571c49c9d7",
-    "075e11fd-dc6c-465a-9b64-4085cb52b81f",
-    "084582b1-4bd4-48b3-863a-79a19c31cd62",
-    "0c723a02-3d2a-410f-a72c-b28cbf3c8207",
-    "0cc5ff7e-c52b-4abc-9c33-38fb50e9a731",
-    "0ed3de4d-67e3-450f-8ac9-8ac46f0c90ba",
-    "0f503ac3-4231-4f30-833f-870b2e5b92dc"
-  ]
-}
-
 
 ###
 POST https://transport-module.onrender.com/trip-messages/send-bulk/ HTTP/1.1
@@ -39,5 +19,17 @@ Content-Type: application/json
   "trip_id": "aeb5022a-fd73-4e77-b1fd-6763785fe9e6",
   "phone_numbers": [
     "0742675176"
+  ]
+}
+###Send using mobile sasa api
+POST /trip-messages/bulk-start-arrive-messages/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "trip_id": "9e533fac-c724-456a-8736-4aa07cbd6e3f",
+  "student_ids": [
+    "61e75a3f-e815-4c2a-b7b7-a59628e30df3",
+    "3a07ec03-8d76-4abe-a64c-eac18002587c"
   ]
 }
