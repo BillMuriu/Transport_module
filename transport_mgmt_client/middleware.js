@@ -23,11 +23,11 @@ export function middleware(request) {
   }
 
   // Check user type access - Updated to use userType instead of role
-  if (isSchoolAdminRoute && userType !== "SCHOOL_ADMIN") {
-    return NextResponse.redirect(
-      new URL("/authentication/unauthorized/trip-coordinator", request.url)
-    );
-  }
+  // if (isSchoolAdminRoute && userType !== "SCHOOL_ADMIN") {
+  //   return NextResponse.redirect(
+  //     new URL("/authentication/unauthorized/trip-coordinator", request.url)
+  //   );
+  // }
 
   if (isTripTeacherRoute && userType !== "TRIP_TEACHER") {
     return NextResponse.redirect(

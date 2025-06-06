@@ -27,36 +27,30 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useCreateStation } from "@/app/school_admin/stations/services/mutations";
-import { LocateIcon } from "lucide-react";
+// import { LocateIcon } from "lucide-react"; // Location icon not needed anymore
 import { useSchoolStore } from "@/stores/useSchoolStore";
 
 const stationSchema = z.object({
   name: z.string().min(1, "Name is required"),
   route_id: z.string().uuid("Route must be a valid UUID"),
-  latitude: z.coerce
-    .number({
-      required_error: "Latitude is required",
-      invalid_type_error: "Latitude must be a number",
-    })
-    .min(-90, "Latitude must be >= -90")
-    .max(90, "Latitude must be <= 90"),
-  longitude: z.coerce
-    .number({
-      required_error: "Longitude is required",
-      invalid_type_error: "Longitude must be a number",
-    })
-    .min(-180, "Longitude must be >= -180")
-    .max(180, "Longitude must be <= 180"),
-  order: z.coerce.number().int().min(1, "Order must be at least 1"),
+  // latitude: z.coerce
+  //   .number({ required_error: "Latitude is required", invalid_type_error: "Latitude must be a number" })
+  //   .min(-90, "Latitude must be >= -90")
+  //   .max(90, "Latitude must be <= 90"),
+  // longitude: z.coerce
+  //   .number({ required_error: "Longitude is required", invalid_type_error: "Longitude must be a number" })
+  //   .min(-180, "Longitude must be >= -180")
+  //   .max(180, "Longitude must be <= 180"),
+  // order: z.coerce.number().int().min(1, "Order must be at least 1"),
 });
 
 export default function AddStationForm() {
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
   const [openBackdrop, setOpenBackdrop] = useState(false);
-  const [coordsEnabled, setCoordsEnabled] = useState(false);
-  const [isLocating, setIsLocating] = useState(false);
-  const [locationSuccess, setLocationSuccess] = useState(null);
+  // const [coordsEnabled, setCoordsEnabled] = useState(false);
+  // const [isLocating, setIsLocating] = useState(false);
+  // const [locationSuccess, setLocationSuccess] = useState(null);
   const school = useSchoolStore((s) => s.school);
 
   const form = useForm({
@@ -64,9 +58,9 @@ export default function AddStationForm() {
     defaultValues: {
       name: "",
       route_id: "",
-      latitude: 0,
-      longitude: 0,
-      order: 1,
+      // latitude: 0,
+      // longitude: 0,
+      // order: 1,
     },
   });
 
@@ -78,7 +72,14 @@ export default function AddStationForm() {
       return;
     }
 
-    const payload = { ...values };
+    // const payload = { ...values };
+    const payload = {
+      name: values.name,
+      route_id: values.route_id,
+      // latitude: values.latitude,
+      // longitude: values.longitude,
+      // order: values.order,
+    };
 
     setOpenBackdrop(true);
 
@@ -95,30 +96,30 @@ export default function AddStationForm() {
     });
   }
 
-  function handleGetCurrentCoordinates() {
-    if (!navigator.geolocation) {
-      setLocationSuccess(false);
-      return;
-    }
+  // function handleGetCurrentCoordinates() {
+  //   if (!navigator.geolocation) {
+  //     setLocationSuccess(false);
+  //     return;
+  //   }
 
-    setIsLocating(true);
-    setLocationSuccess(null); // reset state
+  //   setIsLocating(true);
+  //   setLocationSuccess(null);
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        form.setValue("latitude", latitude);
-        form.setValue("longitude", longitude);
-        setCoordsEnabled(true);
-        setLocationSuccess(true);
-        setIsLocating(false);
-      },
-      () => {
-        setLocationSuccess(false);
-        setIsLocating(false);
-      }
-    );
-  }
+  //   navigator.geolocation.getCurrentPosition(
+  //     (position) => {
+  //       const { latitude, longitude } = position.coords;
+  //       form.setValue("latitude", latitude);
+  //       form.setValue("longitude", longitude);
+  //       setCoordsEnabled(true);
+  //       setLocationSuccess(true);
+  //       setIsLocating(false);
+  //     },
+  //     () => {
+  //       setLocationSuccess(false);
+  //       setIsLocating(false);
+  //     }
+  //   );
+  // }
 
   return (
     <Form {...form}>
@@ -169,6 +170,8 @@ export default function AddStationForm() {
           )}
         />
 
+        {/** Location button and status removed */}
+        {/* 
         <Button
           type="button"
           variant="secondary"
@@ -213,9 +216,11 @@ export default function AddStationForm() {
             Unable to fetch location. Please allow location access in your
             browser settings.
           </p>
-        )}
+        )} 
+        */}
 
-        <FormField
+        {/** Latitude field removed */}
+        {/* <FormField
           control={form.control}
           name="latitude"
           render={({ field }) => (
@@ -233,9 +238,10 @@ export default function AddStationForm() {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
-        <FormField
+        {/** Longitude field removed */}
+        {/* <FormField
           control={form.control}
           name="longitude"
           render={({ field }) => (
@@ -253,9 +259,10 @@ export default function AddStationForm() {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
-        <FormField
+        {/** Order field removed */}
+        {/* <FormField
           control={form.control}
           name="order"
           render={({ field }) => (
@@ -267,7 +274,7 @@ export default function AddStationForm() {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
         <Button type="submit" className="w-full" disabled={isPending}>
           {isPending ? "Saving..." : "Add Station"}

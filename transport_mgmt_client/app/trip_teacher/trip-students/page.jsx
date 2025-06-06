@@ -35,18 +35,22 @@ const TripStudents = () => {
 
   // Initialize students list from data fetched
   useEffect(() => {
-    if (data && students.length === 0) {
-      const transformed = data.map((student) => ({
-        first_name: student.first_name,
-        last_name: student.last_name,
-        id: student.id,
-        Grade: student.class_name,
-        parent_phone: student.parent_phone,
-        sent: false,
-      }));
-      setStudents(transformed);
+    if (data) {
+      const updated = data.map((student) => {
+        const existing = students.find((s) => s.id === student.id);
+        return {
+          id: student.id,
+          first_name: student.first_name,
+          last_name: student.last_name,
+          Grade: student.class_name,
+          parent_phone: student.parent_phone,
+          sent: existing ? existing.sent : false,
+        };
+      });
+
+      setStudents(updated);
     }
-  }, [data, students.length, setStudents]);
+  }, [data, setStudents, students.length]);
 
   // Log ongoingTrip state whenever it changes
   useEffect(() => {
@@ -69,10 +73,21 @@ const TripStudents = () => {
     // Store the trip ID before clearing the store
     const tripId = ongoingTrip.id;
 
+    // Extract only the fields needed for the update, excluding id and metadata
     const updatedData = {
-      ...ongoingTrip,
-      trip_teacher: tripTeacherId,
+      name: ongoingTrip.name,
+      trip_type: ongoingTrip.trip_type,
+      trip_action: ongoingTrip.trip_action,
       trip_status: "completed",
+      school: ongoingTrip.school,
+      vehicle: ongoingTrip.vehicle,
+      driver: ongoingTrip.driver,
+      trip_teacher: tripTeacherId,
+      route: ongoingTrip.route,
+      start_location: ongoingTrip.start_location,
+      end_location: ongoingTrip.end_location,
+      departure_time: ongoingTrip.departure_time,
+      arrival_time: ongoingTrip.arrival_time,
       expected_students,
       boarded_students,
     };
@@ -122,12 +137,23 @@ const TripStudents = () => {
     const expected_students = students.map((s) => s.id);
     const boarded_students = students.filter((s) => s.sent).map((s) => s.id);
 
+    // Extract only the fields needed for the update, excluding id and metadata
     const updatedData = {
-      ...ongoingTrip,
+      name: ongoingTrip.name,
+      trip_type: ongoingTrip.trip_type,
+      trip_action: ongoingTrip.trip_action,
+      trip_status: "cancelled",
+      school: ongoingTrip.school,
+      vehicle: ongoingTrip.vehicle,
+      driver: ongoingTrip.driver,
+      trip_teacher: tripTeacherId,
+      route: ongoingTrip.route,
+      start_location: ongoingTrip.start_location,
+      end_location: ongoingTrip.end_location,
+      departure_time: ongoingTrip.departure_time,
+      arrival_time: ongoingTrip.arrival_time,
       expected_students,
       boarded_students,
-      trip_teacher: tripTeacherId,
-      trip_status: "cancelled",
     };
 
     updateTrip.mutate(
@@ -166,7 +192,7 @@ const TripStudents = () => {
 
   return (
     <div>
-      <Button var>Clear Trip</Button>
+      {/* <Button var>Clear Trip</Button> */}
       <DataTable columns={columns} data={students} setStudents={setStudents} />
       <TripPopoverActions
         onEndTrip={handleEndTrip}
