@@ -64,8 +64,10 @@ export default function Login() {
           refresh: loginData.refresh,
         });
 
-        // Set auth cookie valid for 1 day
-        document.cookie = `auth=true; path=/; max-age=${60 * 60 * 24}`;
+        // Set auth cookie with proper flags for mobile compatibility
+        document.cookie = `auth=true; path=/; max-age=${
+          60 * 60 * 24
+        }; SameSite=Lax`;
 
         toast.success(`Login successful!`);
         setUserId(userId);
@@ -84,11 +86,11 @@ export default function Login() {
     if (userDetails) {
       setUser(userDetails);
 
-      // Set role cookie whenever userDetails update (e.g., after fetch)
+      // Set user_type cookie with proper flags for mobile compatibility
       if (userDetails.user_type) {
         document.cookie = `user_type=${
           userDetails.user_type
-        }; path=/; max-age=${60 * 60 * 24}`;
+        }; path=/; max-age=${60 * 60 * 24}; SameSite=Lax`;
       }
     }
   }, [userDetails]);
