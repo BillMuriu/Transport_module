@@ -21,6 +21,8 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useUpdateDriver, useDeleteDriver } from "../../services/mutations";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useSchoolStore } from "@/stores/useSchoolStore"; // <-- import school store
+import { useGetSchool } from "@/app/school_admin/school-info/services/queries";
 import { API_BASE_URL } from "@/config";
 import { Pencil } from "lucide-react";
 
@@ -37,6 +39,11 @@ export default function EditDriverPage() {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const schoolId = user?.school?.id;
+
+  const { setSchool } = useSchoolStore(); // <-- get setSchool
+  const { refetch: refetchSchool } = useGetSchool(schoolId, {
+    enabled: false,
+  });
 
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -65,7 +72,7 @@ export default function EditDriverPage() {
     fetchDriver();
   }, [id, form]);
 
-  const onSubmit = (values) => {
+  const onSubmit = async (values) => {
     if (!schoolId) {
       toast.error("No school assigned to this user.");
       return;
@@ -76,8 +83,14 @@ export default function EditDriverPage() {
     setOpenBackdrop(true);
 
     updateDriver(payload, {
-      onSuccess: () => {
+      onSuccess: async () => {
         toast.success("Driver updated successfully.");
+        try {
+          const { data } = await refetchSchool();
+          if (data) setSchool(data);
+        } catch (err) {
+          console.error("Failed to refresh school data:", err);
+        }
         setOpenBackdrop(false);
         router.push("/school_admin/drivers");
       },
@@ -90,13 +103,22 @@ export default function EditDriverPage() {
 
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this driver?")) {
+      setOpenBackdrop(true);
       deleteDriver(id, {
-        onSuccess: () => {
+        onSuccess: async () => {
           toast.success("Driver deleted.");
+          try {
+            const { data } = await refetchSchool();
+            if (data) setSchool(data);
+          } catch (err) {
+            console.error("Failed to refresh school data:", err);
+          }
+          setOpenBackdrop(false);
           router.push("/school_admin/drivers");
         },
         onError: () => {
           toast.error("Failed to delete driver.");
+          setOpenBackdrop(false);
         },
       });
     }

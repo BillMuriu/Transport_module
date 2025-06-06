@@ -166,6 +166,7 @@ const TripStudents = () => {
 
   return (
     <div>
+      <Button var>Clear Trip</Button>
       <DataTable columns={columns} data={students} setStudents={setStudents} />
       <TripPopoverActions
         onEndTrip={handleEndTrip}

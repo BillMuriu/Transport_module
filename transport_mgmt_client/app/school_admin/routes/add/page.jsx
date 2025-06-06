@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useSchoolStore } from "@/stores/useSchoolStore"; // ✅
+import { useGetSchool } from "../../school-info/services/queries";
 import { useCreateRoute } from "../services/mutations";
 
 const routeSchema = z.object({
@@ -29,6 +31,7 @@ export default function AddRouteForm() {
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
   const schoolId = user?.school?.id;
+  const { setSchool } = useSchoolStore(); // ✅
 
   const [openBackdrop, setOpenBackdrop] = useState(false);
 
@@ -41,7 +44,11 @@ export default function AddRouteForm() {
 
   const { mutate: createRoute, isPending } = useCreateRoute();
 
-  function onSubmit(values) {
+  const { refetch: refetchSchool } = useGetSchool(schoolId, {
+    enabled: false,
+  }); // ✅
+
+  async function onSubmit(values) {
     if (!schoolId) {
       toast.error("No school assigned to this user.");
       return;
@@ -51,8 +58,14 @@ export default function AddRouteForm() {
     setOpenBackdrop(true);
 
     createRoute(payload, {
-      onSuccess: () => {
+      onSuccess: async () => {
         toast.success("Route added successfully.");
+        try {
+          const { data } = await refetchSchool(); // ✅
+          if (data) setSchool(data); // ✅
+        } catch (err) {
+          console.error("Failed to refresh school data:", err);
+        }
         setOpenBackdrop(false);
         router.push("/school_admin/routes");
       },

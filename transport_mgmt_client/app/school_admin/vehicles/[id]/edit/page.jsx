@@ -21,6 +21,8 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useUpdateVehicle, useDeleteVehicle } from "../../services/mutations";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useSchoolStore } from "@/stores/useSchoolStore";
+import { useGetSchool } from "@/app/school_admin/school-info/services/queries";
 import { API_BASE_URL } from "@/config";
 import { Pencil } from "lucide-react";
 
@@ -34,6 +36,7 @@ export default function EditVehiclePage() {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const schoolId = user?.school?.id;
+  const { setSchool } = useSchoolStore();
 
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -48,6 +51,8 @@ export default function EditVehiclePage() {
 
   const { mutate: updateVehicle, isPending: isUpdating } = useUpdateVehicle(id);
   const { mutate: deleteVehicle, isPending: isDeleting } = useDeleteVehicle();
+
+  const { refetch: refetchSchool } = useGetSchool(schoolId, { enabled: false });
 
   useEffect(() => {
     async function fetchVehicle() {
@@ -69,12 +74,17 @@ export default function EditVehiclePage() {
     }
 
     const payload = { ...values, school: schoolId };
-
     setOpenBackdrop(true);
 
     updateVehicle(payload, {
-      onSuccess: () => {
+      onSuccess: async () => {
         toast.success("Vehicle updated successfully.");
+        try {
+          const { data } = await refetchSchool();
+          if (data) setSchool(data);
+        } catch (err) {
+          console.error("Failed to refresh school data:", err);
+        }
         setOpenBackdrop(false);
         router.push("/school_admin/vehicles");
       },
@@ -86,14 +96,29 @@ export default function EditVehiclePage() {
   };
 
   const handleDelete = () => {
+    if (!schoolId) {
+      toast.error("No school assigned to this user.");
+      return;
+    }
+
     if (confirm("Are you sure you want to delete this vehicle?")) {
+      setOpenBackdrop(true);
+
       deleteVehicle(id, {
-        onSuccess: () => {
+        onSuccess: async () => {
           toast.success("Vehicle deleted.");
+          try {
+            const { data } = await refetchSchool();
+            if (data) setSchool(data);
+          } catch (err) {
+            console.error("Failed to refresh school data:", err);
+          }
+          setOpenBackdrop(false);
           router.push("/school_admin/vehicles");
         },
         onError: () => {
           toast.error("Failed to delete vehicle.");
+          setOpenBackdrop(false);
         },
       });
     }

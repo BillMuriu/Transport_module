@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useSchoolStore } from "@/stores/useSchoolStore";
 import { useCreateTrip } from "@/app/trip_teacher/trips/_queries/mutation";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -37,6 +38,7 @@ const formSchema = z.object({
 
 export default function MyForm() {
   const router = useRouter();
+  const { school } = useSchoolStore();
   const user = useAuthStore((state) => state.user);
   const tripTeacher = user?.user_type === "TRIP_TEACHER" ? user : null;
 
@@ -47,21 +49,20 @@ export default function MyForm() {
     },
   });
 
-  const vehicles = user?.school?.vehicles || [];
-  const drivers = user?.school?.drivers || [];
-  const routes = user?.school?.routes || [];
+  const vehicles = school?.vehicles || [];
+  const drivers = school?.drivers || [];
+  const routes = school?.routes || [];
 
   const [openBackdrop, setOpenBackdrop] = useState(false);
-
   const { mutate: createTrip, isPending } = useCreateTrip();
 
   function onSubmit(values) {
     try {
-      const schoolId = user?.school?.id;
+      const schoolId = school?.id;
       const now = new Date().toISOString();
 
       const payload = {
-        name: "This is the trips name", // or use a dynamic value if needed
+        name: "This is the trips name",
         ...values,
         trip_action:
           values.trip_type === "morning_pickup" ? "pickup" : "dropoff",
@@ -71,10 +72,10 @@ export default function MyForm() {
         end_location: "School",
         departure_time: now,
         arrival_time: null,
-        trip_teacher: tripTeacher?.id, // Manually set the trip_teacher ID
+        trip_teacher: tripTeacher?.id,
       };
 
-      console.log("Payload being sent:", payload); // Log the payload to see if it's set correctly
+      console.log("Payload being sent:", payload);
 
       setOpenBackdrop(true);
 
@@ -107,9 +108,9 @@ export default function MyForm() {
               <FormItem>
                 <FormLabel>Trip Coordinator</FormLabel>
                 <Select
-                  value={tripTeacher?.id || field.value} // Ensure tripTeacher.id is used as the value
+                  value={tripTeacher?.id || field.value}
                   disabled
-                  onValueChange={field.onChange} // This won't be triggered because it's disabled, but it's still necessary for form control
+                  onValueChange={field.onChange}
                 >
                   <FormControl>
                     <SelectTrigger className="w-full" disabled>

@@ -29,6 +29,9 @@ export const useCreateTrip = () => {
 export const useUpdateTrip = () => {
   return useMutation({
     mutationFn: async ({ tripId, updatedData }) => {
+      console.log("Updating trip:", tripId, updatedData);
+      console.log("URL:", `${API_BASE_URL}/trips/${tripId}/`);
+
       const response = await axios.put(
         `${API_BASE_URL}/trips/${tripId}/`,
         updatedData,

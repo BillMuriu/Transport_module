@@ -22,6 +22,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Pencil } from "lucide-react";
 import { useUpdateRoute, useDeleteRoute } from "../../services/mutations";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useSchoolStore } from "@/stores/useSchoolStore"; // ✅
+import { useGetSchool } from "@/app/school_admin/school-info/services/queries";
 import { API_BASE_URL } from "@/config";
 
 const formSchema = z.object({
@@ -33,6 +35,9 @@ export default function EditRoutePage() {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const schoolId = user?.school?.id;
+
+  const { setSchool } = useSchoolStore(); // ✅
+  const { refetch: refetchSchool } = useGetSchool(schoolId, { enabled: false }); // ✅
 
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -71,8 +76,14 @@ export default function EditRoutePage() {
     setOpenBackdrop(true);
 
     updateRoute(payload, {
-      onSuccess: () => {
+      onSuccess: async () => {
         toast.success("Route updated successfully.");
+        try {
+          const { data } = await refetchSchool(); // ✅
+          if (data) setSchool(data); // ✅
+        } catch (err) {
+          console.error("Failed to refresh school data:", err);
+        }
         setOpenBackdrop(false);
         router.push("/school_admin/routes");
       },
@@ -86,8 +97,14 @@ export default function EditRoutePage() {
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this route?")) {
       deleteRoute(id, {
-        onSuccess: () => {
+        onSuccess: async () => {
           toast.success("Route deleted.");
+          try {
+            const { data } = await refetchSchool(); // ✅
+            if (data) setSchool(data); // ✅
+          } catch (err) {
+            console.error("Failed to refresh school data:", err);
+          }
           router.push("/school_admin/routes");
         },
         onError: () => {

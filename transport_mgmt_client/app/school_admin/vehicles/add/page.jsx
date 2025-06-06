@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useSchoolStore } from "@/stores/useSchoolStore";
+import { useGetSchool } from "../../school-info/services/queries";
 import { useCreateVehicle } from "../services/mutations";
 
 const vehicleSchema = z.object({
@@ -30,6 +32,7 @@ export default function AddVehicleForm() {
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
   const schoolId = user?.school?.id;
+  const { setSchool } = useSchoolStore();
 
   const [openBackdrop, setOpenBackdrop] = useState(false);
 
@@ -43,6 +46,10 @@ export default function AddVehicleForm() {
 
   const { mutate: createVehicle, isPending } = useCreateVehicle();
 
+  const { refetch: refetchSchool } = useGetSchool(user?.school?.id, {
+    enabled: false, // Disable automatic fetching
+  });
+
   function onSubmit(values) {
     if (!schoolId) {
       toast.error("No school assigned to this user.");
@@ -50,12 +57,18 @@ export default function AddVehicleForm() {
     }
 
     const payload = { ...values, school: schoolId };
-
     setOpenBackdrop(true);
 
     createVehicle(payload, {
-      onSuccess: () => {
+      onSuccess: async () => {
         toast.success("Vehicle added successfully.");
+        // Refetch school and update store
+        try {
+          const { data } = await refetchSchool();
+          if (data) setSchool(data);
+        } catch (err) {
+          console.error("Failed to refresh school data:", err);
+        }
         setOpenBackdrop(false);
         router.push("/school_admin/vehicles");
       },
@@ -65,7 +78,6 @@ export default function AddVehicleForm() {
       },
     });
   }
-
   return (
     <Form {...form}>
       <form

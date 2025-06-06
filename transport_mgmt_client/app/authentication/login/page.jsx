@@ -45,7 +45,6 @@ export default function Login() {
   const { data: userDetails, isLoading: isFetchingUser } =
     useFetchUserDetails(userId);
 
-  // ✅ Adjusted this line to access school.id
   const { data: schoolData, isLoading: isFetchingSchool } = useGetSchool(
     userDetails?.school?.id,
     {
@@ -64,6 +63,10 @@ export default function Login() {
           access: loginData.access,
           refresh: loginData.refresh,
         });
+
+        // Set auth cookie valid for 1 day
+        document.cookie = `auth=true; path=/; max-age=${60 * 60 * 24}`;
+
         toast.success(`Login successful!`);
         setUserId(userId);
       } else {
@@ -80,6 +83,13 @@ export default function Login() {
   useEffect(() => {
     if (userDetails) {
       setUser(userDetails);
+
+      // Set role cookie whenever userDetails update (e.g., after fetch)
+      if (userDetails.user_type) {
+        document.cookie = `user_type=${
+          userDetails.user_type
+        }; path=/; max-age=${60 * 60 * 24}`;
+      }
     }
   }, [userDetails]);
 
