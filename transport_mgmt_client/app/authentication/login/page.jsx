@@ -20,6 +20,7 @@ import { useFetchUserDetails } from "./queries/queries";
 import { useGetSchool } from "@/app/school_admin/school-info/services/queries";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useSchoolStore } from "@/stores/useSchoolStore";
+import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
 import { useRouter } from "next/navigation";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -33,6 +34,7 @@ export default function Login() {
   const [userId, setUserId] = useState(null);
   const { setTokens, setUser } = useAuthStore();
   const { setSchool } = useSchoolStore();
+  const { ongoingTrip, clearOngoingTrip } = useOngoingTripStore();
   const router = useRouter();
   const [openBackdrop, setOpenBackdrop] = useState(false);
 
@@ -92,8 +94,17 @@ export default function Login() {
           userDetails.user_type
         }; path=/; max-age=${60 * 60 * 24}; SameSite=Lax`;
       }
+
+      // Check if ongoing trip exists and reset if teacher ID doesn't match
+      if (ongoingTrip && ongoingTrip.trip_teacher_id !== userDetails.id) {
+        console.log("🔄 Resetting ongoing trip: Teacher ID mismatch");
+        console.log("Current user ID:", userDetails.id);
+        console.log("Ongoing trip teacher ID:", ongoingTrip.trip_teacher_id);
+        clearOngoingTrip();
+        // toast.info("Previous trip session cleared - different teacher");
+      }
     }
-  }, [userDetails]);
+  }, [userDetails, ongoingTrip, clearOngoingTrip]);
 
   useEffect(() => {
     if (schoolData && userDetails?.user_type) {

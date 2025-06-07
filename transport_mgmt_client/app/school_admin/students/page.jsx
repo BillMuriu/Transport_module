@@ -5,6 +5,7 @@ import { PlusCircle, Loader2 } from "lucide-react";
 import { useStudents } from "./services/queries";
 import { columns } from "./_components/students-columns";
 import { StudentsDataTable } from "./_components/students-data-table";
+import { useSchoolStore } from "@/stores/useSchoolStore";
 
 const Students = () => {
   const { data, isLoading, isError } = useStudents();

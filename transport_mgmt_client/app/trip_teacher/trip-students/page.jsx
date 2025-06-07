@@ -15,14 +15,20 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const TripStudents = () => {
-  const routeId = "3d2da454-05bb-42bb-b96f-5c3e4d2b1cd8";
-  const { data, isLoading, isError } = useStudentsByRoute(routeId);
   const { students, setStudents, resetStudents } = useStudentStore();
 
   const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
   const clearOngoingTrip = useOngoingTripStore(
     (state) => state.clearOngoingTrip
   );
+
+  // Get route ID from ongoing trip
+  const routeId = ongoingTrip?.route;
+
+  // Only fetch students if we have a route ID
+  const { data, isLoading, isError } = useStudentsByRoute(routeId, {
+    enabled: !!routeId, // Only run query if routeId exists
+  });
 
   const updateTrip = useUpdateTrip();
   const createArrivedMessage = useCreateArrivedMessage();
@@ -56,6 +62,7 @@ const TripStudents = () => {
   useEffect(() => {
     if (ongoingTrip) {
       console.log("🧭 ongoingTrip structure:", ongoingTrip);
+      console.log("🛣️ Route ID from ongoing trip:", ongoingTrip.route);
     } else {
       console.log("🛑 No ongoing trip found.");
     }
@@ -183,6 +190,17 @@ const TripStudents = () => {
           No ongoing trip available
         </h2>
         <p>Please start a trip to see the student list.</p>
+      </div>
+    );
+  }
+
+  if (!routeId) {
+    return (
+      <div className="p-4 text-center text-gray-600">
+        <h2 className="text-lg font-semibold mb-2">
+          No route assigned to this trip
+        </h2>
+        <p>Please ensure the trip has a valid route assigned.</p>
       </div>
     );
   }

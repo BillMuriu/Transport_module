@@ -34,16 +34,28 @@ import { useStations } from "../../stations/services/queries";
 const formSchema = z.object({
   first_name: z.string().min(1),
   last_name: z.string().min(1),
-  class_name: z.string().min(1),
+  grade: z.string().min(1, "Please select a grade"),
   parent_name: z.string().min(1),
   parent_phone: z.string().min(10),
-  parent_email: z.string().email(),
-  fingerprint_id: z.coerce.number().min(1),
+  parent_email: z.string().email().optional().or(z.literal("")),
   station: z.string().min(1, "Please select a station"),
 });
 
 // Define empty array outside component to maintain stable reference
 const EMPTY_ROUTES = [];
+
+// Grades array for the select component
+const GRADES = [
+  { value: "1", label: "Grade 1" },
+  { value: "2", label: "Grade 2" },
+  { value: "3", label: "Grade 3" },
+  { value: "4", label: "Grade 4" },
+  { value: "5", label: "Grade 5" },
+  { value: "6", label: "Grade 6" },
+  { value: "7", label: "Grade 7" },
+  { value: "8", label: "Grade 8" },
+  { value: "9", label: "Grade 9" },
+];
 
 export default function AddStudentForm() {
   const user = useAuthStore((s) => s.user);
@@ -71,11 +83,10 @@ export default function AddStudentForm() {
     defaultValues: {
       first_name: "",
       last_name: "",
-      class_name: "",
+      grade: "",
       parent_name: "",
       parent_phone: "",
       parent_email: "",
-      fingerprint_id: 0,
       station: "",
     },
   });
@@ -111,15 +122,13 @@ export default function AddStudentForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full max-w-xl mx-auto space-y-6 py-10 px-4"
       >
-        {/* Existing text inputs */}
+        {/* Text input fields */}
         {[
           "first_name",
           "last_name",
-          "class_name",
           "parent_name",
           "parent_phone",
           "parent_email",
-          "fingerprint_id",
         ].map((fieldName) => (
           <FormField
             key={fieldName}
@@ -128,7 +137,9 @@ export default function AddStudentForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="capitalize">
-                  {field.name.replace("_", " ")}
+                  {fieldName === "parent_email"
+                    ? "Parent Email (Optional)"
+                    : field.name.replace("_", " ")}
                 </FormLabel>
                 <FormControl>
                   <Input {...field} />
@@ -138,6 +149,30 @@ export default function AddStudentForm() {
             )}
           />
         ))}
+
+        {/* Grade dropdown */}
+        <FormField
+          control={form.control}
+          name="grade"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Grade</FormLabel>
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a grade" />
+                </SelectTrigger>
+                <SelectContent className="w-full">
+                  {GRADES.map((grade) => (
+                    <SelectItem key={grade.value} value={grade.value}>
+                      {grade.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {/* Route dropdown - filtering only */}
         <FormItem className="w-full">

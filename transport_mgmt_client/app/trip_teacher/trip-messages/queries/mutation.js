@@ -31,6 +31,7 @@ export const useCreateArrivedMessage = () => {
     mutationFn: async ({ trip_id, student_ids }) => {
       const response = await axios.post(
         `${API_BASE_URL}/trip-messages/send-bulk-messages/`,
+        // `${API_BASE_URL}/trip-messages/bulk-start-arrive-messages/`,
         {
           trip_id,
           student_ids,

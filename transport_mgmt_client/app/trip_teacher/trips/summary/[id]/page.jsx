@@ -6,43 +6,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { CalendarDays, MapPin, Users, Car, User, Clock } from "lucide-react";
-import { useOngoingTripStore } from "@/stores/useOngoingTripStore"; // import the store
-
-// Mock data for demonstration - replace with your actual query
-const mockTrip = {
-  id: "1",
-  name: "Science Museum Field Trip",
-  trip_type: "educational_trip",
-  start_location: "Lincoln High School",
-  end_location: "National Science Museum",
-  departure_time: "2024-03-15T09:00:00Z",
-  arrival_time: "2024-03-15T15:30:00Z",
-  trip_status: "completed",
-  trip_action: "return",
-  driver_name: "John Smith",
-  driver: "driver123",
-  trip_teacher_name: "Ms. Sarah Johnson",
-  trip_teacher: "teacher456",
-  vehicle_name: "School Bus A1",
-  vehicle: "vehicle789",
-  expected_students: Array(24)
-    .fill(null)
-    .map((_, i) => ({ id: i + 1, name: `Student ${i + 1}` })),
-  boarded_students: Array(22)
-    .fill(null)
-    .map((_, i) => ({ id: i + 1, name: `Student ${i + 1}` })),
-};
+import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
+import { useTripById } from "../../_queries/queries";
 
 export default function TripSummaryPage() {
   const [isDataProcessed, setIsDataProcessed] = useState(false);
   const params = useParams();
   const tripId = params.id;
 
-  // Mock loading states - replace with your actual query logic
-  const trip = mockTrip;
-  const isLoading = false;
-  const isError = false;
-  const isSuccess = true;
+  // Use the actual query hook
+  const { data: trip, isLoading, isError, isSuccess } = useTripById(tripId);
 
   const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
   const clearOngoingTrip = useOngoingTripStore(
@@ -121,12 +94,13 @@ export default function TripSummaryPage() {
     );
   };
 
+  // Handle cases where student arrays might not exist
+  const expectedStudents = trip.expected_students || [];
+  const boardedStudents = trip.boarded_students || [];
+
   const attendanceRate =
-    trip.expected_students.length > 0
-      ? (
-          (trip.boarded_students.length / trip.expected_students.length) *
-          100
-        ).toFixed(1)
+    expectedStudents.length > 0
+      ? ((boardedStudents.length / expectedStudents.length) * 100).toFixed(1)
       : 0;
 
   return (
@@ -152,7 +126,7 @@ export default function TripSummaryPage() {
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-xl">
               <MapPin className="h-5 w-5 text-primary" />
-              {trip.name}
+              {trip.name || "Unnamed Trip"}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -164,27 +138,7 @@ export default function TripSummaryPage() {
                   Trip Type
                 </div>
                 <p className="font-medium capitalize text-foreground">
-                  {trip.trip_type.replace("_", " ")}
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                  <MapPin className="h-4 w-4" />
-                  Start Location
-                </div>
-                <p className="font-medium text-foreground">
-                  {trip.start_location}
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                  <MapPin className="h-4 w-4" />
-                  End Location
-                </div>
-                <p className="font-medium text-foreground">
-                  {trip.end_location}
+                  {trip.trip_type ? trip.trip_type.replace("_", " ") : "N/A"}
                 </p>
               </div>
 
@@ -198,7 +152,7 @@ export default function TripSummaryPage() {
                 </p>
               </div>
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                   <Clock className="h-4 w-4" />
                   Arrival Time
@@ -208,7 +162,7 @@ export default function TripSummaryPage() {
                     ? formatDateTime(trip.arrival_time)
                     : "Pending"}
                 </p>
-              </div>
+              </div> */}
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
@@ -216,7 +170,7 @@ export default function TripSummaryPage() {
                   Trip Action
                 </div>
                 <Badge variant="outline" className="capitalize">
-                  {trip.trip_action}
+                  {trip.trip_action || "N/A"}
                 </Badge>
               </div>
             </div>
@@ -235,10 +189,10 @@ export default function TripSummaryPage() {
             <CardContent>
               <div className="space-y-1">
                 <p className="font-medium text-foreground">
-                  {trip.driver_name ?? "N/A"}
+                  {trip.driver_name || "N/A"}
                 </p>
                 <p className="text-sm text-muted-foreground font-mono">
-                  ID: {trip.driver ?? "N/A"}
+                  ID: {trip.driver || "N/A"}
                 </p>
               </div>
             </CardContent>
@@ -254,10 +208,10 @@ export default function TripSummaryPage() {
             <CardContent>
               <div className="space-y-1">
                 <p className="font-medium text-foreground">
-                  {trip.trip_teacher_name ?? "N/A"}
+                  {trip.trip_teacher_name || "N/A"}
                 </p>
                 <p className="text-sm text-muted-foreground font-mono">
-                  ID: {trip.trip_teacher ?? "N/A"}
+                  ID: {trip.trip_teacher || "N/A"}
                 </p>
               </div>
             </CardContent>
@@ -273,10 +227,10 @@ export default function TripSummaryPage() {
             <CardContent>
               <div className="space-y-1">
                 <p className="font-medium text-foreground">
-                  {trip.vehicle_name ?? "N/A"}
+                  {trip.vehicle_name || "N/A"}
                 </p>
                 <p className="text-sm text-muted-foreground font-mono">
-                  ID: {trip.vehicle ?? "N/A"}
+                  ID: {trip.vehicle || "N/A"}
                 </p>
               </div>
             </CardContent>
@@ -298,7 +252,7 @@ export default function TripSummaryPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center p-6 rounded-lg bg-muted/30">
                 <div className="text-3xl font-bold text-foreground mb-2">
-                  {trip.expected_students.length}
+                  {expectedStudents.length}
                 </div>
                 <div className="text-sm font-medium text-muted-foreground">
                   Expected Students
@@ -307,7 +261,7 @@ export default function TripSummaryPage() {
 
               <div className="text-center p-6 rounded-lg bg-green-50 border border-green-200">
                 <div className="text-3xl font-bold text-green-700 mb-2">
-                  {trip.boarded_students.length}
+                  {boardedStudents.length}
                 </div>
                 <div className="text-sm font-medium text-green-600">
                   Students Boarded
@@ -316,7 +270,7 @@ export default function TripSummaryPage() {
 
               <div className="text-center p-6 rounded-lg bg-red-50 border border-red-200">
                 <div className="text-3xl font-bold text-red-700 mb-2">
-                  {trip.expected_students.length - trip.boarded_students.length}
+                  {expectedStudents.length - boardedStudents.length}
                 </div>
                 <div className="text-sm font-medium text-red-600">
                   Students Missing
