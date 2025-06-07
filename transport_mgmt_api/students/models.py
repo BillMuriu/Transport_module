@@ -11,7 +11,7 @@ class Student(models.Model):
     parent_name = models.CharField(max_length=255)
     parent_phone = models.CharField(max_length=20)
     parent_email = models.EmailField(null=True, blank=True)
-    fingerprint_id = models.IntegerField()
+    fingerprint_id = models.IntegerField(null=True, blank=True)
     station = models.ForeignKey('stations.Station', on_delete=models.CASCADE, related_name='students')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
