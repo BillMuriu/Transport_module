@@ -16,9 +16,6 @@ class UserListCreateView(generics.ListCreateAPIView):
     serializer_class = UserSerializer
 
     def perform_create(self, serializer):
-        user_type = serializer.validated_data.get('user_type')
-        if user_type != User.UserType.TRIP_TEACHER:
-            raise PermissionDenied("Only MAIN_ADMIN users can be created here.")
         serializer.save()
 
 class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
