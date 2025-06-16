@@ -3,26 +3,18 @@
 import * as React from "react";
 import {
   IconCamera,
-  IconChartBar,
   IconDashboard,
   IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
-  IconFolder,
-  IconHelp,
   IconInnerShadowTop,
   IconListDetails,
-  IconReport,
-  IconSearch,
   IconSettings,
-  IconUsers,
 } from "@tabler/icons-react";
 
-import { NavDocuments } from "./nav-documents";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
 import { NavUser } from "./nav-user";
+import { SchoolSelector } from "./school-selector";
 import {
   Sidebar,
   SidebarContent,
@@ -39,7 +31,7 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  navMain: [
+  superAdminNav: [
     {
       title: "Dashboard",
       url: "#",
@@ -50,50 +42,17 @@ const data = {
       url: "#",
       icon: IconListDetails,
     },
-    {
-      title: "Analytics",
-      url: "#",
-      icon: IconChartBar,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: IconFolder,
-    },
-    {
-      title: "Team",
-      url: "#",
-      icon: IconUsers,
-    },
   ],
-  navClouds: [
+  onboardingNav: [
     {
       title: "Capture",
       icon: IconCamera,
-      isActive: true,
       url: "#",
-      items: [
-        { title: "Active Proposals", url: "#" },
-        { title: "Archived", url: "#" },
-      ],
     },
     {
-      title: "Proposal",
-      icon: IconFileDescription,
+      title: "Data Library",
+      icon: IconDatabase,
       url: "#",
-      items: [
-        { title: "Active Proposals", url: "#" },
-        { title: "Archived", url: "#" },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: IconFileAi,
-      url: "#",
-      items: [
-        { title: "Active Proposals", url: "#" },
-        { title: "Archived", url: "#" },
-      ],
     },
   ],
   navSecondary: [
@@ -102,16 +61,6 @@ const data = {
       url: "#",
       icon: IconSettings,
     },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: IconHelp,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
-    },
   ],
   documents: [
     {
@@ -119,20 +68,17 @@ const data = {
       url: "#",
       icon: IconDatabase,
     },
-    {
-      name: "Reports",
-      url: "#",
-      icon: IconReport,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: IconFileWord,
-    },
   ],
 };
 
 export function AppSidebar(props) {
+  const [mode, setMode] = React.useState("super-admin");
+
+  const handleSchoolSelect = (school) => {
+    console.log("Selected school:", school);
+    // Handle school selection logic here
+  };
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -149,12 +95,50 @@ export function AppSidebar(props) {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
+
+        <Tabs
+          defaultValue="super-admin"
+          value={mode}
+          onValueChange={setMode}
+          className="w-full mt-4"
+        >
+          <TabsList className="w-full justify-around bg-muted border border-border">
+            <TabsTrigger
+              value="super-admin"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground hover:bg-primary/20 hover:text-primary transition-colors"
+            >
+              Super Admin
+            </TabsTrigger>
+            <TabsTrigger
+              value="onboarding"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground hover:bg-primary/20 hover:text-primary transition-colors"
+            >
+              Onboarding
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+
+      <SidebarContent className="">
+        {mode === "super-admin" && (
+          <>
+            <NavMain items={data.superAdminNav} />
+            <NavSecondary items={data.navSecondary} className="mt-auto" />
+          </>
+        )}
+
+        {mode === "onboarding" && (
+          <>
+            <SchoolSelector
+              isOnboarding={mode === "onboarding"}
+              onSchoolSelect={handleSchoolSelect}
+            />
+            <NavMain items={data.onboardingNav} />
+            <NavSecondary items={data.navSecondary} className="mt-auto" />
+          </>
+        )}
       </SidebarContent>
+
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>
