@@ -18,3 +18,16 @@ export const useGetSchool = (id) =>
       console.error("Failed to fetch school:", error);
     },
   });
+
+export const useSchools = () =>
+  useQuery({
+    queryKey: ["schools"],
+    queryFn: async () => {
+      const response = await axios.get(`${API_BASE_URL}/schools/`);
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    onError: (error) => {
+      console.error("Failed to fetch schools:", error);
+    },
+  });

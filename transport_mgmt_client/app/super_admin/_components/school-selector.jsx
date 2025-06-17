@@ -3,7 +3,9 @@
 import * as React from "react";
 import { Check, ChevronsUpDown, School } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { useSchools } from "@/app/school_admin/school-info/services/queries";
+import { useSelectedSchoolStore } from "@/stores/useSelectedSchoolStore";
+
 import {
   Command,
   CommandEmpty,
@@ -25,62 +27,34 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-// Sample schools data - replace with your actual data
-const schools = [
-  {
-    value: "harvard-university",
-    label: "Harvard University",
-  },
-  {
-    value: "stanford-university",
-    label: "Stanford University",
-  },
-  {
-    value: "mit",
-    label: "Massachusetts Institute of Technology",
-  },
-  {
-    value: "yale-university",
-    label: "Yale University",
-  },
-  {
-    value: "princeton-university",
-    label: "Princeton University",
-  },
-  {
-    value: "columbia-university",
-    label: "Columbia University",
-  },
-  {
-    value: "university-of-chicago",
-    label: "University of Chicago",
-  },
-  {
-    value: "caltech",
-    label: "California Institute of Technology",
-  },
-];
-
 export function SchoolSelector({ isOnboarding = false, onSchoolSelect }) {
   const [open, setOpen] = React.useState(false);
-  const [selectedSchool, setSelectedSchool] = React.useState("");
+  const { data, isLoading } = useSchools();
+  const schools = data?.results || [];
 
-  const handleSchoolSelect = (currentValue) => {
-    const newValue = currentValue === selectedSchool ? "" : currentValue;
-    setSelectedSchool(newValue);
+  const selectedSchoolId = useSelectedSchoolStore(
+    (state) => state.selectedSchoolId
+  );
+  const setSelectedSchoolId = useSelectedSchoolStore(
+    (state) => state.setSelectedSchoolId
+  );
+
+  const handleSchoolSelect = (schoolId) => {
+    const newValue = schoolId === selectedSchoolId ? null : schoolId;
+    setSelectedSchoolId(newValue);
     setOpen(false);
 
-    // Call the callback function if provided
     if (onSchoolSelect) {
-      const school = schools.find((s) => s.value === newValue);
-      onSchoolSelect(school);
+      const school = schools.find((s) => s.id === newValue);
+      onSchoolSelect(school || null);
     }
   };
 
-  // Don't render if not in onboarding mode
-  if (!isOnboarding) {
-    return null;
-  }
+  if (!isOnboarding) return null;
+
+  const selectedSchoolName = selectedSchoolId
+    ? schools.find((s) => s.id === selectedSchoolId)?.name
+    : "Select School";
 
   return (
     <SidebarGroup>
@@ -95,19 +69,13 @@ export function SchoolSelector({ isOnboarding = false, onSchoolSelect }) {
                 >
                   <div className="flex items-center gap-2 min-w-0 flex-1">
                     <School className="h-4 w-4 shrink-0" />
-                    <span className="truncate">
-                      {selectedSchool
-                        ? schools.find(
-                            (school) => school.value === selectedSchool
-                          )?.label
-                        : "Select School"}
-                    </span>
+                    <span className="truncate">{selectedSchoolName}</span>
                   </div>
                   <ChevronsUpDown className="h-4 w-4 opacity-50 shrink-0" />
                 </SidebarMenuButton>
               </PopoverTrigger>
               <PopoverContent
-                className="w-[calc(var(--spacing)*72)] p-0"
+                className="w-[calc(var(--spacing)*68)] p-0"
                 align="start"
               >
                 <Command>
@@ -118,24 +86,28 @@ export function SchoolSelector({ isOnboarding = false, onSchoolSelect }) {
                   <CommandList>
                     <CommandEmpty>No school found.</CommandEmpty>
                     <CommandGroup>
-                      {schools.map((school) => (
-                        <CommandItem
-                          key={school.value}
-                          value={school.value}
-                          onSelect={handleSchoolSelect}
-                          className="cursor-pointer"
-                        >
-                          {school.label}
-                          <Check
-                            className={cn(
-                              "ml-auto h-4 w-4",
-                              selectedSchool === school.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                        </CommandItem>
-                      ))}
+                      {isLoading ? (
+                        <CommandItem disabled>Loading...</CommandItem>
+                      ) : (
+                        schools.map((school) => (
+                          <CommandItem
+                            key={school.id}
+                            value={school.name}
+                            onSelect={() => handleSchoolSelect(school.id)}
+                            className="cursor-pointer"
+                          >
+                            {school.name}
+                            <Check
+                              className={cn(
+                                "ml-auto h-4 w-4",
+                                selectedSchoolId === school.id
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))
+                      )}
                     </CommandGroup>
                   </CommandList>
                 </Command>
@@ -147,9 +119,3 @@ export function SchoolSelector({ isOnboarding = false, onSchoolSelect }) {
     </SidebarGroup>
   );
 }
-
-// Usage example:
-// <SchoolSelector
-//   isOnboarding={true}
-//   onSchoolSelect={(school) => console.log('Selected school:', school)}
-// />

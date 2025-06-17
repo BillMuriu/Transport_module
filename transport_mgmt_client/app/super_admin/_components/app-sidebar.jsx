@@ -10,6 +10,8 @@ import {
   IconSettings,
 } from "@tabler/icons-react";
 
+import { Users, Bus, FileText } from "lucide-react";
+
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
@@ -45,14 +47,44 @@ const data = {
   ],
   onboardingNav: [
     {
-      title: "Capture",
-      icon: IconCamera,
-      url: "#",
+      title: "Students",
+      url: "/super_admin/students",
+      icon: Users,
     },
     {
-      title: "Data Library",
-      icon: IconDatabase,
-      url: "#",
+      title: "Vehicles",
+      url: "/super_admin/vehicles",
+      icon: Bus,
+    },
+    {
+      title: "Drivers",
+      url: "/super_admin/drivers",
+      icon: Users,
+    },
+    {
+      title: "Routes",
+      url: "/super_admin/routes",
+      icon: FileText,
+    },
+    {
+      title: "Stations",
+      url: "/super_admin/stations",
+      icon: FileText,
+    },
+    {
+      title: "Users",
+      url: "/super_admin/users",
+      icon: Users,
+      submenu: [
+        {
+          title: "Manage Users",
+          url: "/school_admin/users/manage",
+        },
+        {
+          title: "Invitation",
+          url: "/school_admin/users/invitations",
+        },
+      ],
     },
   ],
   navSecondary: [
