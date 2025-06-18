@@ -8,6 +8,7 @@ import {
   LogOut,
   School,
   Command,
+  Send,
 } from "lucide-react";
 
 import {
@@ -25,11 +26,30 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
 import { useSchoolStore } from "@/stores/useSchoolStore";
 import { useAuthStore } from "@/stores/useAuthStore";
+
+const messagingNavItems = [
+  {
+    href: "/school_admin/send-message",
+    icon: Send,
+    label: "Send SMS",
+  },
+  {
+    href: "/school_admin/sms-reports",
+    icon: FileText,
+    label: "SMS Reports",
+  },
+  {
+    href: "/school_admin/sms-templates",
+    icon: FileText,
+    label: "SMS Templates",
+  },
+];
 
 const items = [
   {
@@ -185,6 +205,23 @@ export function SchoolAdminSidebar() {
                   </SidebarMenuItem>
                 )
               )}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Messaging</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {messagingNavItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton asChild>
+                    <Link href={item.href}>
+                      <item.icon />
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

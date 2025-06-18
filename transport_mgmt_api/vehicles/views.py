@@ -13,8 +13,14 @@ from django.shortcuts import render
 from .generateAccesstoken import get_access_token
 
 class VehicleListCreateView(generics.ListCreateAPIView):
-    queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
+
+    def get_queryset(self):
+        queryset = Vehicle.objects.all()
+        school_id = self.request.query_params.get('school')
+        if school_id:
+            queryset = queryset.filter(school_id=school_id)
+        return queryset
 
 class VehicleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Vehicle.objects.all()

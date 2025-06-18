@@ -1,0 +1,9 @@
+POST http://localhost:8000/messaging/send-bulk-grade-message/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "grade_level": "grade_1",
+  "msg_type": "Promotional",
+  "content": "Reminder: Grade 3 students have a school event tomorrow. Kindly prepare accordingly."
+}

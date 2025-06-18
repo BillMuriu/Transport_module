@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'trips',
     'trip_message',
     'school_admin',
+    'messaging'
 ]
 
 MIDDLEWARE = [
