@@ -4,11 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { API_BASE_URL } from "@/config";
 
-export const useDrivers = () => {
+export const useDrivers = (schoolId) => {
   return useQuery({
-    queryKey: ["drivers"],
+    queryKey: ["drivers", schoolId],
+    enabled: !!schoolId,
     queryFn: async () => {
-      const response = await axios.get(`${API_BASE_URL}/drivers/`);
+      const response = await axios.get(
+        `${API_BASE_URL}/drivers/?school=${schoolId}`
+      );
       return response.data.results;
     },
   });

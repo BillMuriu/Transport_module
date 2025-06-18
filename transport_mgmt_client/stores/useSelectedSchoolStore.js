@@ -1,16 +1,15 @@
-// stores/use-selected-school-store.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export const useSelectedSchoolStore = create(
   persist(
     (set) => ({
-      selectedSchoolId: null,
-      setSelectedSchoolId: (id) => set({ selectedSchoolId: id }),
-      clearSelectedSchoolId: () => set({ selectedSchoolId: null }),
+      selectedSchool: null,
+      setSelectedSchool: (school) => set({ selectedSchool: school }),
+      clearSelectedSchool: () => set({ selectedSchool: null }),
     }),
     {
-      name: "selected-school-store", // LocalStorage key
+      name: "selected-school-store", // localStorage key
     }
   )
 );

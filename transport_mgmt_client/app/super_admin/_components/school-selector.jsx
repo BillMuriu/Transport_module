@@ -32,29 +32,29 @@ export function SchoolSelector({ isOnboarding = false, onSchoolSelect }) {
   const { data, isLoading } = useSchools();
   const schools = data?.results || [];
 
-  const selectedSchoolId = useSelectedSchoolStore(
-    (state) => state.selectedSchoolId
+  const selectedSchool = useSelectedSchoolStore(
+    (state) => state.selectedSchool
   );
-  const setSelectedSchoolId = useSelectedSchoolStore(
-    (state) => state.setSelectedSchoolId
+  const setSelectedSchool = useSelectedSchoolStore(
+    (state) => state.setSelectedSchool
   );
 
   const handleSchoolSelect = (schoolId) => {
-    const newValue = schoolId === selectedSchoolId ? null : schoolId;
-    setSelectedSchoolId(newValue);
+    const school = schools.find((s) => s.id === schoolId);
+    const isSame = selectedSchool?.id === school?.id;
+    const newValue = isSame ? null : school;
+
+    setSelectedSchool(newValue);
     setOpen(false);
 
     if (onSchoolSelect) {
-      const school = schools.find((s) => s.id === newValue);
-      onSchoolSelect(school || null);
+      onSchoolSelect(newValue);
     }
   };
 
   if (!isOnboarding) return null;
 
-  const selectedSchoolName = selectedSchoolId
-    ? schools.find((s) => s.id === selectedSchoolId)?.name
-    : "Select School";
+  const selectedSchoolName = selectedSchool?.name || "Select School";
 
   return (
     <SidebarGroup>
@@ -100,7 +100,7 @@ export function SchoolSelector({ isOnboarding = false, onSchoolSelect }) {
                             <Check
                               className={cn(
                                 "ml-auto h-4 w-4",
-                                selectedSchoolId === school.id
+                                selectedSchool?.id === school.id
                                   ? "opacity-100"
                                   : "opacity-0"
                               )}

@@ -3,11 +3,15 @@ import axios from "axios";
 import { API_BASE_URL } from "@/config";
 
 // Fetch all routes
-export const useRoutes = () => {
+export const useRoutes = (schoolId) => {
   return useQuery({
-    queryKey: ["routes"],
+    queryKey: ["routes", schoolId || "all"],
+    enabled: !!schoolId,
     queryFn: async () => {
-      const response = await axios.get(`${API_BASE_URL}/routes/`);
+      const url = schoolId
+        ? `${API_BASE_URL}/routes/?school=${schoolId}`
+        : `${API_BASE_URL}/routes/`;
+      const response = await axios.get(url);
       return response.data;
     },
   });
