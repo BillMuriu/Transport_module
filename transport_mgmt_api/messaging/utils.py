@@ -1,16 +1,16 @@
 import os
 import requests
 
-def send_bulk_sms_via_mobile_sasa(message_list):
+def send_bulk_sms_via_mobile_sasa(phone_list, message):
     """
-    Send bulk (non-personalized) SMS using Mobile Sasa API.
+    Send non-personalized bulk SMS using Mobile Sasa API.
 
     Args:
-        message_list: List of dicts with 'phone' and 'message' keys.
-                      All messages are assumed to have the same content.
+        phone_list: List of phone numbers as strings (e.g., ["254712345678", ...])
+        message: The SMS text to send to all numbers.
 
     Returns:
-        tuple: (success: bool, result: dict/str)
+        (success: bool, result: dict or error string)
     """
     url = "https://api.mobilesasa.com/v1/send/bulk"
 
@@ -22,7 +22,8 @@ def send_bulk_sms_via_mobile_sasa(message_list):
 
     payload = {
         "senderID": "MOBILESASA",
-        "messageBody": message_list
+        "message": message,
+        "phones": ",".join(phone_list)
     }
 
     try:

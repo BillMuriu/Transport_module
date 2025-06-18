@@ -7,6 +7,14 @@ from django.utils import timezone
 from students.models import Student
 from .models import Message
 from .utils import send_bulk_sms_via_mobile_sasa
+from rest_framework import generics
+from .models import Message
+from .serializers import MessageSerializer
+
+class MessageListView(generics.ListAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+
 
 
 class SendBulkGradeMessageView(APIView):
@@ -29,7 +37,7 @@ class SendBulkGradeMessageView(APIView):
             class_name=grade_level,
             parent_phone__isnull=False,
             parent_phone__gt=""
-        ).values("id", "parent_phone", "first_name", "last_name")
+        ).values_list("parent_phone", flat=True)
 
         if not students:
             return Response(
@@ -38,52 +46,37 @@ class SendBulkGradeMessageView(APIView):
             )
 
         # Deduplicate phone numbers
-        unique_phones = set()
-        messages_to_send = []
+        unique_phones = list(set(students))
 
-        for student in students:
-            phone = student["parent_phone"]
-            if phone in unique_phones:
-                continue
-
-            unique_phones.add(phone)
-
-            messages_to_send.append({
-                "phone": phone,
-                "message": message_content
-            })
-
-        # Send SMS in batches
+        # Send in batches of 40
         batch_size = 40
         all_success = True
         results = []
 
-        for i in range(0, len(messages_to_send), batch_size):
-            batch = messages_to_send[i:i + batch_size]
-            success, result = send_bulk_sms_via_mobile_sasa(batch)
+        for i in range(0, len(unique_phones), batch_size):
+            batch = unique_phones[i:i + batch_size]
+            success, result = send_bulk_sms_via_mobile_sasa(batch, message_content)
             results.append(result)
-
             if not success:
                 all_success = False
-                break  # or continue if you want to try the rest
+                break
 
         # Save messages to DB
         status_to_use = "sent" if all_success else "failed"
-
         message_records = [
             Message(
                 message_id=str(uuid.uuid4()),
                 sender="System",
-                recipient=msg["phone"],
+                recipient=phone,
                 msg_type=message_type,
-                message_content=msg["message"],
-                cost=0.5,  # or fetch dynamically
-                network="Safaricom",  # optional placeholder
+                message_content=message_content,
+                cost=0.5,
+                network="Safaricom",  # Optional: implement detection logic later
                 status=status_to_use,
                 description=f"Bulk message to {grade_level}",
                 date=timezone.now()
             )
-            for msg in messages_to_send
+            for phone in unique_phones
         ]
 
         with transaction.atomic():
@@ -92,7 +85,7 @@ class SendBulkGradeMessageView(APIView):
         return Response({
             "message": "Messages sent" if all_success else "Some messages failed",
             "details": results,
-            "success_count": len(messages_to_send) if all_success else 0,
-            "total_processed": len(messages_to_send),
+            "success_count": len(unique_phones) if all_success else 0,
+            "total_processed": len(unique_phones),
             "success": all_success
         }, status=status.HTTP_200_OK if all_success else status.HTTP_207_MULTI_STATUS)

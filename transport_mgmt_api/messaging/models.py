@@ -12,7 +12,7 @@ class Message(models.Model):
         ('Promotional', 'Promotional'),
         ('Transactional', 'Transactional'),
     ]
-    msg_type = models.CharField(max_length=20, choices=MSG_TYPE_CHOICES)
+    msg_type = models.CharField(max_length=20, choices=MSG_TYPE_CHOICES, blank=True, null=True)
 
     message_content = models.TextField()
     cost = models.DecimalField(max_digits=6, decimal_places=2)
