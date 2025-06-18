@@ -2,13 +2,16 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { API_BASE_URL } from "@/config";
 
-export const useStations = (routeId) => {
+export const useStations = (routeId, schoolId) => {
   return useQuery({
-    queryKey: ["stations", routeId], // include routeId in cache key
+    queryKey: ["stations", routeId, schoolId], // include both in cache key
     queryFn: async () => {
-      const url = routeId
-        ? `${API_BASE_URL}/stations/?route_id=${routeId}`
-        : `${API_BASE_URL}/stations/`;
+      const params = new URLSearchParams();
+
+      if (routeId) params.append("route_id", routeId);
+      if (schoolId) params.append("school", schoolId);
+
+      const url = `${API_BASE_URL}/stations/?${params.toString()}`;
 
       const response = await axios.get(url);
       return response.data;
