@@ -17,25 +17,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import SearchInput from "./search-input";
-import { StudentSentStatusTabs } from "./sent-status-filter";
-import DataTableActionButtons from "./data-table-action-buttons";
-import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
-import { useSendTripMessages } from "../queries/mutations";
-
+import SearchInput from "../../trip-students/_components/search-input";
+import { StudentSentStatusTabs } from "../../trip-students/_components/sent-status-filter";
 import { motion } from "framer-motion";
 
-export function DataTable({
-  columns,
-  data,
-  setStudents,
-  isDropoffPhase = false,
-}) {
+export function BoardingDataTable({ columns, data }) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState([]);
 
-  const ongoingTrip = useOngoingTripStore((state) => state.ongoingTrip);
-  const { mutate: sendMessagesToParents, isPending } = useSendTripMessages();
   const table = useReactTable({
     data,
     columns,
@@ -47,59 +36,11 @@ export function DataTable({
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    meta: {
-      isDropoffPhase,
-    },
   });
 
-  const selectedRowsCount = table.getFilteredSelectedRowModel().rows.length;
-  const clearSelection = () => setRowSelection({});
-  const handleSendMessages = () => {
-    if (!ongoingTrip?.id) return;
-
-    const selectedRows = table.getSelectedRowModel().rows;
-    const selectedStudents = selectedRows.map((row) => row.original);
-    const studentIds = selectedStudents.map((s) => s.id);
-
-    const payload = {
-      tripId: ongoingTrip.id,
-      studentIds,
-    };
-
-    if (isDropoffPhase) {
-      // In dropoff phase, just mark students as alighted without sending messages
-      const updatedStudents = data.map((student) => {
-        const updatedStudent = selectedStudents.find(
-          (s) => s.id === student.id
-        );
-        return updatedStudent ? { ...student, alighted: true } : student;
-      });
-      setStudents(updatedStudents);
-      clearSelection();
-    } else {
-      // In boarding phase, send messages and mark as boarded
-      console.log("Sending payload to backend:", payload);
-      sendMessagesToParents(payload, {
-        onSuccess: () => {
-          const updatedStudents = data.map((student) => {
-            const updatedStudent = selectedStudents.find(
-              (s) => s.id === student.id
-            );
-            return updatedStudent ? { ...student, sent: true } : student;
-          });
-          setStudents(updatedStudents);
-          clearSelection();
-        },
-        onError: (error) => {
-          console.error("Error sending messages:", error);
-        },
-      });
-    }
-  };
-
   const allRows = table.getRowModel().rows;
-  const sentRows = allRows.filter((row) => row.original.sent === true);
-  const notSentRows = allRows.filter((row) => row.original.sent !== true);
+  const boardedRows = allRows.filter((row) => row.original.boarded === true);
+  const notBoardedRows = allRows.filter((row) => row.original.boarded !== true);
 
   const rowAnimation = {
     hidden: { opacity: 0, y: 10 },
@@ -119,11 +60,11 @@ export function DataTable({
         </div>
       </div>
 
-      <div className="space-y-8">
-        {/* Sent Records Section */}
-        {sentRows.length > 0 && (
+      <div className="space-y-8">        {boardedRows.length > 0 && (
           <div>
-            <div className="font-semibold bg-muted py-2 px-4 mb-2">Sent</div>
+            <div className="font-semibold bg-green-50 text-green-800 py-2 px-4 mb-2">
+              Boarded Students
+            </div>
             <div className="overflow-x-auto">
               <Table className="w-full table-auto text-xs md:text-sm border-separate border-spacing-y-[4px]">
                 <TableHeader>
@@ -144,7 +85,7 @@ export function DataTable({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sentRows.map((row, index) => (
+                  {boardedRows.map((row, index) => (
                     <motion.tr
                       key={row.id}
                       data-state={row.getIsSelected() ? "selected" : ""}
@@ -171,13 +112,12 @@ export function DataTable({
               </Table>
             </div>
           </div>
-        )}
-
-        {/* Not Sent Records Section */}
-        {notSentRows.length > 0 && (
+        )}{" "}
+        {/* Yet to Board Section */}
+        {notBoardedRows.length > 0 && (
           <div>
-            <div className="font-semibold bg-muted py-2 px-4 mb-2">
-              Not Sent
+            <div className="font-semibold bg-yellow-50 text-yellow-800 py-2 px-4 mb-2">
+              Yet to Board
             </div>
             <div className="overflow-x-auto">
               <Table className="w-full table-auto text-xs md:text-sm border-separate border-spacing-y-[4px]">
@@ -197,10 +137,9 @@ export function DataTable({
                       </TableHead>
                     ))}
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {notSentRows.length ? (
-                    notSentRows.map((row, index) => (
+                </TableHeader>                <TableBody>
+                  {notBoardedRows.length ? (
+                    notBoardedRows.map((row, index) => (
                       <motion.tr
                         key={row.id}
                         data-state={row.getIsSelected() ? "selected" : ""}
@@ -238,7 +177,6 @@ export function DataTable({
             </div>
           </div>
         )}
-
         {/* Empty state */}
         {allRows.length === 0 && (
           <div className="overflow-x-auto">
@@ -275,16 +213,6 @@ export function DataTable({
             </Table>
           </div>
         )}
-      </div>
-
-      <div className="mt-6">
-        <DataTableActionButtons
-          table={table}
-          selectedRowsCount={selectedRowsCount}
-          isPending={isPending}
-          sendMessagesToParents={handleSendMessages}
-          clearSelection={clearSelection}
-        />
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ const DataTableActionButtons = ({
   isPending,
   sendMessagesToParents,
   clearSelection,
+  isDropoffPhase = false,
 }) => {
   return (
     <DataTableActionBar
@@ -25,8 +26,13 @@ const DataTableActionButtons = ({
         disabled={isPending || selectedRowsCount === 0}
         className="w-auto flex items-center gap-2 border-2 border-transparent hover:border-accent focus:ring-2 focus:ring-accent focus:ring-offset-2 px-4 py-2 rounded-md text-sm font-semibold transition-all duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
       >
+        {" "}
         {!isPending && <Send className="size-4" />} {/* Send icon */}
-        {isPending ? "Sending..." : "Send"}
+        {isPending
+          ? "Processing..."
+          : isDropoffPhase
+          ? "Mark as Alighted"
+          : "Send"}
       </Button>
     </DataTableActionBar>
   );

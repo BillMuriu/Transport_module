@@ -1,6 +1,7 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { useBoardingStudentsStore } from "@/stores/useBoardingStudentsStore";
 
 export const columns = [
   {
@@ -16,14 +17,19 @@ export const columns = [
         className="mx-auto"
       />
     ),
-    cell: ({ row }) => {
-      const isSent = row.original.sent;
+    cell: ({ row, table }) => {      const isBoarded = row.original.boarded;
+      const updateBoardingStatus = useBoardingStudentsStore((state) => state.updateBoardingStatus);
       return (
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          onCheckedChange={(value) => {
+            row.toggleSelected(!!value);
+            if (value) {
+              updateBoardingStatus(row.original.id);
+            }
+          }}
           aria-label="Select row"
-          disabled={isSent}
+          disabled={isBoarded}
           className="mx-auto"
         />
       );
@@ -34,11 +40,20 @@ export const columns = [
   },
   {
     id: "name",
-    header: () => <span>Name</span>,
-    cell: ({ row }) => {
+    header: () => <span>Name</span>,    cell: ({ row }) => {
       const firstName = row.original.first_name;
       const lastName = row.original.last_name;
-      return <span className="truncate">{`${firstName} ${lastName}`}</span>;
+      const updateBoardingStatus = useBoardingStudentsStore((state) => state.updateBoardingStatus);
+      return (
+        <button
+          onClick={() => {
+            updateBoardingStatus(row.original.id);
+          }}
+          className="hover:text-blue-600 truncate text-left w-full"
+        >
+          {`${firstName} ${lastName}`}
+        </button>
+      );
     },
     filterFn: (row, _columnId, filterValue) => {
       const fullName =
@@ -54,38 +69,20 @@ export const columns = [
     size: 80,
   },
   {
-    accessorKey: "sent",
+    id: "status",
     header: () => <span>Status</span>,
-    cell: ({ row, table }) => {
-      const isSent = row.getValue("sent");
-      const isAlighted = row.original.alighted;
-      const isDropoffPhase = table.options.meta?.isDropoffPhase;
-
-      if (isDropoffPhase) {
-        return (
-          <Badge
-            className={
-              isAlighted
-                ? "bg-green-100 text-green-800 border-green-200 text-xs"
-                : "bg-yellow-100 text-yellow-800 border-yellow-200 text-xs"
-            }
-            variant="outline"
-          >
-            {isAlighted ? "✅ Alighted" : "Boarded"}
-          </Badge>
-        );
-      }
-
+    cell: ({ row }) => {
+      const isBoarded = row.original.boarded;
       return (
         <Badge
           className={
-            isSent
+            isBoarded
               ? "bg-green-100 text-green-800 border-green-200 text-xs"
-              : "bg-muted text-muted-foreground border-muted text-xs"
+              : "bg-yellow-50 text-yellow-800 border-yellow-200 text-xs"
           }
           variant="outline"
         >
-          {isSent ? "✅ Boarded" : "Not Boarded"}
+          {isBoarded ? "Boarded" : "Yet to board"}
         </Badge>
       );
     },

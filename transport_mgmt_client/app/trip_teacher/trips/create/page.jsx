@@ -80,12 +80,16 @@ export default function MyForm() {
       console.log("Payload being sent:", payload); // Log the payload to see if it's set correctly
 
       setOpenBackdrop(true);
-
       createTrip(payload, {
-        onSuccess: () => {
+        onSuccess: (data) => {
           toast.success("Trip started successfully!");
           setOpenBackdrop(false);
-          router.push("/trip_teacher/trip-students");
+          // Redirect based on trip type
+          if (values.trip_type === "morning_pickup") {
+            router.push("/trip_teacher/trip-students");
+          } else {
+            router.push("/trip_teacher/trip-students-boarding");
+          }
         },
         onError: () => {
           toast.error("Failed to submit the form. Please try again.");
