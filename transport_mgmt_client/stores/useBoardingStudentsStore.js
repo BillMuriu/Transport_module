@@ -13,17 +13,26 @@ export const useBoardingStudentsStore = create(
               ? { ...student, boarded: !student.boarded }
               : student
           ),
-        })),      initializeBoardingStudents: (students) =>
+        })),
+      updateAlightedStatus: (studentId) =>
+        set((state) => ({
+          boardingStudents: state.boardingStudents.map((student) =>
+            student.id === studentId
+              ? { ...student, alighted: !student.alighted }
+              : student
+          ),
+        })),
+      initializeBoardingStudents: (students) =>
         set((state) => ({
           boardingStudents: students.map((student) => {
-            // Try to find existing student to preserve their boarding status
+            // Try to find existing student to preserve their status
             const existingStudent = state.boardingStudents.find(
               (s) => s.id === student.id
             );
             return {
               ...student,
-              // Keep existing boarding status if found, otherwise default to false
               boarded: existingStudent ? existingStudent.boarded : false,
+              alighted: existingStudent ? existingStudent.alighted : false,
             };
           }),
         })),

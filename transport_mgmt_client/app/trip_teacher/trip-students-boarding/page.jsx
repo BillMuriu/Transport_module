@@ -62,41 +62,20 @@ const TripStudentsBoarding = () => {
 
     setOpenBackdrop(true);
 
-    const expected_students = boardingStudents.map((s) => s.id);
+    // Get IDs of students who have boarded
     const boarded_students = boardingStudents
       .filter((s) => s.boarded)
       .map((s) => s.id);
 
-    const updatedData = {
-      ...ongoingTrip,
-      trip_status: "boarding_completed",
-      expected_students,
-      boarded_students,
-    };
-
-    // First update the trip status
-    updateTrip.mutate(
+    // Send messages to parents of boarded students
+    sendMessages.mutate(
       {
         tripId: ongoingTrip.id,
-        updatedData,
+        studentIds: boarded_students,
       },
       {
         onSuccess: () => {
-          // Then send messages to parents
-          sendMessages.mutate(
-            {
-              tripId: ongoingTrip.id,
-              studentIds: boarded_students,
-            },
-            {
-              onSuccess: () => {
-                router.push("/trip_teacher/trip-students-dropoff");
-              },
-              onError: () => {
-                setOpenBackdrop(false);
-              },
-            }
-          );
+          router.push("/trip_teacher/trip-students-dropoff");
         },
         onError: () => {
           setOpenBackdrop(false);
@@ -147,10 +126,12 @@ const TripStudentsBoarding = () => {
         >
           Complete Boarding
         </Button>
-      </div>{" "}          <BoardingDataTable
-            columns={columns}
-            data={boardingStudents}
-          />
+      </div>{" "}
+      <BoardingDataTable
+        columns={columns}
+        data={boardingStudents}
+        updateBoardingStatus={updateBoardingStatus}
+      />
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={openBackdrop}

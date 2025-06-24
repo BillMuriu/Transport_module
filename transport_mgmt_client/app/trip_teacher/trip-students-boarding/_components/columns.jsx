@@ -17,8 +17,11 @@ export const columns = [
         className="mx-auto"
       />
     ),
-    cell: ({ row, table }) => {      const isBoarded = row.original.boarded;
-      const updateBoardingStatus = useBoardingStudentsStore((state) => state.updateBoardingStatus);
+    cell: ({ row, table }) => {
+      const isBoarded = row.original.boarded;
+      const updateBoardingStatus = useBoardingStudentsStore(
+        (state) => state.updateBoardingStatus
+      );
       return (
         <Checkbox
           checked={row.getIsSelected()}
@@ -40,10 +43,13 @@ export const columns = [
   },
   {
     id: "name",
-    header: () => <span>Name</span>,    cell: ({ row }) => {
+    header: () => <span>Name</span>,
+    cell: ({ row }) => {
       const firstName = row.original.first_name;
       const lastName = row.original.last_name;
-      const updateBoardingStatus = useBoardingStudentsStore((state) => state.updateBoardingStatus);
+      const updateBoardingStatus = useBoardingStudentsStore(
+        (state) => state.updateBoardingStatus
+      );
       return (
         <button
           onClick={() => {
