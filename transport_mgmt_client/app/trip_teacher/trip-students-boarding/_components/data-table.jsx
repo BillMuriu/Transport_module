@@ -70,7 +70,7 @@ export function BoardingDataTable({ columns, data }) {
         />
         <BoardingStatusFilter table={table} />
       </div>
-      
+
       <div className="space-y-8">
         {/* Not Boarded Students Section */}
         {notBoardedRows.length > 0 && (

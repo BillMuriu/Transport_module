@@ -5,9 +5,12 @@ import { PlusCircle, Loader2 } from "lucide-react";
 import { useRoutes } from "./services/queries";
 import { columns } from "./_components/routes-columns";
 import { RoutesDataTable } from "./_components/routes-data-table";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const Routes = () => {
-  const { data, isLoading, isError } = useRoutes();
+  const user = useAuthStore((s) => s.user);
+  const schoolId = user?.school?.id;
+  const { data, isLoading, isError } = useRoutes(schoolId);
 
   return (
     <div className="bg-background min-h-screen">

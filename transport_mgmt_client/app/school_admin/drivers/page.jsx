@@ -5,9 +5,12 @@ import { PlusCircle, Loader2 } from "lucide-react";
 import { useDrivers } from "./services/queries";
 import { driverColumns } from "./_components/drivers-data-table";
 import { DriversDataTable } from "./_components/drivers-columns";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const Drivers = () => {
-  const { data, isLoading, isError } = useDrivers();
+  const user = useAuthStore((s) => s.user);
+  const schoolId = user?.school?.id;
+  const { data, isLoading, isError } = useDrivers(schoolId);
 
   return (
     <div className="bg-background min-h-screen">

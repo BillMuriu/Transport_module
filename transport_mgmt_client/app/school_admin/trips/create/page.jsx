@@ -83,7 +83,12 @@ export default function MyForm() {
         onSuccess: () => {
           toast.success("Trip started successfully!");
           setOpenBackdrop(false);
-          router.push("/school_admin/trip-students");
+          // Redirect based on trip type
+          if (values.trip_type === "evening_dropoff") {
+            router.push("/school_admin/trip-students-boarding");
+          } else {
+            router.push("/school_admin/trip-students");
+          }
         },
         onError: () => {
           toast.error("Failed to submit the form. Please try again.");
