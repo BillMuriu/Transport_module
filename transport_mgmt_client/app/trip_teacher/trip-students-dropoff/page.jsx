@@ -11,6 +11,13 @@ import { useUpdateTrip } from "../trips/_queries/mutation";
 import { useRouter } from "next/navigation";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 
 const TripStudentsDropoff = () => {
   const { boardingStudents, resetBoardingStudents } =
@@ -152,95 +159,118 @@ const TripStudentsDropoff = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-6 max-w-7xl space-y-6">
-        {/* Header Section */}
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-            Evening Dropoff
-          </h1>
-          <p className="text-muted-foreground">
-            Track and manage student dropoffs for the evening trip
-          </p>
+      <div className="container mx-auto px-4 py-6 max-w-[1400px]">
+        {/* Header with Trip Info Accordion */}
+        <div className="mb-8 space-y-4">
+          <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+                  Evening Dropoff
+                </h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="px-3 py-1 h-auto">
+                  <span className="text-sm font-medium">
+                    Alighted:{" "}
+                    <span className="text-primary font-bold">
+                      {boardingStudents.filter((s) => s.alighted).length}
+                    </span>
+                    {" / "}
+                    <span className="text-foreground">
+                      {boardingStudents.filter((s) => s.boarded).length}
+                    </span>
+                  </span>
+                </Badge>
+              </div>
+            </div>
+          </div>
+
+          <Accordion
+            type="single"
+            collapsible
+            className="bg-card border border-border rounded-lg shadow-sm overflow-hidden"
+          >
+            <AccordionItem value="trip-info" className="border-0">
+              <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/50 bg-primary/5 border-b border-border">
+                <span className="flex items-center gap-2">
+                  View Trip Details & Instructions
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pt-2 pb-4">
+                <div className="grid gap-6 md:grid-cols-3">
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-foreground">
+                      Trip Details
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      <p className="text-muted-foreground">
+                        Route:{" "}
+                        <span className="text-foreground">
+                          {ongoingTrip.route_name || "Not specified"}
+                        </span>
+                      </p>
+                      <p className="text-muted-foreground">
+                        Vehicle:{" "}
+                        <span className="text-foreground">
+                          {ongoingTrip.vehicle_name || "Not specified"}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-foreground">
+                      Student Status
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      <p className="text-muted-foreground">
+                        Expected:{" "}
+                        <span className="text-foreground">
+                          {boardingStudents.length}
+                        </span>
+                      </p>
+                      <p className="text-muted-foreground">
+                        Boarded:{" "}
+                        <span className="text-primary">
+                          {boardingStudents.filter((s) => s.boarded).length}
+                        </span>
+                      </p>
+                      <p className="text-muted-foreground">
+                        Alighted:{" "}
+                        <span className="text-primary">
+                          {boardingStudents.filter((s) => s.alighted).length}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-foreground">
+                      Instructions
+                    </h3>
+                    <div className="space-y-2 text-sm text-muted-foreground">
+                      <p>1. Check students as they alight from the bus</p>
+                      <p>2. Verify all students have been dropped off</p>
+                      <p>3. End trip when completed</p>
+                    </div>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
 
-        {/* Trip Info Card */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <div className="p-6 bg-card rounded-lg shadow-sm border border-border">
-            <h3 className="font-semibold text-foreground mb-2">Trip Details</h3>
-            <div className="space-y-2 text-sm">
-              <p className="text-muted-foreground">
-                Trip Name:{" "}
-                <span className="text-foreground">{ongoingTrip.name}</span>
-              </p>
-              <p className="text-muted-foreground">
-                Route:{" "}
-                <span className="text-foreground">
-                  {ongoingTrip.route_name || "Not specified"}
-                </span>
-              </p>
-              <p className="text-muted-foreground">
-                Vehicle:{" "}
-                <span className="text-foreground">
-                  {ongoingTrip.vehicle_name || "Not specified"}
-                </span>
-              </p>
-            </div>
-          </div>
-
-          <div className="p-6 bg-card rounded-lg shadow-sm border border-border">
-            <h3 className="font-semibold text-foreground mb-2">
-              Student Status
-            </h3>
-            <div className="space-y-2 text-sm">
-              <p className="text-muted-foreground">
-                Expected Students:{" "}
-                <span className="text-foreground">{boardingStudents.length}</span>
-              </p>
-              <p className="text-muted-foreground">
-                Boarded:{" "}
-                <span className="text-primary">
-                  {boardingStudents.filter((s) => s.boarded).length}
-                </span>
-              </p>
-              <p className="text-muted-foreground">
-                Alighted:{" "}
-                <span className="text-primary">
-                  {boardingStudents.filter((s) => s.alighted).length}
-                </span>
-              </p>
-            </div>
-          </div>
-
-          <div className="p-6 bg-card rounded-lg shadow-sm border border-border md:col-span-2 lg:col-span-1">
-            <h3 className="font-semibold text-foreground mb-2">Instructions</h3>
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <p>1. Check students as they alight from the bus</p>
-              <p>2. Verify all students have been dropped off</p>
-              <p>3. End trip when completed</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="rounded-lg border border-border bg-card shadow-sm">
-          <div className="p-6 bg-primary/5 border-b border-border">
-            <h2 className="text-lg font-semibold text-foreground">
-              Student Dropoff Tracking
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Only students who boarded the bus are shown below. Mark each student
-              as they alight at their stop.
-            </p>
-          </div>
-
-          <div className="p-6">
+        {/* Main Content - Table */}
+        <div className="bg-card shadow-sm rounded-lg border border-border">
+          <div className="p-4 sm:p-6">
             <DropoffDataTable columns={columns} data={boardedStudents} />
           </div>
         </div>
 
         {/* Actions */}
-        <div className="sticky bottom-0 py-4 bg-background border-t border-border mt-auto">
-          <div className="container mx-auto px-4 max-w-7xl">
+        <div className="sticky bottom-0 py-4 bg-background border-t border-border mt-6">
+          <div className="container mx-auto max-w-[1400px]">
             <TripPopoverActions
               onEndTrip={handleEndTrip}
               onCancelTrip={handleCancelTrip}

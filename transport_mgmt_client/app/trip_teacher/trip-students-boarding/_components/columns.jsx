@@ -76,9 +76,10 @@ export const columns = [
   },
   {
     id: "status",
+    accessorFn: (row) => row.boarded,
     header: () => <span>Status</span>,
     cell: ({ row }) => {
-      const isBoarded = row.original.boarded;
+      const isBoarded = row.getValue("status");
       return (
         <Badge
           className={

@@ -13,6 +13,14 @@ import { useRouter } from "next/navigation";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Bus } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const TripStudentsBoarding = () => {
   const {
@@ -67,30 +75,38 @@ const TripStudentsBoarding = () => {
       .filter((s) => s.boarded)
       .map((s) => s.id);
 
-    // Send messages to parents of boarded students
-    sendMessages.mutate(
-      {
-        tripId: ongoingTrip.id,
-        studentIds: boarded_students,
-      },
-      {
-        onSuccess: () => {
-          router.push("/trip_teacher/trip-students-dropoff");
-        },
-        onError: () => {
-          setOpenBackdrop(false);
-        },
-      }
-    );
+    // // Send messages to parents of boarded students - Temporarily disabled
+    // sendMessages.mutate(
+    //   {
+    //     tripId: ongoingTrip.id,
+    //     studentIds: boarded_students,
+    //   },
+    //   {
+    //     onSuccess: () => {
+    //       router.push("/trip_teacher/trip-students-dropoff");
+    //     },
+    //     onError: () => {
+    //       setOpenBackdrop(false);
+    //     },
+    //   }
+    // );
+
+    // Directly navigate to dropoff phase
+    router.push("/trip_teacher/trip-students-dropoff");
+    setOpenBackdrop(false);
   };
 
   if (!ongoingTrip) {
     return (
-      <div className="p-4 text-center text-gray-600">
-        <h2 className="text-lg font-semibold mb-2">
-          No ongoing trip available
-        </h2>
-        <p>Please start a trip to see the student list.</p>
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="text-center space-y-4 max-w-md mx-auto p-6 bg-card rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold text-foreground mb-2">
+            No ongoing trip available
+          </h2>
+          <p className="text-muted-foreground">
+            Please start a trip to see the student list.
+          </p>
+        </div>
       </div>
     );
   }
@@ -117,21 +133,121 @@ const TripStudentsBoarding = () => {
   if (isError) return <div>Failed to load students.</div>;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between px-4">
-        <h1 className="text-xl font-bold">Evening Trip - Boarding Phase</h1>
-        <Button
-          onClick={handleCompleteBoardingPhase}
-          disabled={!boardingStudents.some((s) => s.boarded)}
-        >
-          Complete Boarding
-        </Button>
-      </div>{" "}
-      <BoardingDataTable
-        columns={columns}
-        data={boardingStudents}
-        updateBoardingStatus={updateBoardingStatus}
-      />
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-6 max-w-[1400px]">
+        {/* Header with Trip Info Accordion */}
+        <div className="mb-8 space-y-4">
+          <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+                  Evening Boarding
+                </h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="px-3 py-1 h-auto">
+                  <span className="text-sm font-medium">
+                    Boarded:{" "}
+                    <span className="text-primary font-bold">
+                      {boardingStudents.filter((s) => s.boarded).length}
+                    </span>
+                    {" / "}
+                    <span className="text-foreground">
+                      {boardingStudents.length}
+                    </span>
+                  </span>
+                </Badge>
+              </div>
+            </div>
+          </div>
+
+          <Accordion
+            type="single"
+            collapsible
+            className="bg-card border border-border rounded-lg shadow-sm overflow-hidden"
+          >
+            <AccordionItem value="trip-info" className="border-0">
+              <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/50 bg-primary/5 border-b border-border">
+                <span className="flex items-center gap-2">
+                  <Bus className="h-5 w-5 text-primary/90 shrink-0" />
+                  <span>View Trip Details & Instructions</span>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pt-2 pb-4">
+                <div className="grid gap-6 md:grid-cols-3">
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-foreground">
+                      Trip Details
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      <p className="text-muted-foreground">
+                        Route:{" "}
+                        <span className="text-foreground">
+                          {ongoingTrip.route_name || "Not specified"}
+                        </span>
+                      </p>
+                      <p className="text-muted-foreground">
+                        Vehicle:{" "}
+                        <span className="text-foreground">
+                          {ongoingTrip.vehicle_name || "Not specified"}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-foreground">
+                      Student Status
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      <p className="text-muted-foreground">
+                        Expected:{" "}
+                        <span className="text-foreground">
+                          {boardingStudents.length}
+                        </span>
+                      </p>
+                      <p className="text-muted-foreground">
+                        Boarded:{" "}
+                        <span className="text-primary">
+                          {boardingStudents.filter((s) => s.boarded).length}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-foreground">
+                      Instructions
+                    </h3>
+                    <div className="space-y-2 text-sm text-muted-foreground">
+                      <p>1. Check students as they board the bus</p>
+                      <p>2. Verify all expected students</p>
+                      <p>3. Complete boarding when ready</p>
+                    </div>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+
+        {/* Main Content - Table */}
+        <div className="bg-card shadow-sm rounded-lg border border-border">
+          <div className="p-4 sm:p-6">
+            <BoardingDataTable columns={columns} data={boardingStudents} />
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="sticky bottom-0 py-4 bg-background border-t border-border mt-6">
+          <div className="container mx-auto max-w-[1400px] flex justify-end">
+            <Button size="lg" onClick={handleCompleteBoardingPhase}>
+              Complete Boarding Phase
+            </Button>
+          </div>
+        </div>
+      </div>
+
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={openBackdrop}
