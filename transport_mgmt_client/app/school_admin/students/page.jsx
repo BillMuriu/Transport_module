@@ -5,10 +5,12 @@ import { PlusCircle, Loader2 } from "lucide-react";
 import { useStudents } from "./services/queries";
 import { columns } from "./_components/students-columns";
 import { StudentsDataTable } from "./_components/students-data-table";
-import { useSchoolStore } from "@/stores/useSchoolStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const Students = () => {
-  const { data, isLoading, isError } = useStudents();
+  const user = useAuthStore((s) => s.user);
+  const schoolId = user?.school?.id;
+  const { data, isLoading, isError } = useStudents(schoolId);
 
   return (
     <div className="bg-background min-h-screen">
