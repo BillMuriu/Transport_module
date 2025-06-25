@@ -1,15 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 from django.db import transaction
 import uuid
 from django.utils import timezone
 from students.models import Student
-from .models import Message
+from .models import Message, MessageTemplate
 from .utils import send_bulk_sms_via_mobile_sasa
-from rest_framework import generics
-from .models import Message
-from .serializers import MessageSerializer
+from .serializers import MessageSerializer, MessageTemplateSerializer
 
 class MessageListView(generics.ListAPIView):
     queryset = Message.objects.all()
@@ -89,3 +87,11 @@ class SendBulkGradeMessageView(APIView):
             "total_processed": len(unique_phones),
             "success": all_success
         }, status=status.HTTP_200_OK if all_success else status.HTTP_207_MULTI_STATUS)
+
+class MessageTemplateViewSet(generics.ListCreateAPIView):
+    queryset = MessageTemplate.objects.all()
+    serializer_class = MessageTemplateSerializer
+
+class MessageTemplateDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = MessageTemplate.objects.all()
+    serializer_class = MessageTemplateSerializer

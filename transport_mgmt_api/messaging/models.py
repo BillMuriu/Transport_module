@@ -1,7 +1,4 @@
 from django.db import models
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
 
 class Message(models.Model):
     message_id = models.CharField(max_length=50, unique=True)
@@ -31,17 +28,19 @@ class Message(models.Model):
         ('Sent', 'Sent'),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
-
     description = models.TextField(blank=True, null=True)
     date = models.DateTimeField()
 
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name='created_messages'
-    )
-
     def __str__(self):
         return f"{self.message_id} -> {self.recipient}"
+
+
+class MessageTemplate(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    content = models.TextField()
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
