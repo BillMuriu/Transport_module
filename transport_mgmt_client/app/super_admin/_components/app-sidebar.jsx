@@ -73,7 +73,7 @@ const data = {
     },
     {
       title: "Users",
-      url: "/super_admin/users",
+      url: "/super_admin/users/invitations",
       icon: Users,
       submenu: [
         {
