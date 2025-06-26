@@ -161,7 +161,7 @@ export default function EditStudentPage() {
     const { grade, ...otherValues } = values;
     const payload = {
       ...otherValues,
-      class_name: grade,  // grade is already in the format grade_X
+      class_name: grade, // grade is already in the format grade_X
       school: schoolId,
     };
 
@@ -176,12 +176,12 @@ export default function EditStudentPage() {
       ...payload,
       station: {
         value: payload.station,
-        type: typeof payload.station
+        type: typeof payload.station,
       },
       school: {
         value: payload.school,
-        type: typeof payload.school
-      }
+        type: typeof payload.school,
+      },
     });
     console.log("=== End Debug Info ===");
 

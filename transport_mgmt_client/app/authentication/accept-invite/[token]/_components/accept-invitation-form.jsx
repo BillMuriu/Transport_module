@@ -33,7 +33,7 @@ const acceptInviteSchema = z
     path: ["confirm_password"],
   });
 
-export default function AcceptInviteForm({ token }) {
+export default function AcceptInviteForm({ token, invitation }) {
   const router = useRouter();
   const [openBackdrop, setOpenBackdrop] = useState(false);
 
@@ -68,7 +68,18 @@ export default function AcceptInviteForm({ token }) {
     createUser(payload, {
       onSuccess: () => {
         toast.success("Account created successfully.");
-        router.push("/authentication/login");
+
+        // Check if this is a school admin without a school
+        if (
+          invitation?.user_type === "SCHOOL_ADMIN" &&
+          !invitation?.school_id
+        ) {
+          // Redirect to school creation page
+          router.push("/school_admin/onboarding/create-school");
+        } else {
+          // For all other cases, redirect to login
+          router.push("/authentication/login");
+        }
       },
       onError: (error) => {
         toast.error(

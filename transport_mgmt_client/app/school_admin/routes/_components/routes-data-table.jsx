@@ -22,7 +22,7 @@ import {
 
 import { motion } from "framer-motion";
 
-export function RoutesDataTable({ columns, data }) {
+export function RoutesDataTable({ columns, data = [] }) {
   const [columnFilters, setColumnFilters] = useState([]);
 
   const table = useReactTable({

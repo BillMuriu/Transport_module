@@ -22,7 +22,7 @@ import {
 import { motion } from "framer-motion";
 import SearchInput from "../../_components/search-filter";
 
-export function StationsDataTable({ columns, data }) {
+export function StationsDataTable({ columns, data = [] }) {
   const [columnFilters, setColumnFilters] = useState([]);
 
   const table = useReactTable({
