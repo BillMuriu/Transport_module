@@ -54,8 +54,14 @@ class ExpiringUserInviteView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class InvitationListView(generics.ListAPIView):
-    queryset = Invitation.objects.all()
     serializer_class = InvitationSerializer
+
+    def get_queryset(self):
+        queryset = Invitation.objects.all()
+        token = self.request.query_params.get('token', None)
+        if token is not None:
+            queryset = queryset.filter(token=token)
+        return queryset
 
 class CreateInvitationView(generics.CreateAPIView):
     serializer_class = InvitationSerializer
@@ -113,4 +119,9 @@ class AcceptInvitationView(APIView):
         invitation.is_used = True
         invitation.save()
 
-        return Response({"detail": "User created successfully"}, status=status.HTTP_201_CREATED)
+        # Serialize the user data for response
+        user_serializer = UserSerializer(user)
+        return Response({
+            "detail": "User created successfully",
+            "user": user_serializer.data
+        }, status=status.HTTP_201_CREATED)

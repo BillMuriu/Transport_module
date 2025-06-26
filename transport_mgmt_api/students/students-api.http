@@ -14,7 +14,18 @@ Content-Type: application/json
     "parent_email": "oscar.parent@example.com",
     "fingerprint_id": 280,
     "station": "c859eef8-f288-40d0-8a1d-7b0763f2acd9"
-  }
+  },
+{
+    "admission_number": "21321",
+    "first_name": "James",
+    "last_name": "Njiru",
+    "parent_name": "Mr Njiru",
+    "parent_phone": "0792845342",
+    "parent_email": "james.parent@example.com",
+    "station": "c859eef8-f288-40d0-8a1d-7b0763f2acd9",
+    "class_name": "Grade 2",
+    "school": "9984c0da-82bc-4581-88f1-971e8beefc1a"
+}
 ]
 
 

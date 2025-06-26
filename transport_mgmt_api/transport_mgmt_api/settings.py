@@ -195,7 +195,8 @@ STORAGES = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-FRONTEND_URL = "https://transport-module-3.vercel.app" 
+# FRONTEND_URL = "https://transport-module-3.vercel.app" 
+FRONTEND_URL = "http://localhost:3000" 
 
 
 MPESA_ENVIRONMENT = 'sandbox'

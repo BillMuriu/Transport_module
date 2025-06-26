@@ -26,14 +26,15 @@ class UserSerializer(serializers.ModelSerializer):
 
 class InvitationSerializer(serializers.ModelSerializer):
     invite_link = serializers.SerializerMethodField()
-    school_name = serializers.CharField(source='school.name', read_only=True)
-    school_id = serializers.UUIDField(source='school.id', read_only=True)
+    school_name = serializers.CharField(source='school.name', read_only=True, allow_null=True)
+    school_id = serializers.UUIDField(source='school.id', read_only=True, allow_null=True)
 
-    # Add this to allow setting the school via its UUID
+    # Optional school field
     school = serializers.PrimaryKeyRelatedField(
         queryset=School.objects.all(),
         write_only=True,
-        required=True
+        required=False,
+        allow_null=True
     )
 
     class Meta:
