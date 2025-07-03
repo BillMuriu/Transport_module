@@ -6,7 +6,7 @@ import { useBoardingStudentsStore } from "@/stores/useBoardingStudentsStore";
 import { useOngoingTripStore } from "@/stores/useOngoingTripStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { BoardingDataTable } from "./_components/data-table";
-import { columns } from "./_components/columns";
+import { createColumns } from "./_components/columns";
 import { useUpdateTrip } from "../trips/_queries/mutation";
 import { useSendTripMessages } from "../trip-students/queries/mutations";
 import { useRouter } from "next/navigation";
@@ -35,6 +35,16 @@ const TripStudentsBoarding = () => {
   const router = useRouter();
   const [openBackdrop, setOpenBackdrop] = useState(false);
 
+  // State for managing delayed student transitions
+  const [recentlyBoardedStudents, setRecentlyBoardedStudents] = useState(
+    new Set()
+  );
+  
+  // State for students showing "Boarded" feedback but not yet moved to boarded section
+  const [pendingBoardingStudents, setPendingBoardingStudents] = useState(
+    new Set()
+  );
+
   // Get logged-in user info
   const user = useAuthStore((state) => state.user);
   const tripTeacherId = user?.id;
@@ -45,6 +55,37 @@ const TripStudentsBoarding = () => {
 
   const updateTrip = useUpdateTrip();
   const sendMessages = useSendTripMessages();
+
+  // Handle boarding with delayed transition
+  const handleStudentBoarding = (studentId) => {
+    // Phase 1: Show immediate visual feedback (Boarded ✅) without updating state
+    setPendingBoardingStudents(prev => new Set([...prev, studentId]));
+    
+    // Phase 2: After delay, update the actual boarding state and remove visual feedback
+    setTimeout(() => {
+      // Update the actual boarding status
+      updateBoardingStatus(studentId);
+      
+      // Remove from pending (visual feedback)
+      setPendingBoardingStudents(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(studentId);
+        return newSet;
+      });
+      
+      // Add to recently boarded for keeping in current section temporarily
+      setRecentlyBoardedStudents(prev => new Set([...prev, studentId]));
+      
+      // After another short delay, move to boarded section
+      setTimeout(() => {
+        setRecentlyBoardedStudents(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(studentId);
+          return newSet;
+        });
+      }, 800); // Shorter delay for the actual move
+    }, 1200); // 1.2 second delay for visual feedback
+  };
 
   // Initialize students list from data fetched
   useEffect(() => {
@@ -234,7 +275,13 @@ const TripStudentsBoarding = () => {
         {/* Main Content - Table */}
         <div className="bg-card shadow-sm rounded-lg border border-border">
           <div className="p-4 sm:p-6">
-            <BoardingDataTable columns={columns} data={boardingStudents} />
+            <BoardingDataTable
+              columns={createColumns}
+              data={boardingStudents}
+              onStudentBoard={handleStudentBoarding}
+              recentlyBoardedStudents={recentlyBoardedStudents}
+              pendingBoardingStudents={pendingBoardingStudents}
+            />
           </div>
         </div>
 

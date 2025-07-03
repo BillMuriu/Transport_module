@@ -22,13 +22,25 @@ import { motion } from "framer-motion";
 import { BoardingStatusFilter } from "./boarding-status-filter";
 import SearchInput from "@/app/school_admin/_components/search-filter";
 
-export function BoardingDataTable({ columns, data }) {
+export function BoardingDataTable({
+  columns,
+  data,
+  onStudentBoard,
+  recentlyBoardedStudents,
+  pendingBoardingStudents,
+}) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState([]);
 
+  // Generate columns with the handlers
+  const tableColumns =
+    typeof columns === "function"
+      ? columns(onStudentBoard, recentlyBoardedStudents, pendingBoardingStudents)
+      : columns;
+
   const table = useReactTable({
     data,
-    columns,
+    columns: tableColumns,
     getPaginationRowModel: getPaginationRowModel(),
     onRowSelectionChange: setRowSelection,
     onColumnFiltersChange: setColumnFilters,
@@ -41,8 +53,20 @@ export function BoardingDataTable({ columns, data }) {
   });
 
   const allRows = table.getRowModel().rows;
-  const boardedRows = allRows.filter((row) => row.original.boarded === true);
-  const notBoardedRows = allRows.filter((row) => row.original.boarded !== true);
+
+  // Students who are boarded but not recently boarded (should be in boarded section)
+  const boardedRows = allRows.filter(
+    (row) =>
+      row.original.boarded === true &&
+      !recentlyBoardedStudents?.has(row.original.id)
+  );
+
+  // Students who are not boarded OR recently boarded (should stay in pending section temporarily)
+  const notBoardedRows = allRows.filter(
+    (row) =>
+      row.original.boarded !== true ||
+      recentlyBoardedStudents?.has(row.original.id)
+  );
 
   const rowAnimation = {
     hidden: { opacity: 0, y: 10 },
@@ -208,7 +232,7 @@ export function BoardingDataTable({ columns, data }) {
               <TableBody>
                 <TableRow>
                   <TableCell
-                    colSpan={columns.length}
+                    colSpan={tableColumns.length}
                     className="h-24 text-center py-4 px-2 md:py-6 md:px-4"
                   >
                     No results.

@@ -1,9 +1,10 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useBoardingStudentsStore } from "@/stores/useBoardingStudentsStore";
 
-export const columns = [
+export const createColumns = (onStudentBoard, recentlyBoardedStudents, pendingBoardingStudents) => [
   {
     id: "select",
     header: ({ table }) => (
@@ -19,20 +20,19 @@ export const columns = [
     ),
     cell: ({ row, table }) => {
       const isBoarded = row.original.boarded;
-      const updateBoardingStatus = useBoardingStudentsStore(
-        (state) => state.updateBoardingStatus
-      );
+      const isPendingBoarding = pendingBoardingStudents?.has(row.original.id);
+      
       return (
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => {
             row.toggleSelected(!!value);
-            if (value) {
-              updateBoardingStatus(row.original.id);
+            if (value && !isBoarded && !isPendingBoarding) {
+              onStudentBoard?.(row.original.id);
             }
           }}
           aria-label="Select row"
-          disabled={isBoarded}
+          disabled={isBoarded || isPendingBoarding}
           className="mx-auto"
         />
       );
@@ -47,15 +47,17 @@ export const columns = [
     cell: ({ row }) => {
       const firstName = row.original.first_name;
       const lastName = row.original.last_name;
-      const updateBoardingStatus = useBoardingStudentsStore(
-        (state) => state.updateBoardingStatus
-      );
+      const isPendingBoarding = pendingBoardingStudents?.has(row.original.id);
+      
       return (
         <button
           onClick={() => {
-            updateBoardingStatus(row.original.id);
+            if (!row.original.boarded && !isPendingBoarding) {
+              onStudentBoard?.(row.original.id);
+            }
           }}
-          className="hover:text-blue-600 truncate text-left w-full"
+          className="hover:text-blue-600 truncate text-left w-full disabled:cursor-default"
+          disabled={row.original.boarded || isPendingBoarding}
         >
           {`${firstName} ${lastName}`}
         </button>
@@ -80,19 +82,37 @@ export const columns = [
     header: () => <span>Status</span>,
     cell: ({ row }) => {
       const isBoarded = row.getValue("status");
-      return (
-        <Badge
-          className={
-            isBoarded
-              ? "bg-green-100 text-green-800 border-green-200 text-xs"
-              : "bg-yellow-50 text-yellow-800 border-yellow-200 text-xs"
-          }
-          variant="outline"
-        >
-          {isBoarded ? "Boarded" : "Yet to board"}
-        </Badge>
-      );
+      const isRecentlyBoarded = recentlyBoardedStudents?.has(row.original.id);
+      const isPendingBoarding = pendingBoardingStudents?.has(row.original.id);
+
+      // Show "Boarded ✅" if actually boarded OR if pending (visual feedback)
+      if (isBoarded || isPendingBoarding) {
+        return (
+          <Badge
+            className="bg-green-100 text-green-800 border-green-200 text-xs"
+            variant="outline"
+          >
+            Boarded ✅
+          </Badge>
+        );
+      } else {
+        // Show "Board" button for students not yet boarded and not pending
+        return (
+          <Button
+            onClick={() => onStudentBoard?.(row.original.id)}
+            size="sm"
+            variant="outline"
+            className="h-6 px-2 text-xs bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100"
+            disabled={isPendingBoarding} // Disable button when pending to prevent double-clicks
+          >
+            Board
+          </Button>
+        );
+      }
     },
     size: 100,
   },
 ];
+
+// Keep the original columns export for backward compatibility
+export const columns = createColumns();
