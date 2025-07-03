@@ -16,6 +16,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Bus } from "lucide-react";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -39,11 +44,17 @@ const TripStudentsBoarding = () => {
   const [recentlyBoardedStudents, setRecentlyBoardedStudents] = useState(
     new Set()
   );
-  
+
   // State for students showing "Boarded" feedback but not yet moved to boarded section
   const [pendingBoardingStudents, setPendingBoardingStudents] = useState(
     new Set()
   );
+
+  // State for students that are fading out before moving to boarded section
+  const [fadingOutStudents, setFadingOutStudents] = useState(new Set());
+
+  // State for boarding completion popover
+  const [boardingPopoverOpen, setBoardingPopoverOpen] = useState(false);
 
   // Get logged-in user info
   const user = useAuthStore((state) => state.user);
@@ -59,32 +70,43 @@ const TripStudentsBoarding = () => {
   // Handle boarding with delayed transition
   const handleStudentBoarding = (studentId) => {
     // Phase 1: Show immediate visual feedback (Boarded ✅) without updating state
-    setPendingBoardingStudents(prev => new Set([...prev, studentId]));
-    
-    // Phase 2: After delay, update the actual boarding state and remove visual feedback
+    setPendingBoardingStudents((prev) => new Set([...prev, studentId]));
+
+    // Phase 2: After delay, start fade out animation
     setTimeout(() => {
-      // Update the actual boarding status
-      updateBoardingStatus(studentId);
-      
-      // Remove from pending (visual feedback)
-      setPendingBoardingStudents(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(studentId);
-        return newSet;
-      });
-      
-      // Add to recently boarded for keeping in current section temporarily
-      setRecentlyBoardedStudents(prev => new Set([...prev, studentId]));
-      
-      // After another short delay, move to boarded section
+      setFadingOutStudents((prev) => new Set([...prev, studentId]));
+
+      // Phase 3: After fade animation, update state and move student
       setTimeout(() => {
-        setRecentlyBoardedStudents(prev => {
+        // Update the actual boarding status
+        updateBoardingStatus(studentId);
+
+        // Remove from pending and fading states
+        setPendingBoardingStudents((prev) => {
           const newSet = new Set(prev);
           newSet.delete(studentId);
           return newSet;
         });
-      }, 800); // Shorter delay for the actual move
-    }, 1200); // 1.2 second delay for visual feedback
+
+        setFadingOutStudents((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(studentId);
+          return newSet;
+        });
+
+        // Add to recently boarded for keeping in current section briefly
+        setRecentlyBoardedStudents((prev) => new Set([...prev, studentId]));
+
+        // After another short delay, move to boarded section
+        setTimeout(() => {
+          setRecentlyBoardedStudents((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(studentId);
+            return newSet;
+          });
+        }, 500); // Shorter delay for the actual move
+      }, 300); // Wait for fade animation to complete
+    }, 1000); // 1 second delay for visual feedback
   };
 
   // Initialize students list from data fetched
@@ -135,6 +157,24 @@ const TripStudentsBoarding = () => {
     // Directly navigate to dropoff phase
     router.push("/trip_teacher/trip-students-dropoff");
     setOpenBackdrop(false);
+  };
+
+  // Handle boarding phase completion with message sending
+  const handleCompleteBoardingWithMessage = () => {
+    setBoardingPopoverOpen(false);
+    // TODO: Add message sending functionality
+    handleCompleteBoardingPhase();
+  };
+
+  // Handle boarding phase completion without message sending
+  const handleCompleteBoardingWithoutMessage = () => {
+    setBoardingPopoverOpen(false);
+    handleCompleteBoardingPhase();
+  };
+
+  // Handle cancel boarding completion
+  const handleCancelBoardingCompletion = () => {
+    setBoardingPopoverOpen(false);
   };
 
   if (!ongoingTrip) {
@@ -285,12 +325,80 @@ const TripStudentsBoarding = () => {
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="sticky bottom-0 py-4 bg-background border-t border-border mt-6">
-          <div className="container mx-auto max-w-[1400px] flex justify-end">
-            <Button size="lg" onClick={handleCompleteBoardingPhase}>
-              Complete Boarding Phase
-            </Button>
+        {/* Add bottom padding to prevent content from being hidden behind floating bar */}
+        <div className="h-20"></div>
+      </div>
+
+      {/* Floating Action Bar */}
+      <div className="fixed bottom-0 z-40 left-1/2 transform -translate-x-1/2 w-full max-w-[1400px] mx-auto px-4">
+        <div className="border-t border-border/30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-t-lg">
+          <div className="flex justify-center py-4 px-4">
+            <Popover
+              open={boardingPopoverOpen}
+              onOpenChange={setBoardingPopoverOpen}
+            >
+              <PopoverTrigger asChild>
+                <Button size="lg" className="shadow-lg">
+                  Complete Boarding Phase
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-4 mb-4 backdrop-blur bg-background/95 supports-[backdrop-filter]:bg-background/90 shadow-lg rounded-lg border border-border/30">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-foreground">
+                      Complete Boarding Phase
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {boardingStudents.filter((s) => s.boarded).length}{" "}
+                      students have boarded. Choose how to proceed to the
+                      dropoff phase.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    {/* Send departure message and continue */}
+                    <Button
+                      className="w-full justify-start text-left h-auto py-3 px-4"
+                      onClick={handleCompleteBoardingWithMessage}
+                    >
+                      <div className="space-y-1">
+                        <div className="font-medium">
+                          Send Departure Message & Continue
+                        </div>
+                        <div className="text-xs opacity-80">
+                          Notify parents that students have departed
+                        </div>
+                      </div>
+                    </Button>
+
+                    {/* Continue without sending message */}
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start text-left h-auto py-3 px-4 bg-background text-foreground border border-border hover:bg-muted"
+                      onClick={handleCompleteBoardingWithoutMessage}
+                    >
+                      <div className="space-y-1">
+                        <div className="font-medium">
+                          Continue Without Message
+                        </div>
+                        <div className="text-xs opacity-70">
+                          Proceed to dropoff without notifications
+                        </div>
+                      </div>
+                    </Button>
+
+                    {/* Cancel */}
+                    <Button
+                      variant="ghost"
+                      className="w-full text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      onClick={handleCancelBoardingCompletion}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </div>

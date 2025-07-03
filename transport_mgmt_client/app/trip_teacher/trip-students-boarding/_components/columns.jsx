@@ -4,7 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useBoardingStudentsStore } from "@/stores/useBoardingStudentsStore";
 
-export const createColumns = (onStudentBoard, recentlyBoardedStudents, pendingBoardingStudents) => [
+export const createColumns = (
+  onStudentBoard,
+  recentlyBoardedStudents,
+  pendingBoardingStudents,
+  setFadingOutStudents
+) => [
   {
     id: "select",
     header: ({ table }) => (
@@ -21,7 +26,7 @@ export const createColumns = (onStudentBoard, recentlyBoardedStudents, pendingBo
     cell: ({ row, table }) => {
       const isBoarded = row.original.boarded;
       const isPendingBoarding = pendingBoardingStudents?.has(row.original.id);
-      
+
       return (
         <Checkbox
           checked={row.getIsSelected()}
@@ -48,7 +53,7 @@ export const createColumns = (onStudentBoard, recentlyBoardedStudents, pendingBo
       const firstName = row.original.first_name;
       const lastName = row.original.last_name;
       const isPendingBoarding = pendingBoardingStudents?.has(row.original.id);
-      
+
       return (
         <button
           onClick={() => {
@@ -88,25 +93,29 @@ export const createColumns = (onStudentBoard, recentlyBoardedStudents, pendingBo
       // Show "Boarded ✅" if actually boarded OR if pending (visual feedback)
       if (isBoarded || isPendingBoarding) {
         return (
-          <Badge
-            className="bg-green-100 text-green-800 border-green-200 text-xs"
-            variant="outline"
-          >
-            Boarded ✅
-          </Badge>
+          <div className="w-16 flex justify-center">
+            <Badge
+              className="bg-green-100 text-green-800 border-green-200 text-xs min-w-[60px] text-center"
+              variant="outline"
+            >
+              Boarded ✅
+            </Badge>
+          </div>
         );
       } else {
         // Show "Board" button for students not yet boarded and not pending
         return (
-          <Button
-            onClick={() => onStudentBoard?.(row.original.id)}
-            size="sm"
-            variant="outline"
-            className="h-6 px-2 text-xs bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100"
-            disabled={isPendingBoarding} // Disable button when pending to prevent double-clicks
-          >
-            Board
-          </Button>
+          <div className="w-16 flex justify-center">
+            <Button
+              onClick={() => onStudentBoard?.(row.original.id)}
+              size="sm"
+              variant="outline"
+              className="h-6 px-2 text-xs bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100 min-w-[60px]"
+              disabled={isPendingBoarding} // Disable button when pending to prevent double-clicks
+            >
+              Board
+            </Button>
+          </div>
         );
       }
     },

@@ -31,11 +31,17 @@ export function BoardingDataTable({
 }) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState([]);
+  const [fadingOutStudents, setFadingOutStudents] = useState(new Set());
 
   // Generate columns with the handlers
   const tableColumns =
     typeof columns === "function"
-      ? columns(onStudentBoard, recentlyBoardedStudents, pendingBoardingStudents)
+      ? columns(
+          onStudentBoard,
+          recentlyBoardedStudents,
+          pendingBoardingStudents,
+          setFadingOutStudents
+        )
       : columns;
 
   const table = useReactTable({
@@ -75,6 +81,11 @@ export function BoardingDataTable({
       y: 0,
       transition: { delay: i * 0.03 },
     }),
+    fadeOut: {
+      opacity: 0,
+      scale: 0.95,
+      transition: { duration: 0.3 },
+    },
   };
 
   if (data.length === 0) {
@@ -122,29 +133,32 @@ export function BoardingDataTable({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {notBoardedRows.map((row, index) => (
-                    <motion.tr
-                      key={row.id}
-                      data-state={row.getIsSelected() ? "selected" : ""}
-                      className="hover:bg-muted/50"
-                      initial="hidden"
-                      animate="visible"
-                      custom={index}
-                      variants={rowAnimation}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell
-                          key={cell.id}
-                          className="py-2 px-2 md:py-4 md:px-4"
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </motion.tr>
-                  ))}
+                  {notBoardedRows.map((row, index) => {
+                    const isFadingOut = fadingOutStudents.has(row.original.id);
+                    return (
+                      <motion.tr
+                        key={row.id}
+                        data-state={row.getIsSelected() ? "selected" : ""}
+                        className="hover:bg-muted/50"
+                        initial="hidden"
+                        animate={isFadingOut ? "fadeOut" : "visible"}
+                        custom={index}
+                        variants={rowAnimation}
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell
+                            key={cell.id}
+                            className="py-2 px-2 md:py-4 md:px-4"
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        ))}
+                      </motion.tr>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>
