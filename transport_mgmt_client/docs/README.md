@@ -7,18 +7,23 @@ Safe Journey is a comprehensive transport management system designed for schools
 ## Core Features
 
 ### 🚌 [Transport Communication](./features/transport-communication/)
+
 Real-time communication system for trip coordination, student boarding/dropoff tracking, and parent notifications.
 
 ### 🗺️ [Trip Management](./features/trip-management/)
+
 Complete trip lifecycle management from creation to completion, including route planning and vehicle assignment.
 
 ### 👥 [Student Tracking](./features/student-tracking/)
+
 Real-time student location and status tracking during transport operations.
 
-### 🔐 [User Authentication & Authorization](./features/user-authentication/)
-Multi-role authentication system supporting Super Admins, School Admins, and Trip Teachers.
+### 🔐 [Authentication & Authorization](./features/authentication-authorization/)
+
+Secure multi-role authentication system with invitation-based user onboarding, role-based access control, and comprehensive session management.
 
 ### 🏫 [School Administration](./features/school-administration/)
+
 Comprehensive school management including user invitations, resource management, and administrative controls.
 
 ## Technical Documentation

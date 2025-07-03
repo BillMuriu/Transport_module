@@ -85,95 +85,50 @@ export default function SchoolAdminInviteForm({ token, invitation }) {
     setOpenBackdrop(true);
 
     try {
-      // 1. Create user first
+      // Step 1: Accept invitation (create user) - same as regular invitation
       const { confirm_password, school: schoolData, ...userData } = values;
       userData.token = token;
 
-      console.log("Creating user with data:", userData);
+      console.log("Step 1: Creating user with invitation token...");
       const createdUser = await createUser(userData);
-      console.log("User creation response:", {
-        fullResponse: createdUser,
-        type: typeof createdUser,
-        keys: createdUser
-          ? Object.keys(createdUser)
-          : "no keys - null response",
-        id: createdUser?.id,
-        userId: createdUser?.userId,
-        user_id: createdUser?.user_id,
-        data: createdUser?.data,
-      });
+      console.log("User created:", createdUser);
 
-      if (!createdUser) {
-        throw new Error("No response from user creation");
+      if (!createdUser || !createdUser.user?.id) {
+        throw new Error("Failed to create user or get user ID");
       }
 
-      // Get the user ID from the nested user object
-      const userId = createdUser.user?.id;
+      const userId = createdUser.user.id;
 
-      if (!userId) {
-        throw new Error(
-          "Could not find user ID in the response. Response structure: " +
-            JSON.stringify(createdUser)
-        );
+      // Step 2: Create school
+      console.log("Step 2: Creating school...");
+      const createdSchool = await createSchool(schoolData);
+      console.log("School created:", createdSchool);
+
+      if (!createdSchool || !createdSchool.id) {
+        throw new Error("Failed to create school or get school ID");
       }
 
-      const userToUpdate = { id: userId };
+      const schoolId = createdSchool.id;
 
-      // 2. Create school
-      console.log("Creating school with data:", values.school);
-      const createdSchool = await createSchool(values.school);
-      console.log("School creation response:", {
-        fullResponse: createdSchool,
-        type: typeof createdSchool,
-        keys: createdSchool
-          ? Object.keys(createdSchool)
-          : "no keys - null response",
-        id: createdSchool?.id,
-        schoolId: createdSchool?.schoolId,
-        school_id: createdSchool?.school_id,
-      });
-
-      if (!createdSchool) {
-        throw new Error("No response from school creation");
-      }
-
-      // Check if the ID is in a nested structure
-      const schoolId =
-        createdSchool.id ||
-        createdSchool.schoolId ||
-        createdSchool.school_id ||
-        (createdSchool.data &&
-          (createdSchool.data.id ||
-            createdSchool.data.schoolId ||
-            createdSchool.data.school_id));
-
-      if (!schoolId) {
-        throw new Error(
-          "Could not find school ID in the response. Response structure: " +
-            JSON.stringify(createdSchool)
-        );
-      }
-
-      // 3. Update user with school
-      console.log("Updating user", userToUpdate.id, "with school", schoolId);
-      const { token: _, ...userDataWithoutToken } = userData; // Remove token from userData
+      // Step 3: Update user to link with school
+      console.log("Step 3: Linking user to school...");
       const updateData = {
-        ...userDataWithoutToken, // Spread user fields
+        email: userData.email,
+        username: userData.username,
+        phone_number: userData.phone_number,
+        user_type: createdUser.user.user_type, // Maintain what was set during invitation creation
         school: schoolId,
-        user_type: createdUser.user.user_type, // Preserve the user type from creation
+        is_active: true, // Ensure user is active
       };
-      console.log(
-        "Sending update request with:",
-        updateData,
-        "for user:",
-        userToUpdate.id
-      );
-      await updateUser({
-        id: userToUpdate.id,
+
+      console.log("Update data being sent:", updateData);
+      const updatedUser = await updateUser({
+        id: userId,
         data: updateData,
       });
-      console.log("User updated with school successfully");
+      console.log("User update response:", updatedUser);
 
+      console.log("School admin setup completed successfully!");
       toast.success("Account and school created successfully!");
       router.push("/authentication/login");
     } catch (error) {
